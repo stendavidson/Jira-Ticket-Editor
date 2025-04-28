@@ -1,0 +1,126 @@
+@use '../../styles/constants.scss' as c;
+
+.myHeader{
+    // Position
+    position: fixed;
+    top: 0px;
+
+    // Dimensions
+    width: 100%;
+    height: max(70px, 7vh);
+
+    // Borders
+    border: none;
+    border-bottom: 1px solid c.$line;
+
+    // Shadows
+    box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$containerGray;
+    
+    // Children
+    .myNav{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+        height: 100%;
+
+        // Display properties
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+
+        .link{
+            // Dimensions
+            width: max(6%, 110px);
+            height: 75%;
+            margin: 0 max(10px, 1vh);
+
+            // Display properties
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+
+            // Border
+            border-radius: 10px;
+
+            // Text
+            text-decoration: none;
+
+            &:hover{
+                // Color
+                background-color: c.$containerGrayHighlight;
+
+                // Text
+                text-decoration: none;
+            }
+        }
+
+        .avatar{
+            // Position
+            position: relative;
+            margin-left: auto;
+            margin-right: max(10px, 1vh);
+
+            // Dimensions
+            height: 60%;
+        }
+
+        .dropDown{
+            // Position
+            position: absolute;
+            top: max(70px, 7vh);
+            right: 0;
+            
+            // Dimensions
+            width: max(10%, 100px);
+            
+            // Display properties
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            // Border
+            border: 1px solid c.$line;
+            border-bottom-left-radius: 4px;
+
+            // Shadow
+            box-shadow: min(-1px, -0.15vh) max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$containerGray;
+
+            .dropButton{
+                // Dimensions
+                width: 100%;
+                height: max(60px, 6vh);
+
+                // Display properties
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                // Border
+                border-radius: 4px;
+
+                // Text 
+                text-decoration: none;
+
+                &:hover{
+                    // Color
+                    background-color: c.$containerGrayHighlight;
+    
+                    // Text
+                    text-decoration: none;
+
+                    // Pointer
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
+
+

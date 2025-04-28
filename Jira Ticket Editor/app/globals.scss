@@ -1,0 +1,30 @@
+@use '../styles/constants.scss' as c;
+
+// set defaults
+* {
+    // Positon
+    margin: 0px;
+
+    // Padding
+    padding: 0px;
+
+    // Border
+    border: none;
+
+    // Outline
+    outline: none;
+    
+    // Colors
+    background-color: c.$background;
+    color: c.$text;
+
+    // Text
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+// Set body dimensions
+body{
+    // Dimensions
+    width: 100%;
+    min-height: 100%;
+}

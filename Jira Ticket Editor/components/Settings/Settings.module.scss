@@ -1,0 +1,157 @@
+@use '../../styles/constants.scss' as c;
+
+.overlay {
+    // Position
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    // Dimensions
+    width: 100vw;
+    height: 100vh;
+
+    // Display Properties
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+
+    // Color
+    background: rgba(0, 0, 0, 0.5);
+
+    // Children
+    .popup {
+		// Position
+		position: relative;
+		bottom: 5%;
+	
+		// Dimensions
+		height: max(25vh, 250px);
+		width: max(40vh, 400px);
+	
+		// Display Properties
+		display: flex;
+		flex-direction: column;
+	
+		// Padding
+		padding: 20px 0px;
+	
+		// Border
+		border-radius: min(1vh, 10px);
+	
+		// Color
+		background-color: c.$containerGray;
+		
+		// Shadow
+		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.2);
+	
+		// Children
+		.closeButton {
+			// Position
+			position: absolute;
+			top: max(0.5vh, 5px);
+			right: max(1.2vh, 12px);
+
+			// Border
+			border: none;
+
+			// Color
+			background: transparent;
+			color: c.$boxGray;
+			
+			// Text
+			font-size: max(2.4vh, 24px);
+
+			// Cursor
+			cursor: pointer;    
+
+			&:hover {
+			//Color
+			color: c.$boxGrayHighlight;
+			}
+		}
+		
+		.userBar{
+			// Position
+			position: relative;
+			top: 25%;
+
+			// Dimensions
+			width: 100%;
+			height: max(90px, 9vh);
+
+			// Display Properties
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-start;
+			align-items: center;
+
+			// Children
+			.avatar{
+				// Position
+				position: relative;
+				left: max(15px, 1.5vh);
+	
+				// Dimensions
+				height: 70%;
+			}
+
+			.accountName{
+				// Position
+				position: relative;
+				left: max(40px, 4vh);
+				margin: max(5px, 0.5vh) 0;
+
+				// Text
+				font-size: max(15px, 1.5vh);
+				font-weight: bold;
+			}
+
+			.email{
+				// Position
+				position: relative;
+				left: max(40px, 4vh);
+				margin: max(5px, 0.5vh) 0;
+
+				// Text
+				font-size: max(12px, 1.2vh);
+			}		
+		}
+
+		.authButton{
+			// Position
+			position: absolute;
+			bottom: max(1.2vh, 12px);
+			right: max(1.2vh, 12px);
+
+			// Dimensions
+			height: max(4.5vh, 45px);
+
+			// Padding
+			padding: 0 max(2vh, 20px);
+
+			// Border
+			border-radius: max(0.5vh, 5px);
+
+			// Color
+			background-color: c.$button;
+
+			// Shadow
+			box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.2);
+
+			&:hover{
+				// Color
+				background-color: c.$buttonHighlight;
+
+				// Cursor
+				cursor: pointer;
+			}
+		}	
+    }
+}
+
+
+  
+  
+  
+  
+  
