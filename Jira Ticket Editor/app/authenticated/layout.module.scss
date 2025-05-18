@@ -1,0 +1,18 @@
+
+.main{
+    // Position
+    position: absolute;
+    margin-top: max(65px, 6.5vh);
+
+    // Dimensions
+    width: 100%;
+    min-height: calc(100% - max(65px, 6.5vh));
+    max-height: calc(100% - max(65px, 6.5vh));
+
+    // Display Properties
+    display: flex;
+    flex-direction: row;
+
+    // Overflow
+    overflow-y: hidden;
+}
