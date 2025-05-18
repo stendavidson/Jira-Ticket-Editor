@@ -4,10 +4,11 @@
     // Position
     position: fixed;
     top: 0px;
+    z-index: 100;
 
     // Dimensions
     width: 100%;
-    height: max(70px, 7vh);
+    height: max(65px, 6.5vh);
 
     // Borders
     border: none;
@@ -46,10 +47,11 @@
             align-items: center;
 
             // Border
-            border-radius: 10px;
+            border-radius: max(5px, 0.5vh);
 
             // Text
             text-decoration: none;
+            font-size: max(15px, 1.5vh);
 
             &:hover{
                 // Color
@@ -73,7 +75,7 @@
         .dropDown{
             // Position
             position: absolute;
-            top: max(70px, 7vh);
+            top: max(65px, 6.5vh);
             right: 0;
             
             // Dimensions
@@ -124,3 +126,10 @@
 }
 
 
+.highlight{
+    // Color
+    background-color: c.$containerGrayHighlight;
+
+    // Text
+    text-decoration: none;
+}
