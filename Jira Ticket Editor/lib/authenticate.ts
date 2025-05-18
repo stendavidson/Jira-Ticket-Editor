@@ -68,13 +68,15 @@ export async function getAccessToken(authCode: string, redirect_uri: string): Pr
       return access;
 
     }else{
-      
+
+      console.log(await response.text())
       return null;
 
     }
 
   }catch(error){
 
+    console.log(error)
     return null;
 
   }  

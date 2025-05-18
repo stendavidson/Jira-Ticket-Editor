@@ -1,7 +1,7 @@
 'use client'
 
 // Internal import
-import { RedirectPage } from "../components/redirect-page";
+import RedirectPage from "../components/RedirectPage/RedirectPage";
 import { usePathname } from 'next/navigation';
 
 /**

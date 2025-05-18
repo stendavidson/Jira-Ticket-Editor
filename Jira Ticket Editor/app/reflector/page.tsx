@@ -17,7 +17,7 @@ export default function Reflector(){
     const saveCredentials = async () => {
 
       // Request URL
-      const requestURL = new URL('/store-credentials', window.location.origin);
+      const requestURL = new URL('/internal/store-credentials', window.location.origin);
 
       // POST Request
       const response: Response | null = await request(requestURL.toString(), {
@@ -29,7 +29,7 @@ export default function Reflector(){
       });
 
       if(response?.status === 200){
-        const data: Bool | null = await response.json();
+        const data: Bool | null = await response.json() as Bool;
         window.location.href = `/authenticated/projects${data?.elevate ? "?settings=true": ""}`;
       }
     }

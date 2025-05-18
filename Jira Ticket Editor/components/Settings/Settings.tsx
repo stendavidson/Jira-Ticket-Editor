@@ -10,10 +10,10 @@ import AtlassianUser from "../../interfaces/AtlassianUserInterface";
 // External Imports
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Avatar from "../Avatar/Avatar";
+import UserAvatar from "../UserAvatar/UserAvatar";
 
 
-export default function Settings({ onClick, showSettings, elevated, setElevated }: { onClick: () => void, showSettings: boolean, elevated: boolean | null, setElevated: (arg: boolean) => void}) {
+export default function Settings({ onClick, showSettings, elevated, setElevated, writeAccess }: { onClick: () => void, showSettings: boolean, elevated: boolean | null, setElevated: (arg: boolean) => void, writeAccess: boolean}) {
 
   // Router
   const router = useRouter();
@@ -26,10 +26,12 @@ export default function Settings({ onClick, showSettings, elevated, setElevated 
     // Async function to fetch coponent data
     const fetchUser = async () => {
 
+      let user: AtlassianUser | null = null;
+
       if(elevated){
   
         // URL Params
-        const url: URL = new URL("/api", window.location.origin);
+        const url: URL = new URL("/proxy", window.location.origin);
         url.searchParams.append("pathname", "/myself");
         url.searchParams.append("elevate", "true");
   
@@ -40,7 +42,10 @@ export default function Settings({ onClick, showSettings, elevated, setElevated 
             method: "GET",
           }
         );
-        const user: AtlassianUser | null = await response?.json();
+
+        if(response?.status.toString().startsWith("2")){
+          user = await response?.json();
+        }
   
         // Set component variables & trigger re-render
         if (user) {
@@ -55,11 +60,12 @@ export default function Settings({ onClick, showSettings, elevated, setElevated 
 
 
   // Login callback
-  const login = () => {
+  const authorize = () => {
 
     // Construct URL
-    const url = new URL('/authorize', window.location.origin);
+    const url = new URL('internal/authorize', window.location.origin);
     url.searchParams.append("elevate", "true");
+    url.searchParams.append("source", window.location.pathname);
 
     // Redirect
     router.push(url.toString())
@@ -67,10 +73,10 @@ export default function Settings({ onClick, showSettings, elevated, setElevated 
   }
 
   // Logout callback
-  const logout = () => {
+  const deauthorize = () => {
     
     // Construct URL
-    const url = new URL('/deauthorize', window.location.origin);
+    const url = new URL('/internal/deauthorize', window.location.origin);
 
     // Logout the higher level account
     request(url.toString(), {
@@ -94,13 +100,13 @@ export default function Settings({ onClick, showSettings, elevated, setElevated 
           ×
         </button>
         <div className={styles.userBar}>
-          <Avatar className={styles.avatar} accountID={accountID}/> 
+          <UserAvatar className={styles.avatar} accountID={accountID}/> 
           <div>
             <p className={styles.accountName}>{elevated ? "Higher Level Account": "No Higher Level Account"}</p>
             <p className={styles.email}>{elevated ? "Higher Level Account": "No Higher Level Account"}</p>
           </div>
         </div>
-        <button className={styles.authButton} onClick={elevated ? logout: login} type="button">{elevated ? "Deauthorize": "Authorize"}</button>     
+        <button className={styles.authButton} onClick={elevated ? deauthorize : authorize} type="button" disabled={elevated !== null && elevated && !writeAccess}>{elevated ? "Deauthorize": "Authorize"}</button>     
       </div>
     </div>
   );
