@@ -14,12 +14,19 @@ import { useRouter } from 'next/navigation';
  * 
  * @returns A usable link
  */
-export default function Link({className, href, children}: {className: string, href: string, children: React.ReactNode}){
+export default function Link({className, href, onClick, children}: {className: string, href: string, onClick?: () => void, children: React.ReactNode}){
 
   const router = useRouter();
 
-  const direct = () => {
+  function direct(){
+
+    // Next.js safe link
     router.push(href);
+
+    // If there is an onClick callback, execute
+    if(onClick){
+      onClick();
+    }
   }
 
   return (
