@@ -41,15 +41,17 @@ CLIENT_SECRET=<your jira client secret>
 
 - Settings & Elevated Authorization
 
-
-### **Remaining Features**
-
 - Searchable Project List
 
 - Simplified Project Ticket List
 
-- A Ticket List Containing Tickets Assigned Or Related To A Particular User
+- User's Assigned Ticket List
 
+### **Remaining Features**
+
+- A ticket creation interface
+
+- A ticket editing interface
 
 ### **UI/UX Designs**
 
