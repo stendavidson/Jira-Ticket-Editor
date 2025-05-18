@@ -1,19 +1,16 @@
 'use client'
 
-// External Imports
-import { useEffect, useRef } from "react";
-
+// Internal Imports
+import TicketSearchBoard from "@/components/TicketSearchBoard/TicketSearchBoard";
 
 /**
- * This component renders the 'My-Work' page.
+ * This component renders the 'Projects' page.
  * 
  * @returns A react component
  */
-export default function MyWork() {
-
+export default function MyWork(): React.ReactNode {
+  
   return (
-    <main>
-      <div>Hello world!</div>
-    </main>
+      <TicketSearchBoard/>
   );
 }
