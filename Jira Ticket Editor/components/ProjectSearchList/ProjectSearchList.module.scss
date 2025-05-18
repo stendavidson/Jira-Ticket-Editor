@@ -1,0 +1,214 @@
+@use '../../styles/constants.scss' as c;
+
+.projectSearchList{
+    // Position
+    position: relative;
+    left: 0;
+    z-index: 100;
+
+    // Dimensions
+    width: max(25vh, 250px);
+    min-height: 100%;
+    max-height: 100%;
+
+    // Border
+    border-top: 1px solid c.$line;
+    border-right: 1px solid c.$line;
+
+    // Shadow
+    box-shadow: max(1px, 0.1vh) 0 max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
+
+    // Children
+    .titleSection{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+        min-height: max(8vh, 80px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        
+        // Border
+        border-bottom: 1px solid c.$line;
+
+        // Heading
+        h1{
+            // Position
+            position: relative;
+            margin-left: max(1.4vh, 14px);
+            margin-bottom: max(1.3vh, 13px);
+
+            // Color
+            color: white;
+            background-color: transparent;
+
+            // Text
+            font-size: max(3vh, 30px);
+            font-weight: bold;
+        }
+    }
+
+    .searchSection{
+        // Position
+        position: relative;
+        z-index: 110;
+
+        // Dimensions
+        width: 100%;
+        height: max(5vh, 50px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        
+        // Border
+        border-bottom: 1px solid c.$line;
+
+        // Shadow
+        box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
+
+        // Children
+        input[type=text]{
+            // Position
+            position: relative;
+
+            // Dimensions
+            width: 90%;
+            height: max(3vh, 30px);
+
+            // Padding
+            padding: 0 max(0.7vh, 7px);
+
+            // Border
+            border: 1px solid c.$line;
+            border-radius: max(0.5vh, 5px);
+
+            // Text
+            font-size: max(1.4vh, 14px);
+        }
+    }
+
+    .projectsBox{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+        min-height: calc(100% - max(5vh, 50px) - max(8vh, 80px));
+        max-height: calc(100% - max(5vh, 50px) - max(8vh, 80px));
+
+        // Display Properties
+        display: flex;
+        flex-direction: column;
+        justify-content: baseline;
+        align-items: center;
+
+        // Overflow
+        overflow-y: scroll;
+        
+        // scrollbar styling firefox
+        scrollbar-width: thin;
+        scrollbar-color: rgb(70, 70, 70) transparent;
+
+        // scrollbar styling chromium
+        &::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            box-shadow: none;
+            background: rgb(80, 80, 80);
+            border-radius: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: rgb(100, 100, 100);
+        }
+
+        // Children
+        .projectTile{
+            // Position
+            position: relative;
+            margin-top: max(1vh, 10px);
+
+            // Dimensions
+            width: 85%;
+            height: max(5vh, 50px);
+
+            // Display Properties
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            // Border
+            border-radius: max(0.4vh, 4px);
+
+            // Padding
+            padding: max(1vh, 10px);
+
+            // Color
+            background-color: c.$boxGray;
+
+            // Shadow
+            box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
+
+            &:last-child{
+                margin-bottom: max(1vh, 10px);
+            }
+
+            &:hover{
+                // Color
+                background-color: c.$containerGrayHighlight;
+                
+                // Cursor
+                cursor: pointer
+            }
+
+            &:active{
+                // Color
+                background-color: c.$containerGrayHighlight;
+            }
+
+            // Children
+            .projectTitle{
+                // Position
+                position: relative;
+                left: 0;
+
+                // Color
+                color: c.$text;
+                background-color: transparent;
+
+                // Text
+                font-weight: bold;
+            }
+
+            .avatar{
+                // Position
+                position: relative;
+                margin-left: auto;
+                margin-right: max(10px, 1vh);
+
+                // Dimensions
+                height: 60%;
+            }
+        }
+
+        .highlight{
+            // Color
+            background-color: c.$containerGrayHighlight;
+        }
+    }
+}
