@@ -52,7 +52,9 @@ export async function middleware(request: NextRequest) {
   
   // OR if the user has a valid refresh token
   }else if(refreshToken){
+    
     const access: Access | null = await refreshAccessToken(refreshToken);
+
     if(access && (await validate(access.access_token))){
 
       // If the source has been set
