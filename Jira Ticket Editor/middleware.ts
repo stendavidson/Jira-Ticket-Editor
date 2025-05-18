@@ -105,7 +105,7 @@ export async function middleware(request: NextRequest) {
 
     const url = new URL(request.url);
     url.search = '';
-    url.pathname = '/login';
+    url.pathname = '/internal/login';
     response = NextResponse.redirect(url);
 
   }
@@ -125,7 +125,7 @@ export async function middleware(request: NextRequest) {
   // NOT NEEDED: The 'lax' 'source' cookie is set in '\login'
   // using the url parameter 'source' else it defaults to
   // '/projects' and '/authenticated/*' handles redirects to
-  // '/login' and from '/reflector'
+  // '/internal/login' and from '/reflector'
 
   return response;
 }
