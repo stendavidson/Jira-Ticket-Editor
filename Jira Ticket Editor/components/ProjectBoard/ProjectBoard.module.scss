@@ -1,0 +1,131 @@
+@use '../../styles/constants.scss' as c;
+
+.projectBoard{
+    // Position
+    position: relative;
+
+    // Dimensions
+    width: calc(100% - max(25vh, 250px));
+    min-height: 100%;
+
+    // Overflow
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    // Children
+    .titleSection{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+        height: max(9.5vh, 95px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        
+        // Border
+        border-bottom: 1px solid c.$line;
+
+        // Heading
+        h1{
+            // Position
+            position: relative;
+            margin-left: max(4vh, 40px);
+            margin-bottom: max(1.5vh, 15px);
+
+            // Color
+            color: white;
+            background-color: transparent;
+
+            // Text
+            font-size: max(4vh, 40px);
+            font-weight: bold;
+        }
+    }
+
+    .ticketSection{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+        min-height: calc(100% - max(9.5vh, 95px) - max(1vh, 10px));
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+
+        // Children
+        .create{
+            // Position
+            position: absolute;
+            top: max(2vh, 20px);
+            left: max(8vh, 80px);
+
+            // Dimensions
+            width: max(10vh, 100px);
+            height: max(4.6vh, 46px);
+
+            // Border
+            border-radius: max(0.5vh, 5px);
+
+            // Color
+            background-color: c.$button;
+            color: c.$text;
+
+            // Text
+            font-size: max(1.5vh, 15px);
+            font-weight: bold;
+
+            &:hover{
+                // Color
+                background-color: c.$buttonHighlight;
+
+                // Cursor
+                cursor: pointer;
+            }
+        }
+
+        .boardWrapper { 
+            // Position
+            margin-top: max(8.6vh, 86px);
+            margin-right: max(8vh, 80px);
+            margin-left: max(8vh, 80px);
+            margin-bottom: max(2.3vh, 23px);
+            
+            // Dimensions
+            flex-grow: 1;
+            min-height: calc(95% - max(8.6vh, 86px));
+
+            // Display properties
+            display: flex;
+            flex-direction: column;
+            
+            // Children
+            .ticketBoard{
+                // Position
+                position: relative;
+
+                // Dimensions
+                min-height: 72.4vh;
+                min-width: max(40vh, 400px);
+                
+                background-color: c.$containerGray;
+
+                // Flex properies
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Border
+                border-radius: max(0.6vh, 6px);
+            }
+        }
+    }
+}
