@@ -1,0 +1,85 @@
+@use '../../styles/constants.scss' as c;
+
+.avatarCircle{
+
+    // Dimensions
+    aspect-ratio: 1 / 1;
+
+    // Display
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    // Borders
+    border-radius: 50%;
+
+    // Colors
+    background-color: c.$containerGray;
+
+    &:hover{
+        cursor: pointer;
+    }
+}
+
+.avatarImg{
+    // Position
+    position: relative;
+
+    // Dimensions
+    min-height: 100%;
+    min-width: 100%;
+    height: 100%;
+    width: 100%;
+
+    // Display Properties
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    // Borders
+    border-radius: 50%;
+
+    // Colors
+    background-color: c.$containerGray;
+    color: c.$containerGray; 
+
+    // Text
+    font-size: 4px;
+    text-align: center;
+}
+
+.avatarTooltip{
+    // Position
+    position: absolute;
+    z-index: 10;
+    top: 90%;
+    right: 90%;
+
+    // Dimensions
+    max-width: max(25vh, 250px);
+    min-height: max(2vh, 20px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    // Display properties
+    display: none;
+
+    // Padding
+    padding: max(0.5vh, 5px) max(0.5vh, 5px) max(0.5vh, 5px) max(0.5vh, 5px);
+    
+    // Border
+    border-radius: 5px;
+
+    // Colors
+    background-color: rgba(0, 0, 0, 0.4);
+
+    // Pointer Events
+    pointer-events: none;
+}
+
+.avatarCircle:hover .avatarTooltip{
+    display: flex;
+}
