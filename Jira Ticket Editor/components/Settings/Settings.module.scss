@@ -13,7 +13,7 @@
     // Display Properties
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 200;
 
     // Color
     background: rgba(0, 0, 0, 0.5);
@@ -65,8 +65,8 @@
 			cursor: pointer;    
 
 			&:hover {
-			//Color
-			color: c.$boxGrayHighlight;
+				//Color
+				color: c.$boxGrayHighlight;
 			}
 		}
 		
@@ -93,6 +93,10 @@
 	
 				// Dimensions
 				height: 70%;
+
+				&:hover{
+					cursor: default;
+				}
 			}
 
 			.accountName{
@@ -144,6 +148,18 @@
 
 				// Cursor
 				cursor: pointer;
+			}
+
+			&:disabled{
+				// Color
+				color: c.$boxGray;
+				background-color: c.$containerGrayHighlight;
+
+				// Shadow
+				box-shadow: none;
+
+				// Cursor
+				cursor: default;
 			}
 		}	
     }
