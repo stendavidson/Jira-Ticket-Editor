@@ -1,0 +1,138 @@
+@use '../../styles/constants.scss' as c;
+
+.ticketTile{
+    // Position
+    position: relative;
+    margin-top: max(1vh, 10px);
+
+    // Dimensions
+    width: calc(100% - max(4vh, 40px));
+    height: max(5vh, 50px);
+
+    // Display Properties
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    // Border
+    border-radius: max(0.4vh, 4px);
+
+    // Padding
+    padding: max(1vh, 10px);
+
+    // Color
+    background-color: c.$boxGray;
+
+    // Shadow
+    box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
+
+    &:last-child{
+        margin-bottom: max(1vh, 10px);
+    }
+
+    &:hover{
+        // Color
+        background-color: c.$containerGrayHighlight;
+        
+        // Cursor
+        cursor: pointer
+    }
+
+    &:active{
+        // Color
+        background-color: c.$containerGrayHighlight;
+    }
+
+    // Children
+    .startBox{
+        // Position
+        position: relative;
+
+        // Dimensions
+        height: 100%;
+        width: calc(97% - max(4vh, 40px));
+
+        // Display Properties
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        // Color
+        background-color: transparent;
+
+        .ticketTitle{
+            // Position
+            position: relative;
+
+            //Dimensions
+            width: calc(95% - max(4vh, 40px));
+
+            // Color
+            background-color: transparent;
+            color: c.$text;
+
+            // Text
+            font-weight: bold;
+            overflow: hidden;
+            white-space: nowrap; 
+            text-overflow: ellipsis;
+        }
+
+        .ticketNumber{
+            // Color
+            background-color: transparent;
+            color: c.$text;
+
+            // Text
+            font-size: max(1.1vh, 11px);
+            font-weight: 600;
+        }
+    }
+
+    .endBox{
+        // Position
+        position: relative;
+
+        // Dimensions
+        height: 100%;
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+
+        // Color
+        background-color: transparent;
+
+        // Children
+        .priority{
+            // Position
+            position: relative;
+            margin-right: max(1vh, 10px);
+
+            // Dimensions
+            height: 40%;
+
+            // Padding
+            padding-bottom: 5%;
+
+            // Color
+            background-color: transparent;
+        }
+
+        .avatar{
+            // Position
+            position: relative;
+
+            // Dimensions
+            height: 50%;
+        }
+    }
+}
+
+.highlight{
+    // Color
+    background-color: c.$containerGrayHighlight;
+}
