@@ -32,6 +32,7 @@ export default function Reflector(){
         const data: Bool | null = await response.json() as Bool;
         window.location.href = `/authenticated/projects${data?.elevate ? "?settings=true": ""}`;
       }
+      // TODO - add an else-if status === 400 and redirect the user back to their home page unsuccessfully
     }
 
     // Redirect
