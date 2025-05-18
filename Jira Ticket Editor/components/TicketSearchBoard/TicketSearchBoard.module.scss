@@ -1,0 +1,127 @@
+@use '../../styles/constants.scss' as c;
+
+.ticketSearchBoard{
+    // Position
+    position: relative;
+
+    // Dimensions
+    width: 100%;
+    min-height: 100%;
+
+    // Overflow
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    // Children
+    .titleSection{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+        height: max(9.5vh, 95px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        
+        // Border
+        border-bottom: 1px solid c.$line;
+
+        // Heading
+        h1{
+            // Position
+            position: relative;
+            margin-left: max(4vh, 40px);
+            margin-bottom: max(1.5vh, 15px);
+
+            // Color
+            color: white;
+            background-color: transparent;
+
+            // Text
+            font-size: max(4vh, 40px);
+            font-weight: bold;
+        }
+    }
+
+    .ticketSection{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+        min-height: calc(100% - max(9.5vh, 95px) - max(1vh, 10px));
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+
+        .boardWrapper { 
+            // Position
+            margin-top: max(3vh, 30px);
+            margin-right: max(8vh, 80px);
+            margin-left: max(8vh, 80px);
+            margin-bottom: max(2.3vh, 23px);
+            
+            // Dimensions
+            flex-grow: 1;
+            min-height: 100%;
+
+            // Display properties
+            display: flex;
+            flex-direction: column;
+            
+            // Children
+            .ticketBoard{
+                // Position
+                position: relative;
+
+                // Dimensions
+                min-height: 78vh;
+                min-width: max(40vh, 400px);
+                
+                background-color: c.$containerGray;
+
+                // Flex properies
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Border
+                border-radius: max(0.6vh, 6px);
+
+                textarea{
+                    // Position
+                    position: relative;
+                    margin-top: max(1vh, 10px);
+
+                    // Dimensions
+                    width: calc(100% - max(4vh, 40px));
+                    height: max(1.8vh, 18px);
+
+                    // Padding
+                    padding: max(0.7vh, 7px);
+
+                    // Border
+                    border: 1px solid c.$line;
+                    border-radius: max(0.5vh, 5px);
+
+                    // Text
+                    font-size: max(1.4vh, 14px);
+                    line-height: 1.5;
+
+                    // Resizing
+                    resize: none;
+                    
+                    // Overflow
+                    overflow: hidden;
+                }
+            }
+        }
+    }
+}
