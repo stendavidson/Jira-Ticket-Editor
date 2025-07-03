@@ -36,11 +36,14 @@
         flex-direction: column;
         align-items: flex-start;
 
+        // Border
+        border-radius: max(0.5vh, 5px);
+
         // Color
         background-color: c.$containerGray;
 
-        // Border
-        border-radius: max(0.5vh, 5px);
+        // Shadow
+        box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.5);
 
         // Overflow
         overflow: hidden;
