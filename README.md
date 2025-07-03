@@ -4,7 +4,7 @@
 
 
 ### **Description**
-This Next.js web app is currently under development. The goal is to develop an application where users can access, edit and create tickets from Jira. However, un-paid Jira accounts are severely limited in their capacity. Therefore, a feature has been added wherein a single paid account can "elevate" the application's access to the Jira API (note this is in addition to the Jira login feature). This "elevated access" feature has already been implemented (see settings).
+This Next.js web app is currently under development. The goal has been to develop an application where users can access, edit and create tickets from Jira. However, un-paid Jira accounts are severely limited in their capacity. Therefore, a feature has been added wherein a single paid service account can "elevate" the application's access to the Jira API (note this is in addition to the Jira login feature). This "elevated access" feature has already been implemented (see settings/Service Account Authorization).
 
 > [!Note] 
 > There is still error logging, debug logging, this project is not complete.
@@ -39,7 +39,7 @@ CLIENT_SECRET=<your jira client secret>
 
 - Layouts (Navbar etc)
 
-- Settings & Elevated Authorization
+- Settings & Service Account Authorization
 
 - Searchable Project List
 
@@ -53,10 +53,19 @@ CLIENT_SECRET=<your jira client secret>
 
 - A ticket editing interface
 
-### **UI/UX Designs**
+### **Feature Preview(s)**
 
 **Project Boards**
-![Project Board UI/UX Design](/Design%20Information/Project%20Boards.png)
+![Project Board UI/UX Design](/Docs/Project%20Boards.png)
 
 **User Tickets**
-![User Ticket Board UI/UX Design](/Design%20Information/User%20Tickets.png)
+![User Ticket Board UI/UX Design](/Docs/User%20Tickets.png)
+
+**Service Account Authorization**
+![Service Account Authoirzation](/Docs/Service%20Account%20Authorization.png)
+
+**Partial Ticket Interface**
+![Ticket Interface Part 1](/Docs/Incomplete%20Ticket%20Interface%20Part%201.png)
+![Ticket Interface Part 2](/Docs/Incomplete%20Ticket%20Interface%20Part%202.png)
+![Ticket Interface Part 3](/Docs/Incomplete%20Ticket%20Interface%20Part%203.png)
+![Ticket Interface Part 4](/Docs/Incomplete%20Ticket%20Interface%20Part%204.png)
