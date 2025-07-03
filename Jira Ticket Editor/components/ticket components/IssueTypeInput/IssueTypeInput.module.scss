@@ -1,0 +1,112 @@
+@use "../../../styles/constants.scss" as c;
+
+.issueTypeEditor{
+  // Position
+  position: relative;
+
+  // Dimensions
+  width: max(3vh, 30px);
+  height: max(3vh, 30px);
+
+  // Children
+  .issueTypeButton{
+    // Position
+    position: relative;
+
+    // Dimensions
+    width: max(3vh, 30px);
+    height: max(3vh, 30px);
+
+    // Display Properties
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    // Border
+    border-radius: max(0.4vh, 4px);
+
+    // Hover
+    &:hover{
+      // Colors
+      background-color: c.$containerGrayHighlight;
+      
+      // Cursor
+      cursor: pointer;
+    }
+  }
+
+  .issueTypesDropdown{
+    // Position
+    position: absolute;
+    top: max(3.1vh, 31px);
+    z-index: 400;
+
+    // Display Properties
+    display: none;
+    flex-direction: column;
+
+    // Border
+    border-radius: max(0.3vh, 3px);
+
+    // Shadow
+    box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.6);
+
+    // Display dropdown
+    &.displayDropdown {
+        display: flex;
+    }
+
+    // Children
+    .issueTypeOption{
+      // Position
+      position: relative;
+
+      // Dimensions
+      max-height: max(3vh, 30px);
+      min-height: max(3vh, 30px);
+
+      // Display Properties
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      align-items: center;
+
+      // Border
+      border-radius: max(0.3vh, 3px);
+
+      // Padding
+      padding: max(0.5vh, 5px) max(1.4vh, 14px) max(0.5vh, 5px) max(0.8vh, 8px);
+
+      // Text
+      font-size: max(1.4vh, 14px);
+
+      // Hover
+      &:hover{
+        // Color
+        background-color: c.$containerGrayHighlight;
+
+        // Cursor
+        cursor: pointer;
+      }
+
+      // Children
+      .issueTypeName{
+        // Position
+        position: relative;
+        margin-left: max(1vh, 10px);
+      }
+    }
+  }
+}
+
+// Shared icon style
+.issueTypeIcon{
+  // Position
+  position: relative;
+
+  // Dimensions
+  width: max(1.7vh, 17px);
+  height: max(1.7vh, 17px);
+}
