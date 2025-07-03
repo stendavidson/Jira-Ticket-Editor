@@ -1,0 +1,276 @@
+@use "../../../styles/constants.scss" as c;
+
+.fieldEditor{
+    // Position
+    position: relative;
+    margin-bottom: max(1vh, 10px);
+
+    // Dimensions
+    min-height: max(3vh, 30px);
+    width: calc(100% - max(1.4vh, 14px));
+
+    // Display Properties
+    display: flex;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    // Children
+    .label{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+        margin-bottom: max(0.3vh, 3px);
+
+        // Dimensions
+        flex: 1 1 20%;
+        min-width: max(10vh, 100px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Padding
+        padding: 0;
+
+        // Text
+        font-size: max(1.6vh, 16px);
+        font-weight: normal;
+    }
+
+    .fieldButton{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+
+        // Dimensions
+        min-height: max(3vh, 30px);
+        flex: 1 1 35%;
+        min-width: max(16vh, 160px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;    
+
+        // Border
+        border-radius: max(0.4vh, 4px);
+        border: 1px solid c.$containerGray;
+
+        // Padding
+        padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
+
+        // Overflow
+        overflow-y: visible;
+
+        // Hover
+        &:hover{
+            // Color
+            background-color: c.$containerGrayHighlight;
+        }
+
+        // Custom Focus
+        &.focused{
+            // Color
+            background-color: rgb(68, 68, 68);
+
+            // Border
+            border: 1px solid rgb(26, 131, 183);
+        }
+        
+        // Children
+        .icon{
+            // Position
+            position: relative;
+            margin-right: max(1vh, 10px);
+
+            // Dimensions
+            width: max(2vh, 20px);
+            height: max(2vh, 20px);
+
+            // Border
+            border-radius: 50%;
+        }
+
+        .inputField{
+            // Position
+            position: relative;
+
+            // Dimensions
+            width: calc(100% - max(1.4vh, 14px));
+            height: max(4vh, 40px);
+
+            // Display Properties
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            align-items: center;
+            
+            // Text
+            font-size: max(1.4vh, 14px);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            // Placeholder
+            &::placeholder{
+                // Color
+                color: white
+            }
+        }
+
+        .fieldDropdown{
+            // Position
+            position: absolute;
+            top: calc(100% + max(0.2vh, 2px));
+            left: 0;
+            z-index: 301;
+
+            // Dimensions
+            width: 100%;
+            max-height: max(24vh, 240px);
+
+            // Display Properties
+            display: none;
+            flex-direction: column;
+
+            // Border
+            border-radius: max(0.3vh, 3px);
+
+            // Color
+            background-color: c.$containerGray;
+
+            // Shadow
+            box-shadow: 0 max(2px, 0.2vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.6);
+
+            // Overflow
+            overflow-y: auto;
+
+            // Display dropdown
+            &.displayDropdown {
+                display: flex;
+            }
+
+            // scrollbar styling chromium
+            &::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                box-shadow: none;
+                background: rgb(60, 60, 60);
+                border-radius: 6px;
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: rgb(50, 50, 50);
+            }
+
+            // Children
+            .dropdownOption{
+                // Position
+                position: relative;
+
+                // Dimensions
+                box-sizing: border-box;
+                width: 100%;
+                min-height: max(4vh, 40px);
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Border
+                border-radius: max(0.3vh, 3px);
+
+                // Padding
+                padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                // Hover
+                &:hover{
+                    // Color
+                    background-color: c.$containerGrayHighlight;
+
+                    // Cursor
+                    cursor: pointer;
+                }
+
+                // Children
+                .icon{
+                    // Position
+                    position: relative;
+                    margin-right: max(1vh, 10px);
+
+                    // Dimensions
+                    width: max(2vh, 20px);
+                    height: max(2vh, 20px);
+
+                    // Border
+                    border-radius: 50%;
+                }
+                
+                .dropdownOptionName{
+                    // Position
+                    position: relative;
+
+                    // Dimensions
+                    width: calc(100% - max(3.5vh, 35px));
+
+                    // Text
+                    font-size: max(1.4vh, 14px);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .invalidDropdownOption{
+                // Position
+                position: relative;
+
+                // Dimensions
+                box-sizing: border-box;
+                width: 100%;
+                height: max(4vh, 40px);
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: center;
+
+                // Border
+                border-radius: max(0.3vh, 3px);
+
+                // Padding
+                padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
