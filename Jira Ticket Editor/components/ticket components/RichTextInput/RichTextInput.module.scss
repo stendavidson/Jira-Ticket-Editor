@@ -1,0 +1,149 @@
+@use "./././styles/constants.scss" as c;
+
+
+.fieldEditor{
+    // Position
+    position: relative;
+    margin-bottom: max(1vh, 10px);
+
+    // Dimensions
+    min-height: max(3vh, 30px);
+    width: calc(100% - max(1.4vh, 14px));
+
+    // Display Properties
+    display: flex;
+    flex-direction: column;
+
+    // Children
+    .label{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+        margin-bottom: max(0.3vh, 3px);
+        margin-top: 0;
+
+        // Dimensions
+        flex: 1 1 20%;
+        min-width: max(10vh, 100px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Padding
+        padding: 0;
+
+        // Text
+        font-size: max(1.6vh, 16px);
+        font-weight: normal;
+    }
+
+    .inputField{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+
+        // Dimensions
+        width: calc(100% - max(1vh, 10px));
+
+        // Border
+        border-radius: max(0.4vh, 4px);
+        border: 1px solid c.$containerGray;
+
+        // Text
+        font-size: max(1.4vh, 14px);
+
+        // Resize
+        resize: none;
+
+        // Overflow
+        overflow: visible;
+
+        // Hover
+        &:hover{
+            // Colors
+            background-color: c.$containerGrayHighlight;            
+        }
+
+        &::placeholder{
+            // Color
+            color: white;
+        }
+    }
+
+    .disabledField{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+
+        // Dimensions
+        box-sizing: border-box;
+        width: calc(100% - max(1vh, 10px));
+
+        // Border
+        border-radius: max(0.4vh, 4px);
+        border: 1px solid c.$containerGray;
+
+        // Padding
+        padding: max(1.2vh, 12px) max(0.8vh, 8px) max(1.2vh, 12px) max(0.8vh, 8px);
+
+        // Text
+        font-size: max(1.4vh, 14px);
+
+        // Resize
+        resize: none;
+
+        // Overflow
+        overflow: hidden;
+
+        // Hover
+        &:hover{
+            // Colors
+            background-color: c.$containerGrayHighlight;            
+        }
+
+        // Children
+        img {
+            // Dimensions
+            max-width: 100%;
+            height: auto !important;
+        }
+
+        code{
+            // Position
+            line-height: max(3vh, 30px);
+
+            // Padding
+            padding: max(0.3vh, 3px) max(0.5vh, 5px);
+
+            // Border
+            border-radius: max(0.4vh, 4px);
+
+            // Color
+            background-color: rgb(59, 59, 59);
+        }
+
+        blockquote {
+            // Position
+            margin-bottom: max(0.5vh, 5px);
+            margin-top: max(0.5vh, 5px);
+
+            // Padding
+            padding: max(0.5vh, 5px) max(1.5vh, 15px);
+
+            // Border
+            border-left:4px solid #ccc;
+        }
+    }
+
+    // Focus
+    & .focused{
+        // Color
+        background-color: rgb(68, 68, 68) !important;
+
+        // Border
+        border: 1px solid rgb(26, 131, 183);
+    }
+}
