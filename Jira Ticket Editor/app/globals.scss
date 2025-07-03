@@ -15,7 +15,7 @@
     outline: none;
     
     // Colors
-    background-color: c.$background;
+    background-color: inherit;
     color: c.$text;
 
     // Text
@@ -27,4 +27,7 @@ body{
     // Dimensions
     width: 100%;
     height: 100%;
+
+    // Colors
+    background-color: c.$background;
 }
