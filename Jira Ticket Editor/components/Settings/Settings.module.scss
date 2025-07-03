@@ -42,7 +42,7 @@
 		background-color: c.$containerGray;
 		
 		// Shadow
-		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.2);
+		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.5);
 	
 		// Children
 		.closeButton {
@@ -84,6 +84,9 @@
 			flex-direction: row;
 			justify-content: flex-start;
 			align-items: center;
+
+			// Color
+			background-color: #666666;
 
 			// Children
 			.avatar{
