@@ -79,7 +79,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const REDIRECT_URL = new URL('https://auth.atlassian.com/authorize');
     REDIRECT_URL.searchParams.append('audience', 'api.atlassian.com');
     REDIRECT_URL.searchParams.append('client_id', process.env.CLIENT_ID ? process.env.CLIENT_ID : "");
-    REDIRECT_URL.searchParams.append('scope', 'read:me read:account read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider read:servicedesk-request manage:servicedesk-customer write:servicedesk-request read:servicemanagement-insight-objects offline_access');
+    REDIRECT_URL.searchParams.append('scope', 'read:me read:account read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider read:servicedesk-request manage:servicedesk-customer write:servicedesk-request read:servicemanagement-insight-objects write:board-scope.admin:jira-software delete:board-scope.admin:jira-software read:board-scope.admin:jira-software write:board-scope:jira-software read:board-scope:jira-software write:epic:jira-software read:epic:jira-software write:issue:jira-software read:issue:jira-software write:sprint:jira-software delete:sprint:jira-software read:sprint:jira-software read:project:jira read:issue-type-hierarchy:jira offline_access');
     REDIRECT_URL.searchParams.append('redirect_uri', redirect_uri.toString());
     REDIRECT_URL.searchParams.append('state', urlNonce);
     REDIRECT_URL.searchParams.append('response_type', 'code');
