@@ -31,7 +31,7 @@ export default function Settings({ onClick, showSettings, elevated, setElevated,
       if(elevated){
   
         // URL Params
-        const url: URL = new URL("/proxy", window.location.origin);
+        const url: URL = new URL("/proxy-api", window.location.origin);
         url.searchParams.append("pathname", "/myself");
         url.searchParams.append("elevate", "true");
   

@@ -42,7 +42,7 @@ export default function Navbar(){
       let user: AtlassianUser | null = null;
 
       // URL Params
-      const url: URL = new URL("/proxy", window.location.origin);
+      const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", "/myself");
 
       // User request

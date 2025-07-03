@@ -9,7 +9,6 @@ export default async function request(url: string, options: object): Promise<Res
 
   }catch(err){
 
-    console.error(err); // Remove in production
     response = null;
 
   }

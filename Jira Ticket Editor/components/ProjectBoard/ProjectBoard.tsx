@@ -28,7 +28,7 @@ export default function ProjectBoard(){
       let projectData: ExtendedProjectInterface | null = null;
 
       // URL Params
-      const url: URL = new URL("/proxy", window.location.origin);
+      const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", `/project/${searchParams.get("project-id")}`);
 
       // User request
@@ -59,13 +59,13 @@ export default function ProjectBoard(){
       let IDs: {id : string}[] = []
 
       // URL Params
-      const url: URL = new URL("/proxy", window.location.origin);
+      const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", "/search/jql");
 
       // Post Body
       const postBody = {
         "fields": ["id"],
-        "jql": `project=${projectData?.id} AND NOT (status = "Closed" or status = "Closed Lost" or status = "Closed won" or status = "Resolved" or status = "Done" or status = "DONE (IN PROD)" or status = "DONE (IN UAT)" or status = Completed or status = Canceled) order by id desc`
+        "jql": `project=${projectData?.id} AND NOT (status = "Closed" or status = "Closed Lost" or status = "Closed won" or status = "Resolved" or status = "Done" or status = "DONE (IN PROD)" or status = "DONE (IN UAT)" or status = Completed or status = Canceled) AND issuetype NOT IN subTaskIssueTypes() order by id desc`
       }
 
       // User request
