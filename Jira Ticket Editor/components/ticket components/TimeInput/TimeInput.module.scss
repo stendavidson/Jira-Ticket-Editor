@@ -1,0 +1,172 @@
+@use "../../../styles/constants.scss" as c;
+
+.userEditor{
+    // Position
+    position: relative;
+    margin-bottom: max(1vh, 10px);
+
+    // Dimensions
+    min-height: max(3vh, 30px);
+    width: calc(100% - max(1.4vh, 14px));
+
+    // Display Properties
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    // Children
+    .label{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+        margin-bottom: max(0.3vh, 3px);
+        margin-top: 0;
+
+        // Dimensions
+        flex: 1 1 20%;
+        min-width: max(10vh, 100px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Padding
+        padding: 0;
+
+        // Text
+        font-size: max(1.6vh, 16px);
+        font-weight: normal;
+    }
+
+    .userButton{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+
+        // Dimensions
+        height: max(3vh, 30px);
+        flex: 1 1 35%;
+        min-width: max(16vh, 160px);
+
+        // Display Properties
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Border
+        border-radius: max(0.4vh, 4px);
+
+        // Padding
+        padding: max(0.5vh, 5px) max(1.4vh, 14px) max(0.5vh, 5px) max(0.8vh, 8px);
+
+        // Hover
+        &:hover{
+            // Colors
+            background-color: c.$containerGrayHighlight;
+            
+            // Cursor
+            cursor: pointer;
+        }
+
+        // Children
+        .usersDropdown{
+            // Position
+            position: absolute;
+            top: max(4.1vh, 41px);
+            left: 0;
+            z-index: 301;
+
+            // Dimensions
+            width: 100%;
+            max-height: max(24vh, 240px);
+
+            // Display Properties
+            display: none;
+            flex-direction: column;
+
+            // Border
+            border-radius: max(0.3vh, 3px);
+
+            // Color
+            background-color: c.$containerGray;
+
+            // Shadow
+            box-shadow: 0 max(2px, 0.2vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.6);
+
+            // Overflow
+            overflow-y: auto;
+
+            // Display dropdown
+            &.displayDropdown {
+                display: flex;
+            }
+
+            // Children
+            .userOption{
+                // Position
+                position: relative;
+
+                // Dimensions
+                min-height: max(3vh, 30px);
+                max-height: max(3vh, 30px);
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Border
+                border-radius: max(0.3vh, 3px);
+
+                // Padding
+                padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                // Hover
+                &:hover{
+                    // Color
+                    background-color: c.$containerGrayHighlight;
+
+                    // Cursor
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
+
+// Shared icon style
+.userIcon{
+    // Position
+    position: relative;
+
+    // Dimensions
+    width: max(2vh, 25px);
+    height: max(2vh, 25px);
+}
+
+// Shared text style
+.userName{
+    // Position
+    position: relative;
+    margin-left: max(1vh, 10px);
+
+    // Text
+    font-size: max(1.4vh, 14px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
