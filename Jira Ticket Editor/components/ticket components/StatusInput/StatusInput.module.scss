@@ -1,0 +1,128 @@
+@use "../../../styles/constants.scss" as c;
+
+.statusEditor{
+    // Position
+    position: absolute;
+    right: max(6vh, 60px);
+
+    // Dimensions
+    height: max(3vh, 30px);
+    max-height: max(3vh, 30px);
+    min-height: max(3vh, 30px);
+
+    // Children
+    .statusButton{
+        // Position
+        position: relative;
+
+        // Dimensions
+        height: max(3vh, 30px);
+        max-height: max(3vh, 30px);
+        min-height: max(3vh, 30px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        // Border
+        border: 1px solid c.$line;
+        border-radius: max(0.4vh, 4px);
+
+        // Padding
+        padding: 0 max(0.6vh, 6px);
+
+        // Text
+        font-size: max(1.3vh, 13px);
+
+        // Hover
+        &:hover{
+        // Colors
+        background-color: c.$containerGrayHighlight;
+        
+        // Cursor
+        cursor: pointer;
+        }
+    }
+
+    .statusDropdown{
+        // Position
+        position: absolute;
+        top: max(3.3vh, 33px);
+        z-index: 400;
+
+        // Dimensions
+        max-height: max(24vh, 240px);
+
+        // Display Properties
+        display: none;
+        flex-direction: column;
+
+        // Border
+        border-radius: max(0.3vh, 3px);
+
+        // Shadow
+        box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.6);
+
+        // Overflow
+        overflow-y: auto;
+
+        // Display dropdown
+        &.displayDropdown {
+            display: flex;
+        }
+
+        // Children
+        .statusOption{
+            // Position
+            position: relative;
+
+            // Dimensions
+            min-height: max(3vh, 30px);
+            max-height: max(3vh, 30px);
+
+            // Display Properties
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+
+            // Border
+            border-radius: max(0.3vh, 3px);
+
+            // Padding
+            padding: max(0.2vh, 2px) max(0.6vh, 6px) max(0.2vh, 2px) max(0.6vh, 6px);
+
+            // Hover
+            &:hover{
+                // Color
+                background-color: c.$containerGrayHighlight;
+
+                // Cursor
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+// Shared text format
+.statusName{
+  // Position
+  position: relative;
+
+  // Border
+  border-radius: max(0.3vh, 3px);
+
+  // Padding
+  padding: max(0.3vh, 3px);
+
+  // Color
+  background-color: transparent;
+
+  // Text
+  font-weight: bold;
+  text-align: left;
+  font-size: max(1.3vh, 13px);
+  text-wrap: nowrap;
+}
