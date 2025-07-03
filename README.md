@@ -56,16 +56,16 @@ CLIENT_SECRET=<your jira client secret>
 ### **Feature Preview(s)**
 
 **Project Board**
-![Project Board](Docs/Project%20Boards.png)
+![Project Board](Docs/Project%20Boards.PNG)
 
 **User Ticket**
-![User Ticket Board](Docs/User%20Tickets.png)
+![User Ticket Board](Docs/User%20Tickets.PNG)
 
 **Service Account Authorization**
-![Service Account Authorization](Docs/Service%20Account%20Authorization.png)
+![Service Account Authorization](Docs/Service%20Account%20Authorization.PNG)
 
 **Partial Ticket Interface**
-![Ticket Interface Part 1](Docs/Incomplete%20Ticket%20Interface%20Part%201.png)
-![Ticket Interface Part 2](Docs/Incomplete%20Ticket%20Interface%20Part%202.png)
-![Ticket Interface Part 3](Docs/Incomplete%20Ticket%20Interface%20Part%203.png)
-![Ticket Interface Part 4](Docs/Incomplete%20Ticket%20Interface%20Part%204.png)
+![Ticket Interface Part 1](Docs/Incomplete%20Ticket%20Interface%20Part%201.PNG)
+![Ticket Interface Part 2](Docs/Incomplete%20Ticket%20Interface%20Part%202.PNG)
+![Ticket Interface Part 3](Docs/Incomplete%20Ticket%20Interface%20Part%203.PNG)
+![Ticket Interface Part 4](Docs/Incomplete%20Ticket%20Interface%20Part%204.PNG)
