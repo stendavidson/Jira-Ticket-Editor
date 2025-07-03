@@ -2,13 +2,14 @@
 import style from "./TicketTile.module.scss";
 
 // External imports
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal Imports
 import UserAvatar from "../UserAvatar/UserAvatar";
 import TicketInterface from "@/interfaces/TicketInterface";
 import request from "@/lib/nothrow_request";
 import { TicketContext } from "@/contexts/TicketContext";
+import { getVisibleFields } from "@/lib/field_visibility";
 
 
 export default function TicketTile({ ticketID }: {ticketID?: string }){
@@ -19,46 +20,55 @@ export default function TicketTile({ ticketID }: {ticketID?: string }){
   // Ticket context
   const context = useContext(TicketContext);
 
-  useEffect(() => {
-      
-    // Async function to fetch coponent data
-    const fetchTicket = async () => {
+  // Async function to fetch coponent data
+  async function fetchTicket(){
 
-      let ticketData: TicketInterface | null = null;
+    let ticketData: TicketInterface | null = null;
 
-      if(ticketID){
-  
-        // URL Params
-        const url: URL = new URL("/proxy", window.location.origin);
-        url.searchParams.append("pathname", `/issue/${ticketID}`);
-        url.searchParams.append("fields", "*navigable");
-        url.searchParams.append("expand", "editmeta");
-        url.searchParams.append("elevate", "true");
-  
-        // User request
-        const response = await request(
-          url.toString(),
-          {
-            method: "GET",
-          }
-        );
+    if(ticketID){
 
-        if(response?.status.toString().startsWith("2")){
-          ticketData = await response?.json();
-          console.log(ticketData);
+      // URL Params
+      const url: URL = new URL("/proxy-api", window.location.origin);
+      url.searchParams.append("pathname", `/issue/${ticketID}`);
+      url.searchParams.append("fields", "*all");
+      url.searchParams.append("expand", "editmeta");
+      url.searchParams.append("elevate", "true");
+
+      // User request
+      const response = await request(
+        url.toString(),
+        {
+          method: "GET",
         }
-  
-        // Set component variables & trigger re-render
-        if (ticketData) {
-          setTicket(ticketData);
-        }
+      );
+
+      if(response?.status.toString().startsWith("2")){
+        ticketData = getVisibleFields(await response?.json());
+      }
+
+      // Set component variables & trigger re-render
+      if (ticketData) {
+        setTicket(ticketData);
       }
     }
-  
+  }
+
+  // Trigger initial load
+  useEffect(() => {
+    
     fetchTicket();
     
   }, [ticketID]);
 
+  // Trigger reload
+  useEffect(() => {
+    
+    if(context?.updateIndicator === ticketID){
+      fetchTicket();
+      context?.setUpdateIndicator(null);
+    }
+    
+  }, [context?.updateIndicator]);
 
   /**
    * Set ticket data
@@ -71,7 +81,10 @@ export default function TicketTile({ ticketID }: {ticketID?: string }){
     <div className={`${style.ticketTile} ${ticket === context?.ticketData ? style.highlight : ""}`} onClick={highlightTicket}>
       <div className={style.startBox}>
         <div className={style.ticketTitle}>{ticket?.fields?.summary}</div>
-        <p className={style.ticketNumber}>{ticket?.key}</p>
+        <div className={style.ticketKey}>
+          <img src={ticket?.fields?.issuetype?.iconUrl} className={style.issueTypeIcon}/>
+          <p className={style.ticketNumber}>{ticket?.key}</p>
+        </div>
       </div>
       <div className={style.endBox}>
         <img src={ticket?.fields?.priority?.iconUrl} className={style.priority}/>

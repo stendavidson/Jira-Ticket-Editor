@@ -80,14 +80,36 @@
             text-overflow: ellipsis;
         }
 
-        .ticketNumber{
-            // Color
-            background-color: transparent;
-            color: c.$text;
+        .ticketKey{
+            // Position
+            position: relative;
 
-            // Text
-            font-size: max(1.1vh, 11px);
-            font-weight: 600;
+            // Display Properties
+            display: flex;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            align-items: center;
+
+            // Children
+            .issueTypeIcon{
+                // Position
+                position: relative;
+                margin-right: max(0.5vh, 5px);
+
+                // Dimensions
+                width: max(1.6vh, 16px);
+                height: max(1.6vh, 16px);
+            }
+
+            .ticketNumber{
+                // Color
+                background-color: transparent;
+                color: c.$text;
+
+                // Text
+                font-size: max(1.1vh, 11px);
+                font-weight: 600;
+            }
         }
     }
 
