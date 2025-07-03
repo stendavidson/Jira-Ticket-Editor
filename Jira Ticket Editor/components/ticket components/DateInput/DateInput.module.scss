@@ -1,0 +1,98 @@
+@use "../../../styles/constants.scss" as c;
+
+.fieldEditor{
+    // Position
+    position: relative;
+    margin-bottom: max(1vh, 10px);
+
+    // Dimensions
+    min-height: max(3vh, 30px);
+    width: calc(100% - max(1.4vh, 14px));
+
+    // Display Properties
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    // Children
+    .label{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+        margin-bottom: max(0.3vh, 3px);
+        margin-bottom: max(0.3vh, 3px);
+        margin-top: 0;
+
+        // Dimensions
+        flex: 1 1 20%;
+        min-width: max(10vh, 100px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Padding
+        padding: 0;
+
+        // Text
+        font-size: max(1.6vh, 16px);
+        font-weight: normal;
+    }
+
+    .inputField{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+
+        // Dimensions
+        flex: 1 1 35%;
+        min-width: max(16vh, 160px);
+
+        // Display Properties
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Border
+        border-radius: max(0.4vh, 4px);
+        border: 1px solid c.$containerGray;
+
+        // Padding
+        padding: max(1.2vh, 12px) max(0.8vh, 8px) max(1.2vh, 12px) max(0.8vh, 8px);
+
+        // Text
+        font-size: max(1.4vh, 14px);
+
+        // Resize
+        resize: none;
+
+        // Overflow
+        overflow: hidden;
+
+        // Hover
+        &:hover{
+            // Colors
+            background-color: c.$containerGrayHighlight;            
+        }
+
+        // Active and Focus
+        &:focus{
+            // Color
+            background-color: rgb(68, 68, 68);
+
+            // Border
+            border: 1px solid rgb(26, 131, 183);
+        }
+
+        &::placeholder{
+            // Color
+            color: white;
+        }
+    }
+}
