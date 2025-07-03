@@ -2,156 +2,124 @@
 import style from "./ProjectSearchList.module.scss";
 
 // Internal Imports
-import Project from "../../interfaces/ProjectInterface";
-import ProjectList from "../../interfaces/ProjectListInterface";
+import { ProjectsResponseInterface, ProjectInterface } from "./ProjectInterface";
 
 // External Imports
-import React, { JSX, RefObject, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ProjectAvatar from "../ProjectAvatar/ProjectAvatar";
 import request from "../../lib/nothrow_request";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { flushSync } from "react-dom";
 
-
-export default function ProjectSearchList() : JSX.Element {
+export default function ProjectSearchList() {
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
-  const loaderRef: RefObject<HTMLDivElement | null> = useRef<HTMLDivElement | null>(null);
-  const [projectData, setProjectData] = useState<Project[]>([]);
-  const [startAt, setStartAt] = useState<number>(0);
-  const loading = useRef<boolean>(false);
-  const [input, setInput] = useState<string>("");
-  const requestToken = useRef<number>(0);
+
   const [projectID, setProjectID] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [startAt, setStartAt] = useState<number>(0);
+  const [permittedValues, setPermittedValues] = useState<ProjectInterface[]>([]);
+  const [filteredPermittedValues, setFilteredPermittedValues] = useState<ProjectInterface[]>([]);
+  const parentRef = useRef<HTMLDivElement | null>(null);
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+  const loading = useRef<boolean>(false);
+  const initial = useRef<boolean>(true);
 
+  // Debounce timer ref for input
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  /**
-   * This function retrieves a list of all the projects
-   */
-  async function loadProjects(query: string = "") {
+  // Fetch projects from API and append new results uniquely
+  async function getProjects() {
 
-    let projectList: ProjectList | null = null;
+    if (loading.current || startAt === -1){
+      return;
+    }
 
-    // Increment token for this request
-    const currentToken = ++requestToken.current;
-
-    // Set loading to true
     loading.current = true;
 
-    // URL params
-    const url = new URL("/proxy", window.location.origin);
+    // Build URL with params
+    const url = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", "/project/search");
+    url.searchParams.append("query", inputValue);
+    url.searchParams.append("orderBy", "name");
     url.searchParams.append("startAt", startAt.toString());
-    if (query) { url.searchParams.append("query", query) }
-  
+
     const response = await request(url.toString(), { method: "GET" });
 
-    if(response?.status.toString().startsWith("2")){
-      projectList = await response?.json();
-    }
-  
-    // Only update if this is still the latest request
-    if (currentToken === requestToken.current) {
-      if (projectList && projectList.values.length > 0) {
+    if (response?.status.toString().startsWith("2")) {
+      const data = (await response.json()) as ProjectsResponseInterface;
+      const newProjects = data.values.filter(p => !permittedValues.some(existing => existing.id === p.id));
 
-        // Only reset the entire project list if the input has been updated
-        if(input){
-          setProjectData(projectList.values);
-        }else{
-          setProjectData(prev => prev.concat(projectList.values));
-        }
-        
-        setStartAt(projectList.isLast ? -1 : projectList.startAt + projectList.maxResults);
-      } else {
-        setProjectData([]);
-        setStartAt(-1);
-      }
+      setPermittedValues(prev => [...prev, ...newProjects]);
+      setStartAt(data.isLast ? -1 : data.startAt + data.maxResults);
     }
-  
+
     loading.current = false;
   }
 
-
-  /**
-   * Set up an observer on the element that triggers loading
-   */
+  // Initial load
   useEffect(() => {
+    if (initial.current) {
+      initial.current = false;
+      getProjects();
+    }
+  }, []);
 
-    // Create an observer
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const loader = loaderRef.current;
+    const parent = parentRef.current;
+    if (!loader || !parent) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.target === loaderRef.current && !loading.current) {
-          loadProjects();
+        if (entry.isIntersecting) {
+          getProjects();
         }
       },
-      { threshold: 1.0 }
+      {
+        root: parent,
+        rootMargin: "0px 0px 250px 0px",
+        threshold: 0,
+      }
     );
 
-    // If loaderRef.current is defined observer it
-    const loader = loaderRef.current;
-    if (loader) {
-      observer.observe(loader);
-    } 
+    observer.observe(loader);
 
-    // Clean up function
     return () => {
       if (loader) observer.unobserve(loader);
     };
-  }, [startAt]);
+  }, [startAt, permittedValues]); // re-subscribe when startAt or permittedValues change
 
+  // Debounced filtering of permitted projects on input change
+  useEffect(() => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
-  /**
-   * The function sets the project-id as selected by the user.
-   * 
-   * @param id The new project-id that has been selected by the user.
-   */
-  function updateProjectID(id: string): void {
+    debounceTimer.current = setTimeout(() => {
+      const filtered = permittedValues.filter(p =>
+        p.name.toLowerCase().includes(inputValue.toLowerCase())
+      );
+      setFilteredPermittedValues(filtered);
+    }, 300);
 
-    flushSync(() => {
-      setProjectID(id);
-    });
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [inputValue, permittedValues]);
 
+  // Input handler
+  function handleInput(ev: React.ChangeEvent<HTMLInputElement>) {
+    setInputValue(ev.target.value);
+  }
+
+  // Update selected project ID and URL param
+  function updateProjectID(id: string) {
+    setProjectID(id);
     const params = new URLSearchParams(searchParams.toString());
     params.set("project-id", id);
     router.replace(`${pathname}?${params.toString()}`);
   }
-
-
-  /**
-   * This function sets the project search query
-   * 
-   * @param event event triggered by user updating the search field.
-   */
-  function handleInput(event: React.FormEvent<HTMLInputElement>): void {
-    const value = (event.target as HTMLInputElement).value;
-    setInput(value);
-  }
-
-  // Force query change to reset the project search
-  useEffect(() => {
-    setProjectData([]);
-    setStartAt(0);
-    loadProjects(input);
-  }, [input]);
-
-
-
-  // Set the "selected" project-id if the search parameters contain a project id
-  useEffect(() => {
-    
-    // Get initial url param
-    const id = searchParams.get('project-id');
-
-    // Set url param as project ID
-    if(id){
-      setProjectID(id);
-    }
-    
-  }, [])
-
 
   return (
     <div className={style.projectSearchList}>
@@ -159,25 +127,42 @@ export default function ProjectSearchList() : JSX.Element {
         <h1>Projects</h1>
       </div>
       <div className={style.searchSection}>
-        <input type="text" onInput={handleInput} placeholder="Search Projects"></input>
+        <input
+          type="text"
+          onChange={handleInput}
+          value={inputValue}
+          placeholder="Search Projects"
+        />
       </div>
-      <div className={style.projectsBox}>
-        {projectData.map((value) => {
-          return (
-            <div className={`${style.projectTile} ${projectID === value.id ? style.highlight : ""}`} key={value.id} onClick={() => updateProjectID(value.id)}>
-              <p className={style.projectTitle}>{value.name}</p>
-              <ProjectAvatar avatarURL={value.avatarUrls["48x48"]} displayName={value.name} className={style.avatar}/>
+      <div className={style.projectsBox} ref={parentRef}>
+        {filteredPermittedValues.map(project => (
+            <div
+              key={project.id}
+              className={`${style.projectTile} ${projectID === project.id ? style.highlight : ""}`}
+              onClick={() => updateProjectID(project.id)}
+            >
+              <p className={style.projectTitle}>{project.name}</p>
+              <ProjectAvatar
+                avatarURL={project.avatarUrls["48x48"]}
+                displayName={project.name}
+                className={style.avatar}
+              />
             </div>
-          );
+          ))
         }
-        )}
+        {filteredPermittedValues.length === 0 && !loading.current && (
+            <div className={style.rejectTile}>
+              No Matching Projects
+            </div>
+          )
+        }
         {startAt !== -1 && (
-          <div ref={loaderRef} className={style.projectTile}>
-            Loading projects...
-          </div>
-        )}
+            <div ref={loaderRef} className={style.rejectTile}>
+              Loading projects...
+            </div>
+          )
+        }
       </div>
     </div>
   );
-};
-
+}

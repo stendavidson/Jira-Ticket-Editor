@@ -1,5 +1,5 @@
 
-export default interface Project{
+export interface ProjectInterface{
   avatarUrls: {
     "16x16": string;
     "24x24": string;
@@ -22,4 +22,15 @@ export default interface Project{
   self: string;
   simplified: boolean;
   style: string;
+}
+
+
+export interface ProjectsResponseInterface {
+  isLast: boolean;
+  maxResults: number;
+  nextPage?: string;
+  self: string;
+  startAt: number;
+  total: number;
+  values: ProjectInterface[];
 }
