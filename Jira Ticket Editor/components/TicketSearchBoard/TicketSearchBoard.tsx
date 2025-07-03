@@ -17,7 +17,7 @@ export default function ProjectBoard() {
       let IDList: IDListInterface | null = null;
       let IDs: { id: string }[] = [];
 
-      const url: URL = new URL("/proxy", window.location.origin);
+      const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", "/search/jql");
 
       const postBody = {
