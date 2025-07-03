@@ -55,10 +55,10 @@ CLIENT_SECRET=<your jira client secret>
 
 ### **Feature Preview(s)**
 
-**Project Boards**
+**Project Board**
 ![Project Board](Docs/Project%20Boards.png)
 
-**User Tickets**
+**User Ticket**
 ![User Ticket Board](Docs/User%20Tickets.png)
 
 **Service Account Authorization**
