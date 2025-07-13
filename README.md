@@ -110,7 +110,7 @@ npm run dev
 ![Service Account Authorization](Docs/Service%20Account%20Authorization.PNG)
 
 **Partial Ticket Interface**
-![Ticket Interface Part 1](Docs/Incomplete%20Ticket%20Interface%20Part%201.PNG)
-![Ticket Interface Part 2](Docs/Incomplete%20Ticket%20Interface%20Part%202.PNG)
-![Ticket Interface Part 3](Docs/Incomplete%20Ticket%20Interface%20Part%203.PNG)
-![Ticket Interface Part 4](Docs/Incomplete%20Ticket%20Interface%20Part%204.PNG)
+![Ticket Interface Part 1](Docs/Incomplete%20Ticket%20Interface%20Part%201-v2.PNG)
+![Ticket Interface Part 2](Docs/Incomplete%20Ticket%20Interface%20Part%202-v2.PNG)
+![Ticket Interface Part 3](Docs/Incomplete%20Ticket%20Interface%20Part%203-v2.PNG)
+![Ticket Interface Part 4](Docs/Incomplete%20Ticket%20Interface%20Part%204-v2.PNG)
