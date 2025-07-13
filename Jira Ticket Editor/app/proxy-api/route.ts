@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import AuthWrapper from '@/lib/AuthWrapper';
 import AuthTokensInterface from '@/interfaces/AuthTokensInterface';
 
-const BASE_JIRA_URL = 'https://api.atlassian.com/ex/jira/68e39a30-a1b8-4b14-8d88-6363789cef33/rest/api/3';
+const BASE_JIRA_URL = `https://api.atlassian.com/ex/jira/${process.env.CLOUD_ID}/rest/api/3`;
 
 async function proxyRequest(method: 'GET' | 'POST' | 'PUT' | 'DELETE', request: NextRequest, authTokens: AuthTokensInterface): Promise<NextResponse> {
 
@@ -48,7 +48,8 @@ async function proxyRequest(method: 'GET' | 'POST' | 'PUT' | 'DELETE', request: 
       'Accept': 'application/json'
     };
 
-    const contentType = request.headers.get('content-type');
+    const contentType = request.headers.get('Content-Type');
+
     if (contentType) {
       if (contentType.includes('application/json') || contentType.includes('text/plain')) {
         headers['Content-Type'] = 'application/json';
@@ -59,7 +60,7 @@ async function proxyRequest(method: 'GET' | 'POST' | 'PUT' | 'DELETE', request: 
       headers['Content-Type'] = 'application/json';
     }
 
-    if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
+    if (contentType?.includes("multipart/form-data")) {
       headers['X-Atlassian-Token'] = 'nocheck';
     }
 
