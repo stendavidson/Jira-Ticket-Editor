@@ -26,9 +26,19 @@ import DateTimeInput from "../ticket components/DateTimeInput/DateTimeInput";
 import { AttachmentInterface } from "@/interfaces/AttachementInterface";
 import request from "@/lib/nothrow_request";
 import { flushSync } from "react-dom";
+import React from "react";
+import TimeEstimateInput from "../ticket components/TimeEstimateInput/TimeEstimateInput";
+//import LogTimeInput from "../ticket components/LogTimeInput/LogTimeInput";
 const RichTextInput = dynamic(() => import('../ticket components/RichTextInput/RichTextInput'), { ssr: false });
 
 
+/**
+ * This method extracts the media uuid from a url
+ * 
+ * @param url The url containing the uuid
+ * 
+ * @returns the extracted uuid.
+ */
 function extractMediaUUID(url: string): string | null {
   const match = url.match(/\/file\/([0-9a-fA-F-]{36})\//);
   return match ? match[1] : null;
@@ -37,30 +47,61 @@ function extractMediaUUID(url: string): string | null {
 
 export default function Ticket(){
 
+  // Context(s)
   const context = useContext(TicketContext);
+
+  // State Values
   const [attachments, setAttachments] = useState<AttachmentInterface[]>([]);
+  const [timeSpent, setTimeSpent] = useState<string>("");
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// API Functions ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
 
   /**
+   * This function retrieves the attachment uuid(s) and appends them to the relevant
+   * attachment object.
    * 
-   * @param attachments 
+   * @param attachments An array of input attachments to modify
    */
   async function preloadAttachments(attachments: AttachmentInterface[]) {
+
+    // Copy the attachments
     const updatedAttachments = [...attachments];
 
+    // Request all attachment information simultaneously
     const fetchPromises = updatedAttachments.map((attachment, i) => {
-      if (!attachment.mimeType.includes("image")) return Promise.resolve();
 
+      // Only process images
+      if (!attachment.mimeType.includes("image")){
+        return Promise.resolve();
+      }
+
+      // Create an abort controller
       const controller = new AbortController();
 
+      // URL Parameters
       const url = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", `/attachment/content/${attachment.id}`);
 
+      // Execute request
       return request(url.toString(), { method: "GET", signal: controller.signal }).then(response => {
-        if (response?.status.toString().startsWith("2")) {
+
+        // Handle the response
+        if (response?.status.toString().startsWith("2")) { 
+
+          // Early exit
+          controller.abort();
+
+          // Append the uuid to the attachment object
           const sourceURL = response.headers.get("origin-location");
           updatedAttachments[i].uuid = sourceURL ? extractMediaUUID(sourceURL) : null;
+
         }
-        controller.abort();
       });
     });
 
@@ -71,7 +112,16 @@ export default function Ticket(){
     });
   }
 
-  // Load
+
+  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////// Effects ///////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This function updates all of the image attachments
+   */
   useEffect(() => {
 
     if(context?.ticketData){
@@ -79,6 +129,19 @@ export default function Ticket(){
     }
 
   }, [context?.ticketData])
+
+
+  /**
+   * This function sets the time spent on a given ticket
+   */
+  useEffect(() => {
+    
+    if(context?.ticketData){
+      setTimeSpent(context!.ticketData?.fields["timetracking"].timeSpent);
+    }
+    
+  }, [context?.ticketData])
+
 
   return (
     context?.ticketData ? (
@@ -99,7 +162,10 @@ export default function Ticket(){
           </div>
           <div className={styles.mainContent}>
             <div className={styles.column1}>
-            
+              <div className={styles.primaryContent}>
+                <ShortTextInput className={styles.adjustPositionPrimary} fontSize={30} issueID={context.ticketData!.id} keyName={"summary"} operations={context.ticketData!.editmeta.fields["summary"].operations} defaultValue={context.ticketData!.fields["summary"] ?? ""}/>
+                <RichTextInput className={styles.adjustPositionPrimary} issueID={context.ticketData!.id} keyName={"description"} name={context.ticketData!.editmeta.fields["description"].name} operations={context.ticketData!.editmeta.fields["description"].operations} attachments={attachments} defaultValue={context.ticketData!.fields["description"] ?? ""}/>
+              </div>
             </div>
             <div className={styles.column2}>
               <div className={styles.details}>
@@ -131,7 +197,7 @@ export default function Ticket(){
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "array" && context.ticketData!.editmeta.fields[key].schema.items === "sd-sentiment"){
                         return <SentimentInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]} allowedValues={context.ticketData!.editmeta.fields[key].allowedValues}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom !== "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description" && key !== "environment"){
-                        return <ShortTextInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key] ?? ""}/>
+                        return <ShortTextInput key={key} className={styles.adjustPosition} fontSize={14} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key] ?? ""}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom === "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description" && key !== "environment"){
                         return <RichTextInput key={`${key}-${context.ticketData!.id}-${context.ticketData!.fields.updated}`} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} attachments={attachments} defaultValue={context.ticketData!.fields[key] ?? ""}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "number"){
@@ -141,7 +207,17 @@ export default function Ticket(){
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "datetime"){
                         return <DateTimeInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key] ?? ""}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "timetracking"){
-                        return null//<TimeTrackingInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]} allowedValues={context.ticketData!.editmeta.fields[key].allowedValues}/>
+
+                        return (
+                          <React.Fragment key={key}>
+                            <TimeEstimateInput key={key + "originalEstimate"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Original Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].originalEstimate}/>
+                            <TimeEstimateInput key={key + "remainingEstimate"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Remaining Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].remainingEstimate}/>
+                            <TimeEstimateInput key={key + "timeSpent"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Spent"} operations={[]} defaultValue={timeSpent}/>
+                            
+                          </React.Fragment>
+                        )
+
+                        //<LogTimeInput key={key + "logTime"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Tracking"} operations={context.ticketData!.editmeta.fields[key].operations} update={setTimeSpent}/>
                       }
 
                     // Other Fields: seperate controls for editing, unique representations (e.g. progress bars), read-only data

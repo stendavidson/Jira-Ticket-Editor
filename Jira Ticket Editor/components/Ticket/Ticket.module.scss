@@ -133,6 +133,7 @@
 
             // Dimensions
             min-width: 100%;
+            width: 100%;
             height: calc(100% - max(7vh, 70px));
 
             // Display Properties
@@ -144,20 +145,52 @@
             .column1{
                 // Position
                 position: relative;
+                margin-right: max(2vh, 20px);
 
                 // Dimensions
-                width: 60%;
+                width: calc(60% - max(2vh, 20px));
                 height: 100%;
                 min-height: 100%;
+                
+                // Display Properties
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Overflow
+                overflow-y: auto;
+
+                // Children
+                .primaryContent{
+                    // Position
+                    position: relative;
+
+                    // Dimensions
+                    width: 93%;
+                    min-height: 100%; //calc(100% - max(1vh, 10px));
+
+                    // Display Properties
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: flex-start;
+                    flex: 0 0 auto;
+
+                    // Padding
+                    padding-bottom: max(1vh, 10px);
+
+                    // Overflow
+                    overflow-x: visible;
+                }
             }
 
             .column2{
                 // Position
                 position: relative;
-                right: max(2vh, 20px);
 
                 // Dimensions
-                width: 40%;
+                width: calc(40% - max(2vh, 20px));
                 min-height: 100%;
                 max-height: 100%;
 
@@ -208,13 +241,32 @@
                         // Text
                         font-size: max(1.6vh, 16px);
                     }
-
-                    .adjustPosition{
-                        margin-top: max(1vh, 10px);
-                        margin-left: max(1.4vh, 14px);
-                    }
                 }
             }
         }
+    }
+}
+
+
+.adjustPosition{
+    // Position
+    margin-top: max(1vh, 10px);
+    margin-left: max(1.4vh, 14px);
+}
+
+.adjustPositionPrimary{
+    // Position
+    margin: 0 0 max(1.5vh, 15px) 0 !important;
+
+    // Dimensions
+    width: 100% !important;
+
+    // Padding
+    padding-right: 0 !important;
+
+    // Last-child
+    :last-child{
+        // Position
+        margin: 0 0 0 0 !important;
     }
 }
