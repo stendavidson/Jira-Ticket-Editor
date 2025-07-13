@@ -1,7 +1,7 @@
 
 // External imports
 import TicketInterface from "@/interfaces/TicketInterface";
-import { createContext, JSX, ReactNode, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 
 
 export const TicketContext = createContext<{
@@ -12,7 +12,7 @@ export const TicketContext = createContext<{
 } | null>(null);
 
 
-export function TicketProvider({ children }: {children : ReactNode}): JSX.Element {
+export function TicketProvider({ children }: {children : ReactNode}) {
 
   const [ticketData, setTicketData] = useState<TicketInterface | null>(null);
   const [updateIndicator, setUpdateIndicator] = useState<string | null>(null);

@@ -3,14 +3,11 @@
 // Styles
 import styles from "./ProjectAvatar.module.scss";
 
-// External Imports
-import { JSX } from "react";
-
 
 /**
  * This component displays the project avatar
  */
-export default function UserAvatar({ avatarURL, displayName, className }: { avatarURL: string|undefined, displayName: string|undefined, className: string }): JSX.Element{
+export default function UserAvatar({ avatarURL, displayName, className }: { avatarURL: string|undefined, displayName: string|undefined, className: string }) {
 
   return (
     <>

@@ -6,8 +6,6 @@ import { usePathname } from 'next/navigation';
 
 /**
  * Renders an error 404 redirect page
- * 
- * @returns JSX.Element | undefined
  */
 export default function PageNotFound(){
 
