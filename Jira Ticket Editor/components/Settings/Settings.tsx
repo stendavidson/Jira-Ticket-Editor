@@ -20,7 +20,7 @@ export default function Settings({ onClick, showSettings, elevated, setElevated,
   const router = useRouter();
 
   // State value(s)
-  const [accountID, setAccountID] = useState<string | null>(null);
+  const [account, setAccount] = useState<AtlassianUser | null>(null);
 
 
 
@@ -55,7 +55,7 @@ export default function Settings({ onClick, showSettings, elevated, setElevated,
       user = await response?.json();
     }
 
-    setAccountID(user?.accountId ?? null);
+    setAccount(user);
   }
 
 
@@ -97,7 +97,7 @@ export default function Settings({ onClick, showSettings, elevated, setElevated,
       // Upon successful logout set vals
       if(response?.status === 204){
         setElevated(false);
-        setAccountID(null);
+        setAccount(null);
       }
 
     })
@@ -132,10 +132,10 @@ export default function Settings({ onClick, showSettings, elevated, setElevated,
           ×
         </button>
         <div className={styles.userBar}>
-          <UserAvatar className={styles.avatar} accountID={accountID}/> 
+          <UserAvatar className={styles.avatar} accountID={account?.accountId}/> 
           <div>
-            <p className={styles.accountName}>{elevated ? "Higher Level Account": "No Higher Level Account"}</p>
-            <p className={styles.email}>{elevated ? "Higher Level Account": "No Higher Level Account"}</p>
+            <p className={styles.accountName}>{elevated ? account?.displayName : "No Higher Level Account"}</p>
+            <p className={styles.email}>{elevated ? account?.emailAddress : "No Higher Level Account"}</p>
           </div>
         </div>
         <button className={styles.authButton} onClick={elevated ? deauthorize : authorize} type="button" disabled={elevated !== null && elevated && !writeAccess}>{elevated ? "Deauthorize": "Authorize"}</button>     
