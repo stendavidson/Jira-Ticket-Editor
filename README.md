@@ -107,7 +107,7 @@ npm run dev
 ![User Ticket Board](Docs/User%20Tickets.PNG)
 
 **Service Account Authorization**
-![Service Account Authorization](Docs/Service%20Account%20Authorization.PNG)
+![Service Account Authorization](Docs/Service%20Account%20Authorization%20v2.PNG)
 
 **Partial Ticket Interface**
 ![Ticket Interface Part 1](Docs/Incomplete%20Ticket%20Interface%20Part%201.PNG)
