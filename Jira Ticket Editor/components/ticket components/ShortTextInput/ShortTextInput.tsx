@@ -9,7 +9,7 @@ import request from "@/lib/nothrow_request";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
-export default function ShortTextInput({className, issueID, keyName, name, operations, defaultValue}: {className: string, issueID: string, keyName: string, name: string, operations: string[],  defaultValue: string}) {
+export default function ShortTextInput({className, fontSize, issueID, keyName, name, operations, defaultValue}: {className: string, fontSize: number, issueID: string, keyName: string, name?: string, operations: string[],  defaultValue: string}) {
 
   // State Values
   const [initial, setInitial] = useState<string>(defaultValue ?? "");
@@ -116,6 +116,18 @@ export default function ShortTextInput({className, issueID, keyName, name, opera
   }
 
 
+  /**
+   * This function handles resizing of the short text input area
+   */
+  function resizeHandler(){
+
+    if(ref.current){
+      ref.current!.style.height = `max(${(fontSize + (fontSize/7))/10}vh, ${fontSize + (fontSize/7)}px)`;
+      ref.current!.style.height = `max(${(ref.current!.scrollHeight - 26) / 10}vh, ${ref.current!.scrollHeight - 26}px)`;
+    }
+  }
+
+
 
   ///////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////// Effects ///////////////////////////////////
@@ -128,25 +140,41 @@ export default function ShortTextInput({className, issueID, keyName, name, opera
    */
   useEffect(() => {
     if(ref.current){
-      ref.current.style.height = "max(1.6vh, 16px)";
+      ref.current.style.height = `max(${(fontSize + (fontSize/7))/10}vh, ${fontSize + (fontSize/7)}px)`;
       ref.current.style.height = `max(${(ref.current.scrollHeight - 26) / 10}vh, ${ref.current.scrollHeight - 26}px)`;
     }
   }, []);
 
 
+  /**
+   * This effect is used to set the initial height of the text field
+   */
+  useEffect(() => {
+
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+        window.removeEventListener("resize", resizeHandler);
+    };
+
+  }, []);
+
 
   return (
     <div className={`${styles.fieldEditor} ${className || ""}`}>
-      <h1 className={styles.label}>{name}</h1>
+      {name && (
+        <h1 className={styles.label}>{name}</h1>
+      )}
       <textarea
         className={styles.inputField}
+        style={{fontSize: fontSize}}
         disabled={!operations.includes("set")}
         value={inputValue}
         placeholder="None"
         onChange={(ev: React.ChangeEvent<HTMLTextAreaElement>) => {
           setInputValue(ev.target.value);
           if(ref.current){
-            ref.current.style.height = "max(1.6vh, 16px)";
+            ref.current.style.height = `max(${(fontSize + 2)/10}vh, ${fontSize + 2}px)`;
             ref.current.style.height = `max(${(ref.current.scrollHeight - 26) / 10}vh, ${ref.current.scrollHeight - 26}px)`;
           }
         }}
