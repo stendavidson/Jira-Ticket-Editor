@@ -4,10 +4,17 @@
 
 
 ### **Description**
-This Next.js web app is currently under development. The goal has been to develop an application where users can access, edit and create tickets from Jira. However, un-paid Jira accounts are severely limited in their capacity. Therefore, a feature has been added wherein a single paid service account can "elevate" the application's access to the Jira API (note this is in addition to the Jira login feature). This "elevated access" feature has already been implemented (see settings/Service Account Authorization).
+The goal has been to develop an application where users can access, edit and create tickets from Jira. However, un-paid Jira accounts are severely limited in their capacity. Therefore, a feature has been added wherein a single paid service account can "elevate" the application's access to the Jira API (note this is in addition to the Jira login feature). This "elevated access" feature has already been implemented (see settings/Service Account Authorization).
 
 > [!Note] 
-> There is still error logging, debug logging, this project is not complete.
+> This Next.js web app is currently under development it is not fully documented. It still retains debug logging, and not all components have been refactored according the design chosen.
+
+
+### **Pre-requisites**
+
+1. Node.js must be installed on your device.
+
+2. An active Jira account.
 
 
 ### **Dev Setup**
@@ -21,12 +28,23 @@ This Next.js web app is currently under development. The goal has been to develo
 ```txt
 
 ENVIRONMENT=development
+CLOUD_ID=<your atlassian cloud ID>
 CLIENT_ID=<your jira client id>
 CLIENT_SECRET=<your jira client secret>
 
 ```
 
-4. To run the Next.js application please run the command `npm run dev`
+4. Before running please run the command:
+
+```shell
+npm install
+```
+
+5. To run the Next.js application please run the command:
+
+```shell
+npm run dev
+```
 
 
 ### **Completed Features**
@@ -47,11 +65,38 @@ CLIENT_SECRET=<your jira client secret>
 
 - User's Assigned Ticket List
 
+- Ticket Fields/Components:
+  - Date Input
+  - Date Time Input
+  - Issue Type Input
+  - Label(s) Input
+  - Number Input
+  - Single-Option Input
+  - Multi-Option Input
+  - Parent Issue Input
+  - Priority Input
+  - Rich Text (ADF) Input
+  - Sentiment Input
+  - (Un-formatted) Text Input
+  - Sprint Input
+  - Status Input
+  - Team Input
+  - Time Input
+  - Multi-User Input
+  - Single-User Input
+
+
 ### **Remaining Features**
 
-- A ticket creation interface
+- Ticket comments
 
-- A ticket editing interface
+- Ticket worklogs
+
+- Ticket sub-tasks
+
+- Ticket dependencies
+
+- Ticket creator
 
 ### **Feature Preview(s)**
 
