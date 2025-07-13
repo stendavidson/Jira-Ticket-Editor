@@ -39,6 +39,7 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request body
     const body: any = {}

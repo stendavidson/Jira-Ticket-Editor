@@ -45,6 +45,7 @@ export default function OptionArray({ className, issueID, keyName, name, operati
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/field/${fieldID}/context`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("startAt", startAt.toString());
 
     // GET request
@@ -91,6 +92,7 @@ export default function OptionArray({ className, issueID, keyName, name, operati
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/field/${fieldID}/context/${contextID}/option`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("startAt", startAt.toString());
 
     // GET request
@@ -153,6 +155,7 @@ export default function OptionArray({ className, issueID, keyName, name, operati
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};
@@ -188,6 +191,7 @@ export default function OptionArray({ className, issueID, keyName, name, operati
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};

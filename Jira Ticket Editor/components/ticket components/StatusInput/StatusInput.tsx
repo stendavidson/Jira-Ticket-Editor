@@ -41,6 +41,7 @@ export default function StatusInput({ issueID, defaultValue }: { issueID: string
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}/transitions`);
+    url.searchParams.append("elevate", "true");
 
     // GET Request
     const response = await request(
@@ -81,6 +82,7 @@ export default function StatusInput({ issueID, defaultValue }: { issueID: string
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}/transitions`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {

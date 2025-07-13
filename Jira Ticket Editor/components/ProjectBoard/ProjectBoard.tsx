@@ -30,6 +30,7 @@ export default function ProjectBoard(){
       // URL Params
       const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", `/project/${searchParams.get("project-id")}`);
+      url.searchParams.append("elevate", "true");
 
       // User request
       const response = await request(
@@ -61,6 +62,7 @@ export default function ProjectBoard(){
       // URL Params
       const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", "/search/jql");
+      url.searchParams.append("elevate", "true");
 
       // Post Body
       const postBody = {

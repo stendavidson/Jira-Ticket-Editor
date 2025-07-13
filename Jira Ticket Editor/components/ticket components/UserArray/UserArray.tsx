@@ -56,6 +56,7 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/user/permission/search`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("issueKey", issueKey);
     url.searchParams.append("permissions", "ASSIGNABLE_USER");
     url.searchParams.append("startAt", startAt.toString());
@@ -106,6 +107,7 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};
@@ -143,6 +145,7 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};

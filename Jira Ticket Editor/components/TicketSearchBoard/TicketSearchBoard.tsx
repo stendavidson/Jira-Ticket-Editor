@@ -19,6 +19,7 @@ export default function ProjectBoard() {
 
       const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", "/search/jql");
+      url.searchParams.append("elevate", "true");
 
       const postBody = {
         fields: ["id"],

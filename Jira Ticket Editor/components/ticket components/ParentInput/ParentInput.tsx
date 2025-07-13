@@ -43,6 +43,7 @@ export default function ParentInput({ className, projectID, issueID, keyName, na
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issuetype/project`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("projectId", projectID);
     url.searchParams.append("level", (issueType.hierarchyLevel + 1).toString());
 
@@ -73,6 +74,7 @@ export default function ParentInput({ className, projectID, issueID, keyName, na
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/search/jql`);
+    url.searchParams.append("elevate", "true");
 
     // POST Body
     const postBody = {
@@ -135,6 +137,7 @@ export default function ParentInput({ className, projectID, issueID, keyName, na
       // URL Params
       const url: URL = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", `/issue/${issueID}`);
+      url.searchParams.append("elevate", "true");
 
       // PUT Request Body
       const body: any = {};

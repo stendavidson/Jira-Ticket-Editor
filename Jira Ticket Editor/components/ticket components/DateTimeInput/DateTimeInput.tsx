@@ -54,6 +54,7 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {}

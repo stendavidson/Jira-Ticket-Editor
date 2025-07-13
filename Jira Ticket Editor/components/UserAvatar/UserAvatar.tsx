@@ -37,6 +37,7 @@ export default function UserAvatar({ accountID, display, hide, className, defaul
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", "/user");
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("accountId", accountID!);
 
     // User request

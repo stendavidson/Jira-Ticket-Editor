@@ -55,6 +55,7 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", "/priority/search");
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("projectId", projectID);
     url.searchParams.append("startAt", startAt.toString());
 
@@ -96,6 +97,7 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};

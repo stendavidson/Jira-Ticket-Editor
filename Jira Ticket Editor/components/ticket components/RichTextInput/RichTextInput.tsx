@@ -69,6 +69,7 @@ async function uploadImage(issueID: string, file: File | undefined, quillRef: Re
   // URL Parameters
   const url = new URL("/proxy-api", window.location.origin);
   url.searchParams.append("pathname", `/issue/${issueID}/attachments`);
+  url.searchParams.append("elevate", "true");
 
   // Request body / form-data
   const formData = new FormData();
@@ -90,6 +91,7 @@ async function uploadImage(issueID: string, file: File | undefined, quillRef: Re
     if (attachment.length > 0) {
       imageURL = new URL("/proxy-api", window.location.origin);
       imageURL.searchParams.append("pathname", `/attachment/content/${attachment[0].id}`);
+      imageURL.searchParams.append("elevate", "true");
     }
   }
 
@@ -229,6 +231,8 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
+    
 
     // PUT Request Body
     const body: any = {}

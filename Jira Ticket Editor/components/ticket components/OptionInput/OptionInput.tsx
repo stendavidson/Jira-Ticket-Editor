@@ -50,6 +50,7 @@ export default function OptionInput({ className, issueID, keyName, name, operati
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/field/${keyName}/context`);
+    url.searchParams.append("elevate", "true");
 
     // GET request
     const response = await request(
@@ -92,6 +93,7 @@ export default function OptionInput({ className, issueID, keyName, name, operati
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/field/${keyName}/context/${contextID}/option`);
+    url.searchParams.append("elevate", "true");
 
     // GET request
     const response = await request(
@@ -157,6 +159,7 @@ export default function OptionInput({ className, issueID, keyName, name, operati
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};

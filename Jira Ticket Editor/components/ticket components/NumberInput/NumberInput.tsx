@@ -40,6 +40,7 @@ export default function NumberInput({className, issueID, keyName, name, operatio
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {}

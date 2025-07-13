@@ -50,6 +50,7 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", "/label");
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("startAt", startAt.toString());
 
     // GET request
@@ -88,6 +89,7 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};
@@ -123,6 +125,7 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};

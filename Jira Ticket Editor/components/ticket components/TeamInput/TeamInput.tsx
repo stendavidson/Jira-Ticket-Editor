@@ -61,6 +61,7 @@ export default function TeamInput({ className, issueID, keyName, name, operation
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/jql/autocompletedata/suggestions`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("fieldName", name);
     url.searchParams.append("fieldValue", textInput);
 
@@ -127,6 +128,7 @@ export default function TeamInput({ className, issueID, keyName, name, operation
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // Request body
     const body: any = {};

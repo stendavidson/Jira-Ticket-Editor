@@ -87,6 +87,7 @@ export default function Ticket(){
       // URL Parameters
       const url = new URL("/proxy-api", window.location.origin);
       url.searchParams.append("pathname", `/attachment/content/${attachment.id}`);
+      url.searchParams.append("elevate", "true");
 
       // Execute request
       return request(url.toString(), { method: "GET", signal: controller.signal }).then(response => {

@@ -29,6 +29,7 @@ export default function IssueTypeInput({ issueID, defaultValue, allowedValues = 
     // URL Params
     const url: URL = new URL("/proxy", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {

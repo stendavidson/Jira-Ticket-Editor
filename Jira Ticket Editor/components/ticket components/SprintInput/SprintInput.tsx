@@ -50,6 +50,7 @@ export default function SprintInput({ className, projectID, issueID, keyName, na
     // URL Params
     const url: URL = new URL("/proxy-agile", window.location.origin);
     url.searchParams.append("pathname", `/board`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("projectKeyOrId", projectID);
     url.searchParams.append("startAt", startAt.toString());
 
@@ -101,6 +102,7 @@ export default function SprintInput({ className, projectID, issueID, keyName, na
     // URL Params
     const url: URL = new URL("/proxy-agile", window.location.origin);
     url.searchParams.append("pathname", `/board/${boardID}/sprint`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("startAt", startAt.toString());
 
     // GET request
@@ -167,6 +169,7 @@ export default function SprintInput({ className, projectID, issueID, keyName, na
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${issueID}`);
+    url.searchParams.append("elevate", "true");
 
     // PUT Request Body
     const body: any = {};

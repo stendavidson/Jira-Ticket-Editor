@@ -36,6 +36,7 @@ export default function TicketTile({ ticketID }: {ticketID?: string }){
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", `/issue/${ticketID}`);
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("fields", "*all");
     url.searchParams.append("expand", "editmeta");
     url.searchParams.append("elevate", "true");

@@ -41,6 +41,7 @@ export default function ProjectSearchList() {
     // Build URL with params
     const url = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", "/project/search");
+    url.searchParams.append("elevate", "true");
     url.searchParams.append("query", inputValue);
     url.searchParams.append("orderBy", "name");
     url.searchParams.append("startAt", startAt.toString());
