@@ -7,8 +7,6 @@ import { usePathname, useRouter } from 'next/navigation';
 
 /**
  * Component conditionally renders a redirect page
- * 
- * @returns JSX.Element | undefined
  */
 export default function RedirectPage({countdown, message, reason, immediateRedirect, relativeURL}: {countdown: number, message: string, reason: string, immediateRedirect: string, relativeURL: string}) {
   
@@ -19,38 +17,58 @@ export default function RedirectPage({countdown, message, reason, immediateRedir
   // Internal hooks
   const [count, setCount] = useState<number>(countdown);
 
-  if (pathname === immediateRedirect) {
 
-    // Force immediate re-direct for "/"
-    useEffect(() => {
+
+  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////// Effects ///////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+  
+  /**
+   * This effect immediately redirects for particular urls (e.g. "\")
+   */
+  useEffect(() => {
+
+    if(pathname === immediateRedirect){
       router.push(relativeURL);
-    }, []);
+    }
+    
+  }, []);
 
-  }else{
+  
+  /**
+   * This function renders a countdown timer - until the page redirects
+   */
+  useEffect(() => {
 
-    // Countdown logic
-    useEffect(() => {
-      // If the count reaches 0, redirect to the projects page
-      if (count === 0) {
-        router.push(relativeURL);
-        return;
-      }
+    // If the count reaches 0, redirect to the projects page
+    if (count === 0) {
+      router.push(relativeURL);
+      return;
+    }
 
-      // Count down every second
-      const timer = setInterval(() => {
-        setCount((prevCount) => prevCount - 1);
-      }, 1000);
+    // Count down every second
+    const timer = setInterval(() => {
+      setCount((prevCount) => prevCount - 1);
+    }, 1000);
 
-      // Cleanup interval when the component is unmounted or when count changes
-      return () => clearInterval(timer);
-    }, [count]); // Only run when the count changes
+    // Cleanup interval when the component is unmounted or when count changes (i.e. ever-time the effect runs)
+    return () => clearInterval(timer);
 
-    return (
+  }, [count]);
+
+
+  
+  return (
+    pathname !== immediateRedirect ? (
       <div style={{ textAlign: 'center', marginTop: '50px' }}>
         {(message != undefined ? <h1>{message}</h1>: null)}
         {(reason != undefined ? <p>{reason}</p>: null)}
         <p>Redirecting to {relativeURL} in {count}...</p>
       </div>
-    );
-  }
+    ) : (
+      null
+    )
+  );
 }

@@ -13,54 +13,63 @@ import { useRouter } from "next/navigation";
 import UserAvatar from "../UserAvatar/UserAvatar";
 
 
+
 export default function Settings({ onClick, showSettings, elevated, setElevated, writeAccess }: { onClick: () => void, showSettings: boolean, elevated: boolean | null, setElevated: (arg: boolean) => void, writeAccess: boolean}) {
 
   // Router
   const router = useRouter();
 
-  // Account info
+  // State value(s)
   const [accountID, setAccountID] = useState<string | null>(null);
 
-  useEffect(() => {
-    
-    // Async function to fetch coponent data
-    const fetchUser = async () => {
 
-      let user: AtlassianUser | null = null;
 
-      if(elevated){
-  
-        // URL Params
-        const url: URL = new URL("/proxy-api", window.location.origin);
-        url.searchParams.append("pathname", "/myself");
-        url.searchParams.append("elevate", "true");
-  
-        // User request
-        const response = await request(
-          url.toString(),
-          {
-            method: "GET",
-          }
-        );
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// API Functions ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
 
-        if(response?.status.toString().startsWith("2")){
-          user = await response?.json();
-        }
+
+
+  /**
+   * This function retrieves user data
+   */
+  async function fetchUser(){
   
-        // Set component variables & trigger re-render
-        if (user) {
-          setAccountID(user.accountId);
-        }
+    // URL Params
+    const url: URL = new URL("/proxy-api", window.location.origin);
+    url.searchParams.append("pathname", "/myself");
+    url.searchParams.append("elevate", "true");
+
+    // User request
+    const response = await request(
+      url.toString(),
+      {
+        method: "GET",
       }
+    );
+
+    // Process response
+    let user: AtlassianUser | null = null;
+
+    if(response?.status.toString().startsWith("2")){
+      user = await response?.json();
     }
-  
-    fetchUser();
-    
-  }, [elevated])
+
+    setAccountID(user?.accountId ?? null);
+  }
 
 
-  // Login callback
-  const authorize = () => {
+
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This function redirects the user to authorization url
+   */
+  async function authorize(){
 
     // Construct URL
     const url = new URL('internal/authorize', window.location.origin);
@@ -69,11 +78,13 @@ export default function Settings({ onClick, showSettings, elevated, setElevated,
 
     // Redirect
     router.push(url.toString())
-
   }
 
-  // Logout callback
-  const deauthorize = () => {
+
+  /**
+   * This function clear's the application's elevated access credentials
+   */
+  async function deauthorize(){
     
     // Construct URL
     const url = new URL('/internal/deauthorize', window.location.origin);
@@ -91,6 +102,27 @@ export default function Settings({ onClick, showSettings, elevated, setElevated,
 
     })
   }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////// Effects ///////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+  
+  /**
+   * This retrieves the elevating user's data
+   */
+  useEffect(() => {
+    
+    // Prevent unnecessary requests
+    if(elevated){
+      fetchUser();
+    }
+    
+  }, [elevated]);
+
 
 
   return(

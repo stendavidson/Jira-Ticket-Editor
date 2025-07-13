@@ -3,6 +3,8 @@
 // Import External
 import { useRouter } from 'next/navigation';
 
+
+
 /**
  * This component acts as a next.js compatible link
  * 
@@ -16,8 +18,18 @@ import { useRouter } from 'next/navigation';
  */
 export default function Link({className, href, onClick, children}: {className: string, href: string, onClick?: () => void, children: React.ReactNode}){
 
+  // Router
   const router = useRouter();
 
+
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+  /**
+   * This function directs the user to the target link
+   */
   function direct(){
 
     // Next.js safe link
@@ -28,6 +40,8 @@ export default function Link({className, href, onClick, children}: {className: s
       onClick();
     }
   }
+
+
 
   return (
     <div className={className} onClick={direct}>{children}</div>

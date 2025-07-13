@@ -14,53 +14,89 @@ import { getVisibleFields } from "@/lib/field_visibility";
 
 export default function TicketTile({ ticketID }: {ticketID?: string }){
 
-  // Ticket data
+  // State values
   const [ticket, setTicket] = useState<TicketInterface | null>(null);
 
-  // Ticket context
+  // Context(s)
   const context = useContext(TicketContext);
 
-  // Async function to fetch coponent data
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// API Functions ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+  
+  /**
+   * This function retrieves the ticket data
+   */
   async function fetchTicket(){
 
+    // URL Params
+    const url: URL = new URL("/proxy-api", window.location.origin);
+    url.searchParams.append("pathname", `/issue/${ticketID}`);
+    url.searchParams.append("fields", "*all");
+    url.searchParams.append("expand", "editmeta");
+    url.searchParams.append("elevate", "true");
+
+    // User request
+    const response = await request(
+      url.toString(),
+      {
+        method: "GET",
+      }
+    );
+
+    // Process responses
     let ticketData: TicketInterface | null = null;
 
-    if(ticketID){
-
-      // URL Params
-      const url: URL = new URL("/proxy-api", window.location.origin);
-      url.searchParams.append("pathname", `/issue/${ticketID}`);
-      url.searchParams.append("fields", "*all");
-      url.searchParams.append("expand", "editmeta");
-      url.searchParams.append("elevate", "true");
-
-      // User request
-      const response = await request(
-        url.toString(),
-        {
-          method: "GET",
-        }
-      );
-
-      if(response?.status.toString().startsWith("2")){
-        ticketData = getVisibleFields(await response?.json());
-      }
-
-      // Set component variables & trigger re-render
-      if (ticketData) {
-        setTicket(ticketData);
-      }
+    if(response?.status.toString().startsWith("2")){
+      ticketData = getVisibleFields(await response?.json());
     }
+
+    setTicket(ticketData);
   }
 
-  // Trigger initial load
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This function sets the ticket context data
+   */
+  function highlightTicket(){
+    context?.setTicketData(ticket);
+  }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////// Effects ///////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+  
+
+
+  /**
+   * This retrieves the ticket data
+   */
   useEffect(() => {
     
-    fetchTicket();
+    // Prevent unnecessary requests
+    if(ticketID){
+      fetchTicket();
+    }
     
   }, [ticketID]);
 
-  // Trigger reload
+
+  /**
+   * The ticket data is re-loaded upon request from the ticket
+   */
   useEffect(() => {
     
     if(context?.updateIndicator === ticketID){
@@ -70,12 +106,6 @@ export default function TicketTile({ ticketID }: {ticketID?: string }){
     
   }, [context?.updateIndicator]);
 
-  /**
-   * Set ticket data
-   */
-  function highlightTicket(){
-    context?.setTicketData(ticket);
-  }
 
   return (ticketID !== undefined ? (
     <div className={`${style.ticketTile} ${ticket === context?.ticketData ? style.highlight : ""}`} onClick={highlightTicket}>

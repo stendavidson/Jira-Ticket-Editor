@@ -14,95 +14,102 @@ import { useEffect, useRef, useState } from "react";
 
 export default function UserAvatar({ accountID, display, hide, className, defaultDisplayName = "Unknown" }: { accountID?: string | null, display?: () => void, hide?: () => void, className?: string, defaultDisplayName?: string}){
 
-  //////////////////////////////////////////////////////////////////
-  ///////////////////// Retrieving API Data ////////////////////////
-  //////////////////////////////////////////////////////////////////
-
-  // Re-render triggering variables
+  // State values
   const [avatarURL, setAvatarURL] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
 
-  useEffect(() => {
-
-    // Async function to fetch coponent data
-    const fetchUser = async () => {
-
-      let user: AtlassianUser | null = null;
-
-      if(accountID){
-
-        setAvatarURL(null);
-        setDisplayName(null);
-
-        // URL Params
-        const url: URL = new URL("/proxy-api", window.location.origin);
-        url.searchParams.append("pathname", "/user");
-        url.searchParams.append("accountId", accountID);
-
-        // User request
-        const response = await request(
-          url.toString(),
-          {
-            method: "GET",
-          }
-        );
-
-        if(response?.status.toString().startsWith("2")){
-          user = await response?.json();
-        }
-
-        // Set component variables & trigger re-render
-        setAvatarURL(user?.avatarUrls["48x48"] ? user.avatarUrls["48x48"]: null);
-        setDisplayName(user?.displayName ? user.displayName: null);
-      }else{
-        // Set component variables & trigger re-render
-        setAvatarURL(null);
-        setDisplayName(null);
-      }
-    }
-
-    fetchUser();
-    
-  }, [accountID])
-
-  //////////////////////////////////////////////////////////////////
-  /////////////////////// Handling Events //////////////////////////
-  //////////////////////////////////////////////////////////////////
-
-  // UserAvatar Element Reference
+  // Refs
   const avatarRef = useRef<HTMLDivElement>(null);
 
-  // Attach event listener
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// API Functions ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This function retrieves the user data
+   */
+  async function fetchUser(){
+
+    // URL Params
+    const url: URL = new URL("/proxy-api", window.location.origin);
+    url.searchParams.append("pathname", "/user");
+    url.searchParams.append("accountId", accountID!);
+
+    // User request
+    const response = await request(
+      url.toString(),
+      {
+        method: "GET",
+      }
+    );
+
+    // Process response
+    let user: AtlassianUser | null = null;
+
+    if(response?.status.toString().startsWith("2")){
+      user = await response?.json();
+    }
+
+    // Set component variables & trigger re-render
+    setAvatarURL(user?.avatarUrls["48x48"] ? user.avatarUrls["48x48"] : null);
+    setDisplayName(user?.displayName ? user.displayName : null);
+  }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This retrieves the user data
+   */
   useEffect(() => {
 
-    const handleMouseDown = (event: MouseEvent) => {
-
-      let target = event.target as Node;
-      let ancestor = avatarRef.current;
-
-      if(ancestor && ancestor.contains(target)){
-        display?.();
-      }else{
-        setTimeout(() => {
-          hide?.();
-        }, 300);
-      }
-
+    // Prevent unnecessary requests
+    if(accountID){
+      fetchUser();
+    }else{
+      setAvatarURL(null);
+      setDisplayName(null);
     }
     
-    document.addEventListener("mousedown", handleMouseDown)
+  }, [accountID]);
 
-    // Clean up function
-    return () => { document.removeEventListener("mousedown", handleMouseDown) };
 
-  }, [avatarURL, displayName, accountID]);
-
-  // Only re-render as required
   return (
     <>
-      <div className={`${styles.avatarCircle} ${className}`} ref={avatarRef}>
-          <img className={styles.avatarImg} src={avatarURL ? avatarURL : "./../defaultAvatar.png"} alt={displayName ? `The avatar for the user ${displayName}`: "Avatar logo couldn't be loaded"}/> 
-          <p className={styles.avatarTooltip}>{displayName ? displayName: defaultDisplayName}</p>
+      <div 
+        className={`${styles.avatarCircle} ${className}`}
+        tabIndex={-1}
+        onMouseDown={() => {
+          
+          display?.();
+
+        }}
+        onBlur={(ev: React.FocusEvent<HTMLDivElement>) => {
+
+          const nextFocused = ev.relatedTarget as Node | null;
+          const currentNode = avatarRef.current;
+
+          // Call hide or display depending on focus
+          if (currentNode && (!nextFocused || !currentNode.contains(nextFocused))) {
+            setTimeout(() => {
+              hide?.();
+            }, 200);
+          }
+          
+        }}
+        ref={avatarRef}
+      >
+        <img className={styles.avatarImg} src={avatarURL ? avatarURL : "./../defaultAvatar.png"} alt={displayName ? `The avatar for the user ${displayName}`: "Avatar logo couldn't be loaded"}/> 
+        <p className={styles.avatarTooltip}>{displayName ? displayName: defaultDisplayName}</p>
       </div>
     </>
   );
