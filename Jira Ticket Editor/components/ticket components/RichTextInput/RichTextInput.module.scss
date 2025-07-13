@@ -5,10 +5,10 @@
     // Position
     position: relative;
     margin-bottom: max(1vh, 10px);
+    padding-right: max(1vh, 10px);
 
     // Dimensions
-    min-height: max(3vh, 30px);
-    width: calc(100% - max(1.4vh, 14px));
+    width: calc(100% - max(2.4vh, 24px));
 
     // Display Properties
     display: flex;
@@ -24,6 +24,7 @@
 
         // Dimensions
         flex: 1 1 20%;
+        max-height: max(1.6vh, 16px);
         min-width: max(10vh, 100px);
 
         // Display Properties
@@ -43,10 +44,13 @@
     .inputField{
         // Position
         position: relative;
-        margin-right: max(1vh, 10px);
 
         // Dimensions
         width: calc(100% - max(1vh, 10px));
+
+        // Display Properities
+        display: flex;
+        flex-direction: column;
 
         // Border
         border-radius: max(0.4vh, 4px);
@@ -76,11 +80,10 @@
     .disabledField{
         // Position
         position: relative;
-        margin-right: max(1vh, 10px);
 
         // Dimensions
         box-sizing: border-box;
-        width: calc(100% - max(1vh, 10px));
+        width: 100%;
 
         // Border
         border-radius: max(0.4vh, 4px);

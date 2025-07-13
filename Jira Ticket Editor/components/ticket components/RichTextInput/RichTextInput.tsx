@@ -1,68 +1,19 @@
+
 // Import styles
 import './RichTextInput.css';
 import styles from './RichTextInput.module.scss';
 
 // External imports
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import ReactQuill, { Quill } from 'react-quill-new';
-const BlockEmbed = Quill.import('blots/block/embed');
-const Block = Quill.import('parchment').Scope.BLOCK;
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import ReactQuill from 'react-quill-new';
+
 
 // Internal Imports
 import { parseADFtoHTML, parseHTMLtoADF, stringToHTML, RichTextInterface } from "./../../../lib/parser";
 import { AttachmentInterface } from '@/interfaces/AttachementInterface';
 import request from '@/lib/nothrow_request';
-
-interface CustomMediaValue {
-  src: string;
-  uuid: string;
-  alt: string;
-  width: number;
-  height: number;
-}
-
-// @ts-expect-error: BlockEmbed is a class
-class CustomImage extends BlockEmbed {
-  static blotName = 'customImage';
-  static tagName = 'img';
-  static className = 'custom-image';
-  static scope = Block;
-
-  static create(value: CustomMediaValue): HTMLImageElement {
-    const node = super.create() as HTMLImageElement;
-    node.setAttribute('src', value.src);
-    node.setAttribute('data-uuid', value.uuid);
-    node.setAttribute('alt', value.alt);
-    node.setAttribute('data-width', value.width.toString());
-    node.setAttribute('data-height', value.height.toString());
-    node.classList.add(CustomImage.className);
-    return node;
-  }
-
-  static value(node: HTMLImageElement): CustomMediaValue {
-    return {
-      src: node.getAttribute('src') || '',
-      uuid: node.getAttribute('data-uuid') || '',
-      alt: node.getAttribute('alt') || '',
-      width: parseInt(node.getAttribute('data-width') || '') || 0,
-      height: parseInt(node.getAttribute('data-height') || '') || 0,
-    };
-  }
-
-  static formats(node: HTMLImageElement) {
-    return {
-      src: node.getAttribute('src'),
-      uuid: node.getAttribute('data-uuid'),
-      alt: node.getAttribute('alt'),
-      width: parseInt(node.getAttribute('data-width') || '') || 0,
-      height: parseInt(node.getAttribute('data-height') || '') || 0,
-    };
-  }
-}
-
-// Register the blot
-Quill.register({ 'formats/customImage': CustomImage }, true);
-
+import { TicketContext } from '@/contexts/TicketContext';
+import './QuillCustomizations';
 
 
 /**
@@ -115,20 +66,23 @@ async function uploadImage(issueID: string, file: File | undefined, quillRef: Re
   let width: number | null = null;
   let height: number | null = null;
 
+  // URL Parameters
   const url = new URL("/proxy-api", window.location.origin);
   url.searchParams.append("pathname", `/issue/${issueID}/attachments`);
 
+  // Request body / form-data
   const formData = new FormData();
   formData.append('file', file, file.name);
 
+  // Upload request
   let response = await request(url.toString(), {
     method: "POST",
-    body: formData,
+    body: formData
   });
 
+  // Process response
   let attachment: AttachmentInterface[] = [];
 
-  // Retrieve image URL
   if (response?.status.toString().startsWith("2")) {
     
     attachment = (await response.json()) as AttachmentInterface[];
@@ -175,7 +129,7 @@ async function uploadImage(issueID: string, file: File | undefined, quillRef: Re
         width: width,
         height: height
       }, 'user');
-      editor!.setSelection(range.index + 1, 0);
+      editor!.setSelection(range.index + 1, 1);
     }
   }
 }
@@ -208,10 +162,13 @@ function imageHandler(issueID: string, onBlurRef: React.RefObject<boolean>, quil
 }
 
 
+/**
+ * Toolbar configuration
+ */
 const fullToolbar = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
   ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code'],
-  [{ color: [] }, { background: [] }],
+  [{ color: [] }],
   [{ script: 'sub' }, { script: 'super' }],
   [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
   ['link', 'image'],
@@ -221,16 +178,46 @@ const fullToolbar = [
 
 export default function RichTextInput({ className, issueID, keyName, name, operations, attachments = [], defaultValue = null  }: { className: string, issueID: string, keyName: string, name: string, operations: string[], attachments: AttachmentInterface[], defaultValue: RichTextInterface | null }) {
   
+  // Memo - TODO: validate if this is the most effective solution
   const parsedHTML = useMemo(() => {
     return defaultValue ? parseADFtoHTML(defaultValue.content, attachments) : "";
   }, [defaultValue, attachments]);
+
+  // State values
   const [initial, setInitial] = useState(parsedHTML);
   const [inputValue, setInputValue] = useState(parsedHTML);
   const [focused, setFocused] = useState(false);
 
+  // Ref Values
   const fieldRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<ReactQuill | null>(null);
   const onBlurRef = useRef<boolean>(true);
+
+  // Contexts
+  const context = useContext(TicketContext);
+
+  /**
+   * This constant stores the Quill toolbar config, handlers and other configs
+   */
+  const modules = {
+    toolbar: {
+      container: fullToolbar,
+      handlers: {
+        image: () => { imageHandler(issueID, onBlurRef, quillRef) }
+      }
+    },
+    history: {
+      delay: 2000,
+      maxStack: 100,
+      userOnly: true
+    }
+  };
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// API Functions ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
 
   /**
    * This function updates the issue data with the user input
@@ -262,16 +249,28 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
   }
 
 
+
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This callback handles the current state of the text input field and determines if
+   * the ticket needs to be updated.
+   */
   function updateHandler(){
 
     // Early exit
     if(initial !== inputValue){
 
       setInIssue().then((success: boolean) => {
-        if(!success){
-          setInputValue(initial);
-        }else{
+        if(success){
+          context?.setUpdateIndicator(issueID);
           setInitial(inputValue);
+        }else{
+          setInputValue(initial);
         }
       })
 
@@ -279,30 +278,24 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
   }
 
 
+
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
   useEffect(() => {
-    //console.log(inputValue);
-    //console.log(parseHTMLtoADF(stringToHTML(inputValue)))
+    console.log(inputValue);
+    console.log(parseHTMLtoADF(stringToHTML(inputValue)))
   }, [inputValue])
-
-
-  const modules = {
-    toolbar: {
-      container: fullToolbar,
-      handlers: {
-        image: () => { imageHandler(issueID, onBlurRef, quillRef) }
-      }
-    },
-    history: {
-      delay: 2000,
-      maxStack: 100,
-      userOnly: true
-    }
-  };
   
 
   return (
     <div className={`${styles.fieldEditor} ${className || ''}`}>
-      <h1 className={styles.label}>{name}</h1>
+      {name && (
+        <h1 className={styles.label}>{name}</h1>
+      )}
 
       <div
         className={`${"ql-editor"} ${styles.disabledField}`}

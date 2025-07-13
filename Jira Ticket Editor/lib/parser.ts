@@ -504,7 +504,7 @@ function extractMedia(mediaNode: RichTextNodeInterface, attachments: AttachmentI
   }
 
   if(fileID && mimeType!.includes("image")){
-    output = `<img class='custom-image' src="/proxy-api?pathname=%2Fattachment%2Fcontent%2F${fileID}" data-uuid="${uuid}" alt="${mediaNode.attrs!.alt}" data-width="${mediaNode.attrs!.width}" data-height="${mediaNode.attrs!.height}"><p><br></p><p><br></p>`;
+    output = `<p><img class='custom-image' src="/proxy-api?pathname=%2Fattachment%2Fcontent%2F${fileID}" data-uuid="${uuid}" alt="${mediaNode.attrs!.alt}" data-width="${mediaNode.attrs!.width}" data-height="${mediaNode.attrs!.height}"></p>`;
   }
 
   return output;
