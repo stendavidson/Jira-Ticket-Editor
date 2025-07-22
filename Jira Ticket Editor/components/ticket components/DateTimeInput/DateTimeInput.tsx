@@ -2,7 +2,7 @@
 import styles from "./DateTimeInput.module.scss";
 
 // External imports
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
 import request from "@/lib/nothrow_request";
@@ -11,26 +11,17 @@ import { TicketContext } from "@/contexts/TicketContext";
 
 export default function DateTimeInput({className, issueID, keyName, name, operations, defaultValue}: {className: string, issueID: string, keyName: string, name: string, operations: string[],  defaultValue: string}) {
 
-  // The local date and time
-  let localDate: string = "";
-  let localTime: string = "";
-  
-  // Parse default value
-  if(defaultValue){
-    const date = new Date(defaultValue);
-    localDate = date.toLocaleDateString('en-CA');
-    localTime = date.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
-  }
 
   // State Values
-  const [initialOne, setInitialOne] = useState<string>(defaultValue ? localDate : "");
-  const [initialTwo, setInitialTwo] = useState<string>(defaultValue ? localTime : "")
-  const [inputValueOne, setInputValueOne] = useState<string>(defaultValue ? localDate : "");
-  const [inputValueTwo, setInputValueTwo] = useState<string>(defaultValue ? localTime : "");
+  const [initialOne, setInitialOne] = useState<string>("");
+  const [initialTwo, setInitialTwo] = useState<string>("")
+  const [inputValueOne, setInputValueOne] = useState<string>("");
+  const [inputValueTwo, setInputValueTwo] = useState<string>("");
   const [focused, setFocused] = useState<boolean>(false);
 
   // Refs
-  const ref = useRef<HTMLInputElement | null>(null);
+  const refDate = useRef<HTMLInputElement | null>(null);
+  const refTime = useRef<HTMLInputElement | null>(null);
   const divRef = useRef<HTMLDivElement | null>(null);
 
   // Contexts
@@ -125,7 +116,7 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
   function inputKeyHandler(ev: React.KeyboardEvent<HTMLInputElement>): void {
 
     // Early exit
-    if(!ref.current!.validity){
+    if (!refDate.current?.validity.valid || !refTime.current?.validity.valid) {
       return;
     }
 
@@ -133,7 +124,9 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
     if (ev.key === "Enter") {
 
       // Leave field
-      ref.current!.blur();
+      divRef.current!.blur();
+      refDate.current!.blur();
+      refTime.current!.blur();
 
       // Prevent double handling
       ev.preventDefault();
@@ -173,7 +166,7 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
   function clickAwayHandler() {    
 
     // Early exit
-    if(!ref.current!.validity){
+    if (!refDate.current?.validity.valid || !refTime.current?.validity.valid) {
       return;
     }
 
@@ -206,6 +199,42 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
 
 
 
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This (re-)sets the default input values
+   */
+  useEffect(() => {
+
+    if (defaultValue) {
+
+      // Format date and time
+      const date = new Date(defaultValue);
+      const newDate = date.toLocaleDateString("en-CA");
+      const newTime = date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
+      setInitialOne(newDate);
+      setInitialTwo(newTime);
+      setInputValueOne(newDate);
+      setInputValueTwo(newTime);
+
+    } else {
+
+      setInitialOne("");
+      setInitialTwo("");
+      setInputValueOne("");
+      setInputValueTwo("");
+
+    }
+
+  }, [defaultValue]);
+
+
+
   return (
     <div className={`${styles.fieldEditor} ${className || ""}`}>
       <h1 className={styles.label}>{name}</h1>
@@ -217,8 +246,13 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
           setFocused(true);
         }}
         onBlur={() => {
-          setFocused(false);
-          clickAwayHandler();
+          // Delay to allow focus to move to another child
+          setTimeout(() => {
+            if (!divRef.current!.contains(document.activeElement)) {
+              setFocused(false);
+              clickAwayHandler();
+            }
+          }, 0);
         }}
       >
         <input
@@ -231,7 +265,7 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
             setInputValueOne(ev.target.value);
           }}
           onKeyDown={inputKeyHandler}
-          ref={ref}
+          ref={refDate}
         />
         <input
           className={styles.inputTimeField}
@@ -243,7 +277,7 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
             setInputValueTwo(ev.target.value);
           }}
           onKeyDown={inputKeyHandler}
-          ref={ref}
+          ref={refTime}
         />
       </div>
     </div>

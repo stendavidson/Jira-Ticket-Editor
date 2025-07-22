@@ -28,7 +28,7 @@ import request from "@/lib/nothrow_request";
 import { flushSync } from "react-dom";
 import React from "react";
 import TimeEstimateInput from "../ticket components/TimeEstimateInput/TimeEstimateInput";
-//import LogTimeInput from "../ticket components/LogTimeInput/LogTimeInput";
+const LogTimeInput = dynamic(() => import("../ticket components/LogTimeInput/LogTimeInput"), { ssr: false });
 const RichTextInput = dynamic(() => import('../ticket components/RichTextInput/RichTextInput'), { ssr: false });
 
 
@@ -129,7 +129,7 @@ export default function Ticket(){
       preloadAttachments(context?.ticketData!.fields.attachment);
     }
 
-  }, [context?.ticketData])
+  }, [context?.ticketData]);
 
 
   /**
@@ -141,9 +141,10 @@ export default function Ticket(){
       setTimeSpent(context!.ticketData?.fields["timetracking"].timeSpent);
     }
     
-  }, [context?.ticketData])
+  }, [context?.ticketData]);
 
 
+  
   return (
     context?.ticketData ? (
       <div className={styles.overlay}>
@@ -211,21 +212,12 @@ export default function Ticket(){
 
                         return (
                           <React.Fragment key={key}>
-                            <TimeEstimateInput key={key + "originalEstimate"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Original Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].originalEstimate}/>
-                            <TimeEstimateInput key={key + "remainingEstimate"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Remaining Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].remainingEstimate}/>
-                            <TimeEstimateInput key={key + "timeSpent"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Spent"} operations={[]} defaultValue={timeSpent}/>
-                            
+                            <TimeEstimateInput className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Original Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].originalEstimate}/>
+                            <TimeEstimateInput className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Remaining Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].remainingEstimate}/>
+                            <TimeEstimateInput key={`${key}-${timeSpent}`} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Spent"} operations={[]} defaultValue={timeSpent}/>
+                            <LogTimeInput className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Tracking"} operations={context.ticketData!.editmeta.fields[key].operations} timeSpent={timeSpent} updateTimeSpent={setTimeSpent}/>
                           </React.Fragment>
-                        )
-
-                        //<LogTimeInput key={key + "logTime"} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Tracking"} operations={context.ticketData!.editmeta.fields[key].operations} update={setTimeSpent}/>
-                      }
-
-                    // Other Fields: seperate controls for editing, unique representations (e.g. progress bars), read-only data
-                    }else{
-
-                      if(typeof(context.ticketData!.fields["key"]) === "string"){
-                        return null//<StringInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={toNameCase(key)} defaultValue={context.ticketData!.fields[key]}/>
+                        );
                       }
 
                     }

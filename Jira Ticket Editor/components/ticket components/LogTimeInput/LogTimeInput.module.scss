@@ -1,0 +1,441 @@
+@use "../../../styles/constants.scss" as c;
+
+.fieldEditor{
+    // Position
+    position: relative;
+    margin-bottom: max(1vh, 10px);
+
+    // Dimensions
+    min-height: max(3vh, 30px);
+    width: calc(100% - max(1.4vh, 14px));
+
+    // Display Properties
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    // Children
+    .label{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+        margin-bottom: max(0.3vh, 3px);
+        margin-bottom: max(0.3vh, 3px);
+        margin-top: 0;
+
+        // Dimensions
+        flex: 1 1 20%;
+        min-width: max(10vh, 100px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Padding
+        padding: 0;
+
+        // Text
+        font-size: max(1.6vh, 16px);
+        font-weight: normal;
+    }
+
+    .buttonContainer{
+        // Position
+        position: relative;
+        margin-right: max(1vh, 10px);
+
+        // Dimensions
+        flex: 1 1 35%;
+        min-width: max(16vh, 160px);
+
+        // Display Properties
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;   
+        
+        // Padding
+        padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
+
+        // Children
+        .logButton{
+            // Position
+            position: relative;
+            left: min(-0.8vh, -8px);
+
+            // Dimensions
+            height: max(4vh, 40px);
+
+            // Padding
+            padding: 0 max(1.5vh, 15px);
+
+            // Border
+            border-radius: max(0.4vh, 4px);
+            
+            // Color
+            background-color: c.$button;
+
+            // Text
+            font-size: max(1.4vh, 14px);
+            font-weight: bold;
+
+            // Hover
+            &:hover{
+                // Color
+                background-color: c.$buttonHighlight;
+            }
+        }
+    }
+}
+
+
+.overlay{
+    // Position
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 400;
+
+    // Dimensions
+    width: 100vw;
+    height: 100vh;
+
+    // Display Properties
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    // Color
+    background-color: rgba(0, 0, 0, 0.5);
+
+    // Children
+    .popup{
+        // Position
+		position: relative;
+		bottom: 7%;
+	
+		// Dimensions
+		height: max(45vh, 450px);
+		width: max(35vh, 350px);
+	
+		// Display Properties
+		display: flex;
+		flex-direction: column;
+	
+		// Padding
+		padding: max(2vh, 20px);
+	
+		// Border
+		border-radius: min(1vh, 10px);
+	
+		// Color
+		background-color: c.$containerGray;
+		
+		// Shadow
+		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.5);
+
+        // Children
+        .popupTitle{
+            // Position
+            position: relative;
+            margin-bottom: max(2vh, 20px);
+
+            // Dimensions
+            width: 100%;
+
+            // Text
+            font-size: max(1.8vh, 18px);
+        }
+
+        .fieldContainer{
+            // Position
+            position: relative;
+            margin-bottom: max(2vh, 20px);
+
+            // Dimensions
+            width: 100%;
+
+            // Display Properties
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fieldLabel{
+            // Position
+            position: relative;
+            margin-bottom: max(0.3vh, 3px);
+
+            // Dimensions
+            width: 100%;
+            
+            // Text
+            text-align: left;
+            font-size: max(1.2vh, 12px);
+            font-weight: bold;
+        }
+
+        .inputField{
+            // Position
+            position: relative;
+
+            // Dimensions
+            width: calc(100% - max(1.6vh, 16px));
+            min-height: max(4vh, 40px);
+
+            // Padding
+            padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
+
+            // Border
+            border-radius: max(0.4vh, 4px);
+            border: 1px solid c.$line;
+
+            // Color
+            background-color: rgb(68, 68, 68) !important;
+
+            // Text
+            font-size: max(1.4vh, 14px);
+
+            // Resize
+            resize: none;
+
+            // Overflow
+            overflow: visible;
+
+            // Placeholder
+            &::placeholder{
+                // Color
+                color: white;
+            }
+        }
+
+        .dateTimeField{
+            // Position
+            position: relative;
+            margin-right: max(1vh, 10px);
+
+            // Dimensions
+            min-height: max(4vh, 40px);
+            width: calc(100% - max(1.6vh, 16px));
+
+            // Display Properties
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;   
+            
+            // Padding
+            padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
+
+            // Border
+            border-radius: max(0.4vh, 4px);
+            border: 1px solid c.$line;
+
+            // Overflow
+            overflow-y: visible;
+
+            // Children
+            .inputDateField{
+                // Position
+                position: relative;
+
+                // Dimensions
+                flex-grow: 1;
+                flex-shrink: 1;
+                max-width: 55%;
+                height: max(4vh, 40px);
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Padding
+                padding-right: max(0.4vh, 4px);
+
+                // Border
+                border-top-left-radius: max(0.4vh, 4px);
+                border-bottom-left-radius: max(0.4vh, 4px);
+                
+                // Text
+                font-size: max(1.4vh, 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                // Placeholder
+                &::placeholder{
+                    // Color
+                    color: white
+                }
+
+                // Focus
+                &:focus{
+                    // Border
+                    border-right: 1px solid c.$line;
+                }
+            }
+
+            .inputTimeField{
+                // Position
+                position: relative;
+
+                // Dimensions
+                flex-grow: 1;
+                flex-shrink: 1;
+                max-width: 45%;
+                height: max(4vh, 40px);
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Padding
+                padding-left: max(1vh, 10px);
+
+                // Border
+                border-top-right-radius: max(0.4vh, 4px);
+                border-bottom-right-radius: max(0.4vh, 4px);
+                
+                // Text
+                font-size: max(1.4vh, 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                // Placeholder
+                &::placeholder{
+                    // Color
+                    color: white
+                }
+
+                // Focus
+                &:focus{
+                    // Border
+                    border-left: 1px solid c.$line;
+                }
+            }
+        }
+
+        .inputTextField{
+            // Position
+            position: relative;
+
+            // Dimensions
+            width: 100%;
+            min-height: max(18vh, 180px);
+            
+            // Border
+            border-radius: max(0.4vh, 4px);
+            border: 1px solid c.$line;
+
+            // Color
+            background-color: rgb(68, 68, 68) !important;
+
+            // Text
+            font-size: max(1.4vh, 14px);
+
+            // Resize
+            resize: none;
+
+            // Overflow
+            overflow: visible;
+
+            // Placeholder
+            &::placeholder{
+                // Color
+                color: white;
+            }
+        }
+
+        .buttonContainer{
+            // Position
+            position: relative;
+
+            // Dimensions
+            width: 100%;
+
+            // Display Properties
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+
+            // Children
+            .saveButton{
+                // Position
+                position: relative;
+                margin-right: max(1.5vh, 15px);
+
+                // Dimensions
+                height: max(4vh, 40px);
+
+                // Padding
+                padding: 0 max(1.5vh, 15px);
+
+                // Border
+                border-radius: max(0.4vh, 4px);
+
+                // Color
+                background-color: c.$button;
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                font-weight: 600;
+
+                // Hover
+                &:hover{
+                    // Color
+                    background-color: c.$buttonHighlight;
+                }
+            }
+
+            .cancelButton{
+                // Position
+                position: relative;
+
+                // Dimensions
+                height: max(4vh, 40px);
+
+                // Padding
+                padding: 0 max(1.5vh, 15px);
+
+                // Border
+                border-radius: max(0.4vh, 4px);
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                font-weight: 600;
+
+                // Hover
+                &:hover{
+                    // Color
+                    background-color: c.$containerGrayHighlight;
+                }
+            }
+        }
+    }
+}
+
+// Focus
+.focused{
+
+    // Border
+    border: 1px solid rgb(26, 131, 183) !important;
+}
+
+// Required
+.warning{
+
+    // Border
+    border: 1px solid rgb(214, 43, 43) !important;
+}
