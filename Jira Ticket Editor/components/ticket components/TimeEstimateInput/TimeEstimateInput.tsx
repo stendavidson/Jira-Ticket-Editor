@@ -133,11 +133,9 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
 
 
   /**
-   * This function validates the users inputValue
+   * This function validates the users input value
    * 
-   * @param timeInput The user inputValue
-   * 
-   * @param target The user inputValue field
+   * @param timeInput The user input value
    */
   function validateInputField(timeInput: string): boolean {
     
