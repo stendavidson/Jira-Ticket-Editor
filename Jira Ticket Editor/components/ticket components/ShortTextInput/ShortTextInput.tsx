@@ -140,10 +140,7 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
    * This effect is used to set the initial height of the text field
    */
   useEffect(() => {
-    if(ref.current){
-      ref.current.style.height = `max(${(fontSize + (fontSize/7))/10}vh, ${fontSize + (fontSize/7)}px)`;
-      ref.current.style.height = `max(${(ref.current.scrollHeight - 26) / 10}vh, ${ref.current.scrollHeight - 26}px)`;
-    }
+    resizeHandler()
   }, []);
 
 
@@ -174,10 +171,7 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
         placeholder="None"
         onChange={(ev: React.ChangeEvent<HTMLTextAreaElement>) => {
           setInputValue(ev.target.value);
-          if(ref.current){
-            ref.current.style.height = `max(${(fontSize + 2)/10}vh, ${fontSize + 2}px)`;
-            ref.current.style.height = `max(${(ref.current.scrollHeight - 26) / 10}vh, ${ref.current.scrollHeight - 26}px)`;
-          }
+          resizeHandler();
         }}
         onBlur={clickAwayHandler}
         onKeyDown={inputKeyHandler}
