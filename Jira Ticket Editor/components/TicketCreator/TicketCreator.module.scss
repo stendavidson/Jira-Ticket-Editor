@@ -1,0 +1,346 @@
+@use "../../styles/constants.scss" as c;
+
+
+.overlay{
+    // Position
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 400;
+
+    // Dimensions
+    width: 100vw;
+    height: 100vh;
+
+    // Display Properties
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    // Color
+    background-color: rgba(0, 0, 0, 0.5);
+
+    // Children
+    .popup{
+        // Position
+		position: relative;
+		bottom: 10%;
+	
+		// Dimensions
+		height: max(23.5vh, 235px);
+		width: max(35vh, 350px);
+	
+		// Display Properties
+		display: flex;
+		flex-direction: column;
+	
+		// Padding
+		padding: max(2vh, 20px);
+	
+		// Border
+		border-radius: min(1vh, 10px);
+	
+		// Color
+		background-color: c.$containerGray;
+		
+		// Shadow
+		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.5);
+
+        // Children
+        .popupTitle{
+            // Position
+            position: relative;
+            margin-bottom: max(2vh, 20px);
+
+            // Text
+            font-size: max(1.8vh, 18px);
+        }
+
+        .fieldContainer{
+            // Position
+            position: relative;
+            margin-bottom: max(2vh, 20px);
+
+            // Dimensions
+            width: 100%;
+
+            // Display Properties
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fieldLabel{
+            // Position
+            position: relative;
+            margin-bottom: max(0.3vh, 3px);
+
+            // Dimensions
+            width: 100%;
+            
+            // Text
+            text-align: left;
+            font-size: max(1.2vh, 12px);
+            font-weight: bold;
+        }
+
+        .inputDropdownField, .inputTextField{
+            // Position
+            position: relative;
+
+            // Dimensions
+            width: calc(100% - max(1.6vh, 16px));
+
+            // Padding
+            padding: max(1.2vh, 12px) max(0.8vh, 8px) max(1.2vh, 12px) max(0.8vh, 8px);
+
+            // Border
+            border-radius: max(0.4vh, 4px);
+            border: 1px solid c.$line;
+
+            // Color
+            background-color: rgb(68, 68, 68) !important;
+
+            // Text
+            font-size: max(1.4vh, 14px);
+
+            // Resize
+            resize: none;
+
+            // Overflow
+            overflow: hidden;
+        }
+
+        .inputDropdownField{
+            // Placeholder
+            &::placeholder{
+                // Color
+                color: c.$text;
+                
+            }
+        }
+
+        .inputTextField{
+            // Placeholder
+            &::placeholder{
+                // Color
+                color: #a4a4a4
+            }
+        }
+
+        .fieldDropdown{
+            // Position
+            position: absolute;
+            top: calc(100% + max(0.2vh, 2px));
+            left: 0;
+            z-index: 301;
+
+            // Dimensions
+            width: calc(100% + max(0.2vh, 2px));
+            max-height: max(24vh, 240px);
+
+            // Display Properties
+            display: none;
+            flex-direction: column;
+
+            // Border
+            border-radius: max(0.3vh, 3px);
+
+            // Color
+            background-color: c.$containerGray;
+
+            // Shadow
+            box-shadow: 0 max(2px, 0.2vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.6);
+
+            // Overflow
+            overflow-y: auto;
+
+            // Display dropdown
+            &.displayDropdown {
+                display: flex;
+            }
+
+            // scrollbar styling chromium
+            &::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                box-shadow: none;
+                background: rgb(60, 60, 60);
+                border-radius: 6px;
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: rgb(50, 50, 50);
+            }
+
+            // Children
+            .dropdownOption{
+                // Position
+                position: relative;
+
+                // Dimensions
+                box-sizing: border-box;
+                width: 100%;
+                min-height: max(4vh, 40px);
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                align-items: center;
+
+                // Border
+                border-radius: max(0.3vh, 3px);
+
+                // Padding
+                padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                // Hover
+                &:hover{
+                    // Color
+                    background-color: c.$containerGrayHighlight;
+
+                    // Cursor
+                    cursor: pointer;
+                }
+
+                .dropdownOptionName{
+                    // Position
+                    position: relative;
+
+                    // Dimensions
+                    width: 100%;
+
+                    // Text
+                    font-size: max(1.4vh, 14px);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .invalidDropdownOption{
+                // Position
+                position: relative;
+
+                // Dimensions
+                box-sizing: border-box;
+                width: 100%;
+                height: max(4vh, 40px);
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: center;
+
+                // Border
+                border-radius: max(0.3vh, 3px);
+
+                // Padding
+                padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .buttonContainer{
+            // Position
+            position: relative;
+
+            // Dimensions
+            width: 100%;
+
+            // Display Properties
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            
+            // Children
+            .saveButton{
+                // Position
+                position: relative;
+                margin-right: max(1.5vh, 15px);
+
+                // Dimensions
+                height: max(4vh, 40px);
+
+                // Padding
+                padding: 0 max(1.5vh, 15px);
+
+                // Border
+                border-radius: max(0.4vh, 4px);
+
+                // Color
+                background-color: c.$button;
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                font-weight: 600;
+
+                // Hover
+                &:hover{
+                    // Color
+                    background-color: c.$buttonHighlight;
+                }
+            }
+
+            .cancelButton{
+                // Position
+                position: relative;
+
+                // Dimensions
+                height: max(4vh, 40px);
+
+                // Padding
+                padding: 0 max(1.5vh, 15px);
+
+                // Border
+                border-radius: max(0.4vh, 4px);
+
+                // Text
+                font-size: max(1.4vh, 14px);
+                font-weight: 600;
+
+                // Hover
+                &:hover{
+                    // Color
+                    background-color: c.$containerGrayHighlight;
+                }
+            }
+        }
+    }
+}
+
+// Focus
+.focused{
+
+    // Border
+    border: 1px solid rgb(26, 131, 183) !important;
+}
+
+// Required
+.warning{
+
+    // Border
+    border: 1px solid rgb(214, 43, 43) !important;
+}
