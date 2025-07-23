@@ -65,6 +65,8 @@ npm run dev
 
 - User's Assigned Ticket List
 
+- Ticket creator
+
 - Ticket Fields/Components:
   - Date Input
   - Date Time Input
@@ -85,8 +87,6 @@ npm run dev
   - Multi-User Input
   - Single-User Input
   - Ticket worklogs
-
-- Ticket creator
 
 
 ### **Remaining Features**
