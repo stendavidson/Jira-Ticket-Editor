@@ -85,7 +85,8 @@ npm run dev
   - Multi-User Input
   - Single-User Input
   - Ticket worklogs
-  - Ticket creator
+
+- Ticket creator
 
 
 ### **Remaining Features**
