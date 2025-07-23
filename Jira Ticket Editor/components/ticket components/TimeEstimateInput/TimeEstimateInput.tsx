@@ -167,7 +167,7 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
           type="text"
           disabled={!operations.includes("set")}
           value={inputValue}
-          placeholder="None"
+          placeholder="Log time e.g. 1w 2d 3h 4m"
           onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
             setInputValue(ev.target.value);
           }}
