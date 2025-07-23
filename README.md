@@ -84,19 +84,17 @@ npm run dev
   - Time Input
   - Multi-User Input
   - Single-User Input
+  - Ticket worklogs
+  - Ticket creator
 
 
 ### **Remaining Features**
 
 - Ticket comments
 
-- Ticket worklogs
-
 - Ticket sub-tasks
 
 - Ticket dependencies
-
-- Ticket creator
 
 ### **Feature Preview(s)**
 
