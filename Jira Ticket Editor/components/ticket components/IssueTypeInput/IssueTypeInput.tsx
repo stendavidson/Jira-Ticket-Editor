@@ -12,11 +12,17 @@ import { TicketContext } from "@/contexts/TicketContext";
 
 export default function IssueTypeInput({ issueID, defaultValue, allowedValues = []}: { issueID: string, defaultValue: IssueTypeInterface, allowedValues: IssueTypeInterface[]}){
 
+  // State values
   const [issueType, setIssueType] = useState<IssueTypeInterface>(defaultValue);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+
+  // Refs
   const ref = useRef<HTMLDivElement | null>(null);
+
+  // Context
   const context = useContext(TicketContext);
 
+  
   /**
    * This function updates the issue's type
    * 
@@ -93,7 +99,9 @@ export default function IssueTypeInput({ issueID, defaultValue, allowedValues = 
       document.removeEventListener("mousedown", handler);
     };
 
-  }, [])
+  }, []);
+
+  
 
   return (
     <div className={styles.issueTypeEditor} ref={ref}>
