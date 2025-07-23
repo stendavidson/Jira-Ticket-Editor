@@ -7,7 +7,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 // Internal imports
 import request from "@/lib/nothrow_request";
 import { TicketContext } from "@/contexts/TicketContext";
-import UserInterface from "../UserInput/UserInterface";
+import UserInterface from "./UserInterface";
 
 
 export default function UserInput({ className, issueID, issueKey, keyName, name, operations, defaultValue}: { className?: string, issueID: string, issueKey: string, keyName: string, name: string, operations: string[], defaultValue: UserInterface | null}){

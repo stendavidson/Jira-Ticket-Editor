@@ -7,29 +7,29 @@ import dynamic from 'next/dynamic';
 
 // Internal Imports
 import { TicketContext } from "@/contexts/TicketContext";
-import IssueTypeInput from "../ticket components/IssueTypeInput/IssueTypeInput";
-import PriorityInput from "../ticket components/PriorityInput/PriorityInput";
-import TeamInput from "../ticket components/TeamInput/TeamInput";
-import UserInput from "../ticket components/UserInput/UserInput";
-import OptionInput from "../ticket components/OptionInput/OptionInput";
-import UserArray from "../ticket components/UserArray/UserArray";
-import SprintInput from "../ticket components/SprintInput/SprintInput";
-import ParentInput from "../ticket components/ParentInput/ParentInput";
-import StatusInput from "../ticket components/StatusInput/StatusInput";
-import SentimentInput from "../ticket components/SentimentInput/SentimentInput";
-import OptionArray from "../ticket components/OptionArray/OptionArray";
-import LabelArray from "../ticket components/LabelArray/LabelArray";
-import ShortTextInput from "../ticket components/ShortTextInput/ShortTextInput";
-import NumberInput from "../ticket components/NumberInput/NumberInput";
-import DateInput from "../ticket components/DateInput/DateInput";
-import DateTimeInput from "../ticket components/DateTimeInput/DateTimeInput";
+import IssueTypeInput from "../TicketComponents/IssueTypeInput/IssueTypeInput";
+import PriorityInput from "../TicketComponents/PriorityInput/PriorityInput";
+import TeamInput from "../TicketComponents/TeamInput/TeamInput";
+import UserInput from "../TicketComponents/UserInput/UserInput";
+import OptionInput from "../TicketComponents/OptionInput/OptionInput";
+import UserArray from "../TicketComponents/UserArray/UserArray";
+import SprintInput from "../TicketComponents/SprintInput/SprintInput";
+import ParentInput from "../TicketComponents/ParentInput/ParentInput";
+import StatusInput from "../TicketComponents/StatusInput/StatusInput";
+import SentimentInput from "../TicketComponents/SentimentInput/SentimentInput";
+import OptionArray from "../TicketComponents/OptionArray/OptionArray";
+import LabelArray from "../TicketComponents/LabelArray/LabelArray";
+import ShortTextInput from "../TicketComponents/ShortTextInput/ShortTextInput";
+import NumberInput from "../TicketComponents/NumberInput/NumberInput";
+import DateInput from "../TicketComponents/DateInput/DateInput";
+import DateTimeInput from "../TicketComponents/DateTimeInput/DateTimeInput";
 import { AttachmentInterface } from "@/interfaces/AttachementInterface";
 import request from "@/lib/nothrow_request";
 import { flushSync } from "react-dom";
 import React from "react";
-import TimeEstimateInput from "../ticket components/TimeEstimateInput/TimeEstimateInput";
-const LogTimeInput = dynamic(() => import("../ticket components/LogTimeInput/LogTimeInput"), { ssr: false });
-const RichTextInput = dynamic(() => import('../ticket components/RichTextInput/RichTextInput'), { ssr: false });
+import TimeEstimateInput from "../TicketComponents/TimeEstimateInput/TimeEstimateInput";
+const LogTimeInput = dynamic(() => import("../TicketComponents/LogTimeInput/LogTimeInput"), { ssr: false });
+const RichTextInput = dynamic(() => import('../TicketComponents/RichTextInput/RichTextInput'), { ssr: false });
 
 
 /**

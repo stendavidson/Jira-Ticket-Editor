@@ -9,7 +9,7 @@ import ReactQuill from 'react-quill-new';
 
 
 // Internal Imports
-import { parseADFtoHTML, parseHTMLtoADF, stringToHTML, RichTextInterface } from "./../../../lib/parser";
+import { parseADFtoHTML, parseHTMLtoADF, stringToHTML, RichTextInterface } from "../../../lib/parser";
 import { AttachmentInterface } from '@/interfaces/AttachementInterface';
 import request from '@/lib/nothrow_request';
 import { TicketContext } from '@/contexts/TicketContext';
