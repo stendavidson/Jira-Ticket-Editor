@@ -9,6 +9,7 @@ import { ExtendedProjectInterface } from "../../interfaces/ExtendedProjectInterf
 import request from "../../lib/nothrow_request";
 import IDListInterface from "@/interfaces/IDListInterface";
 import TicketTile from "../TicketTile/TicketTile";
+import TicketCreator from "../TicketCreator/TicketCreator";
 
 
 export default function ProjectBoard(){
@@ -89,7 +90,8 @@ export default function ProjectBoard(){
 
     fetchTicketIDs();
 
-  }, [projectData])
+  }, [projectData]);
+
 
   return (
     <div className={style.projectBoard}>
@@ -97,7 +99,7 @@ export default function ProjectBoard(){
         <h1>{projectData?.name}</h1>
       </div>
       <div className={style.ticketSection}>
-        <button className={style.create} type="button">Create</button>
+        <TicketCreator className={style.create} projectID={projectData?.id} issueTypes={projectData?.issueTypes ?? []} ticketIDs={ticketIDs} setTicketIDs={setTicketIDs}/>
         <div className={style.boardWrapper}>
           <div className={style.ticketBoard}>
             {ticketIDs.length === 0 ? 

@@ -89,6 +89,21 @@
                 // Cursor
                 cursor: pointer;
             }
+
+            // Disabled
+            &:disabled{
+                // Color
+                background-color: c.$boxGray;
+            }
+
+            // Disabled Hover
+            &:disabled:hover{
+                // Color
+                background-color: c.$boxGray;
+
+                // Cursor
+                cursor: not-allowed;
+            }
         }
 
         .boardWrapper { 
