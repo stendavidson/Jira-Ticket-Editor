@@ -308,13 +308,13 @@ export default function LogTimeInput({className, issueID, keyName, name, operati
 
             {/* "Time Spent" field */}
             <div className={styles.fieldContainer}>
-              <label className={styles.fieldLabel}>{`${(inputTime === "") ? "*" : ""}`} Time Spent</label>
+              <label className={styles.fieldLabel}>{`${(inputTime === "") ? "*" : ""}`}Time Spent</label>
               <input
                 className={`${styles.inputField} ${timeFocused ? styles.focused : ""} ${timeFocused && (inputTime === "" || !validateInputTimeField(inputTime)) ? styles.warning : ""}`}
                 type="text"
                 disabled={false}
                 value={inputTime}
-                placeholder="None"
+                placeholder="Log time e.g. 1w 2d 3h 4m"
                 onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
                   setInputTime(ev.target.value);
                 }}
@@ -327,7 +327,7 @@ export default function LogTimeInput({className, issueID, keyName, name, operati
 
             {/* "Date & Time Started" field */}
             <div className={styles.fieldContainer}>
-              <label className={styles.fieldLabel}>{`${(inputDateTime1 === "" || inputDateTime2 === "") ? "*" : ""}`} Date Started</label>
+              <label className={styles.fieldLabel}>{`${(inputDateTime1 === "" || inputDateTime2 === "") ? "*" : ""}`}Date Started</label>
               <div 
                 className={`${styles.dateTimeField} ${dateTimeFocused ? styles.focused : ""} ${dateTimeFocused && (inputDateTime1 === "" || inputDateTime2 === "") ? styles.warning : ""}`}
                 tabIndex={-1}
@@ -401,6 +401,7 @@ export default function LogTimeInput({className, issueID, keyName, name, operati
                 <ReactQuill
                   theme="snow"
                   value={inputComment}
+                  placeholder={`Enter Work Description...`}
                   onChange={setInputComment}
                   modules={modules}
                   ref={quillRef}
