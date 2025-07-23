@@ -139,6 +139,17 @@
             // Border
             border-left:4px solid #ccc;
         }
+
+        .placeholder{
+            // Position
+            position: relative;
+
+            // Color
+            color: c.$boxGrayHighlight;
+
+            // Text
+            font-style: italic;
+        }
     }
 
     // Focus

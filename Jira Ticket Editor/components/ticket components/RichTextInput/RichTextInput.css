@@ -614,13 +614,11 @@
 }
 
 .ql-editor.ql-blank::before {
-  color:rgba(0,0,0,0.6);
+  color:#a4a4a4;
   content:attr(data-placeholder);
   font-style:italic;
-  left:15px;
   pointer-events:none;
   position:absolute;
-  right:15px
 }
 
 .ql-snow.ql-toolbar:after,.ql-snow .ql-toolbar:after {

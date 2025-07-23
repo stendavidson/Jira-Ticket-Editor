@@ -31,16 +31,11 @@ const fullToolbar = [
 ];
 
 
-export default function RichTextInput({ className, issueID, keyName, name, operations, attachments = [], defaultValue = null  }: { className: string, issueID: string, keyName: string, name: string, operations: string[], attachments: AttachmentInterface[], defaultValue: RichTextInterface | null }) {
-  
-  // Memo - TODO: validate if this is the most effective solution
-  const parsedHTML = useMemo(() => {
-    return defaultValue ? parseADFtoHTML(defaultValue.content, attachments) : "";
-  }, [defaultValue, attachments]);
+export default function RichTextInput({ className, issueID, keyName, name, operations, attachments = [], defaultValue = null  }: { className: string, issueID: string, keyName: string, name: string, operations: string[], attachments: AttachmentInterface[], defaultValue: RichTextInterface | null }) {  
 
   // State values
-  const [initial, setInitial] = useState(parsedHTML);
-  const [inputValue, setInputValue] = useState(parsedHTML);
+  const [initial, setInitial] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [focused, setFocused] = useState(false);
 
   // Ref Values
@@ -133,6 +128,29 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
 
     }
   }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// Effects //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+  /**
+   * Load the quill editor's contents
+   */
+  useEffect(() => {
+
+    const quillHTML = defaultValue ? parseADFtoHTML(defaultValue.content, attachments) : "";
+    setInitial(quillHTML);
+    setInputValue(quillHTML);
+
+  }, [defaultValue, attachments])
+
+
+  useEffect(() => {
+    console.log(inputValue);
+  }, [inputValue])
   
 
   return (
@@ -150,7 +168,7 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
             fieldRef.current!.focus();
           }, 0);
         }}
-        dangerouslySetInnerHTML={{ __html: inputValue }}
+        dangerouslySetInnerHTML={{ __html: (inputValue !== "" && inputValue !== "<p><br></p>") ? inputValue : `<p class="${styles.placeholder}">Enter ${name}...</p>` }}
       />
 
       <div
@@ -177,6 +195,7 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
         <ReactQuill
           theme="snow"
           value={inputValue}
+          readOnly={!operations.includes("set")}
           onChange={setInputValue}
           modules={modules}
           ref={quillRef}
