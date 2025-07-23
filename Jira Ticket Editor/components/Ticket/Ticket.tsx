@@ -166,7 +166,8 @@ export default function Ticket(){
             <div className={styles.column1}>
               <div className={styles.primaryContent}>
                 <ShortTextInput className={styles.adjustPositionPrimary} fontSize={30} issueID={context.ticketData!.id} keyName={"summary"} operations={context.ticketData!.editmeta.fields["summary"].operations} defaultValue={context.ticketData!.fields["summary"] ?? ""}/>
-                <RichTextInput className={styles.adjustPositionPrimary} issueID={context.ticketData!.id} keyName={"description"} name={context.ticketData!.editmeta.fields["description"].name} operations={context.ticketData!.editmeta.fields["description"].operations} attachments={attachments} defaultValue={context.ticketData!.fields["description"] ?? ""}/>
+                <RichTextInput key={attachments[0]?.id} className={styles.adjustPositionPrimary} issueID={context.ticketData!.id} keyName={"description"} name={context.ticketData!.editmeta.fields["description"].name} operations={context.ticketData!.editmeta.fields["description"].operations} attachments={attachments} defaultValue={context.ticketData!.fields["description"] ?? ""}/>
+                
               </div>
             </div>
             <div className={styles.column2}>
@@ -201,7 +202,7 @@ export default function Ticket(){
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom !== "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description" && key !== "environment"){
                         return <ShortTextInput key={key} className={styles.adjustPosition} fontSize={14} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key] ?? ""}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom === "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description" && key !== "environment"){
-                        return <RichTextInput key={`${key}-${context.ticketData!.id}-${context.ticketData!.fields.updated}`} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} attachments={attachments} defaultValue={context.ticketData!.fields[key] ?? ""}/>
+                        return <RichTextInput key={`${key}-${attachments[0]?.id}`} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} attachments={attachments} defaultValue={context.ticketData!.fields[key] ?? ""}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "number"){
                         return <NumberInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key] ?? ""}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "date" || context.ticketData!.editmeta.fields[key].schema?.custom?.includes("com.atlassian.jira.ext.charting")){
