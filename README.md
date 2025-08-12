@@ -4,7 +4,10 @@
 
 
 ### **Description**
-The goal has been to develop an application where users can access, edit and create tickets from Jira. However, un-paid Jira accounts are severely limited in their capacity. Therefore, a feature has been added wherein a single paid service account can "elevate" the application's access to the Jira API (note this is in addition to the Jira login feature). This "elevated access" feature has already been implemented (see settings/Service Account Authorization).
+The goal has been to develop an application where users can access, edit and create tickets from Jira. Furthermore, a feature has been added wherein a Jira Service Account can "proxy" access to the Jira API (note this is in addition to the Jira login feature). This feature has already been implemented (see settings/Service Account Authorization).
+
+> [!Warning]
+> To the best of my knowledge this application is currently compliant with Jira's Terms of Service. However, this does not comprise legal advice nor is this respository necessarily up-to-date with Jira's latest Terms of Service. Furthermore, there may be ways in which this application could be utilized that unintentionally violates Jira's Terms of Service. Please ensure that any implementation of this application abides by the the laws applicable in your region and where relevant, Jira's Terms of Service. In utilizing, extending or redistributing this application you acknowledge all this and accept full responsibility.
 
 > [!Note] 
 > This Next.js web app is currently under development it is not fully documented. It still retains debug logging, and not all components have been refactored according the design chosen.
@@ -57,7 +60,7 @@ npm run dev
 
 - Layouts (Navbar etc)
 
-- Settings & Service Account Authorization
+- Settings & Service Account Authorization (may need to be re-implemented in accordance with Jira's latest update to their security requirements).
 
 - Searchable Project List
 
@@ -87,13 +90,12 @@ npm run dev
   - Multi-User Input
   - Single-User Input
   - Ticket worklogs
+  - Ticket sub-tasks
 
 
 ### **Remaining Features**
 
 - Ticket comments
-
-- Ticket sub-tasks
 
 - Ticket dependencies
 
