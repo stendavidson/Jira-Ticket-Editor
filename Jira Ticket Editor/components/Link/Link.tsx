@@ -5,18 +5,7 @@ import { useRouter } from 'next/navigation';
 
 
 
-/**
- * This component acts as a next.js compatible link
- * 
- * @param className The style class name
- * 
- * @param href The link
- * 
- * @param children The link body
- * 
- * @returns A usable link
- */
-export default function Link({className, href, onClick, children}: {className: string, href: string, onClick?: () => void, children: React.ReactNode}){
+export default function Link({ className, href, onClick, children }: { className: string, href: string, onClick?: () => void, children: React.ReactNode }){
 
   // Router
   const router = useRouter();
@@ -40,7 +29,6 @@ export default function Link({className, href, onClick, children}: {className: s
       onClick();
     }
   }
-
 
 
   return (
