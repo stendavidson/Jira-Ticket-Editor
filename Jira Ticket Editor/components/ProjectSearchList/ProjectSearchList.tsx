@@ -1,126 +1,224 @@
 // Style Imports
 import style from "./ProjectSearchList.module.scss";
 
-// Internal Imports
-import { ProjectsResponseInterface, ProjectInterface } from "./ProjectInterface";
-
 // External Imports
 import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+
+// Internal Imports
+import { ProjectsResponseInterface, ProjectInterface } from "./ProjectInterface";
 import ProjectAvatar from "../ProjectAvatar/ProjectAvatar";
-import request from "../../lib/nothrow_request";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import request from "../../lib/NoExceptRequestLib";
+import { checkIfLoaderVisibleAndFetch } from "@/lib/DropdownLib";
 
-export default function ProjectSearchList() {
 
+
+export default function ProjectSearchList({selectedProject, projectSetter}: {selectedProject: string | null, projectSetter: (projectID: string | null) => void}) {
+
+  // Next.js hooks
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
 
-  const [projectID, setProjectID] = useState<string | null>(null);
+  // State values
   const [inputValue, setInputValue] = useState<string>("");
   const [startAt, setStartAt] = useState<number>(0);
   const [permittedValues, setPermittedValues] = useState<ProjectInterface[]>([]);
   const [filteredPermittedValues, setFilteredPermittedValues] = useState<ProjectInterface[]>([]);
+  const [triggerLoad, setTriggerLoad] = useState<boolean>(false);
+
+  // Refs
   const parentRef = useRef<HTMLDivElement | null>(null);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
-  const loading = useRef<boolean>(false);
-  const initial = useRef<boolean>(true);
+  const loadDiv = useRef<HTMLDivElement | null>(null);
+  const requestToken = useRef<number>(0);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Debounce timer ref for input
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch projects from API and append new results uniquely
-  async function getProjects() {
+  
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// API Functions ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
 
-    if (loading.current || startAt === -1){
+
+
+  /**
+   * This function retrieves all projects
+   * 
+   * @param textInput The user's search/filter input
+   * 
+   * @param overrideToken An indicator that the startAt value should be ignored
+   */
+  async function getProjects(textInput: string, overrideToken: boolean = false){
+    
+    // Early exit
+    if(!overrideToken && startAt === -1){
       return;
     }
 
-    loading.current = true;
+    // Max results
+    const maxResults = 50;
 
-    // Build URL with params
+    // Set request token
+    requestToken.current++;
+    const token = requestToken.current;
+    
+    // Abort previous request
+    abortRef.current?.abort();
+
+    // Create new AbortController to exit early if necessary
+    const abortController = new AbortController();
+    abortRef.current = abortController;
+
+    // URL Params
     const url = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", "/project/search");
     url.searchParams.append("elevate", "true");
     url.searchParams.append("query", inputValue);
     url.searchParams.append("orderBy", "name");
     url.searchParams.append("startAt", startAt.toString());
+    url.searchParams.append("maxResults", maxResults.toString());
 
-    const response = await request(url.toString(), { method: "GET" });
-
-    if (response?.status.toString().startsWith("2")) {
-      const data = (await response.json()) as ProjectsResponseInterface;
-      const newProjects = data.values.filter(p => !permittedValues.some(existing => existing.id === p.id));
-
-      setPermittedValues(prev => [...prev, ...newProjects]);
-      setStartAt(data.isLast ? -1 : data.startAt + data.maxResults);
-    }
-
-    loading.current = false;
-  }
-
-  // Initial load
-  useEffect(() => {
-    if (initial.current) {
-      initial.current = false;
-      getProjects();
-    }
-  }, []);
-
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    const loader = loaderRef.current;
-    const parent = parentRef.current;
-    if (!loader || !parent) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          getProjects();
-        }
-      },
+    // GET request
+    const response = await request(
+      url.toString(),
       {
-        root: parent,
-        rootMargin: "0px 0px 250px 0px",
-        threshold: 0,
+        method: "GET",
+        signal: abortController.signal
       }
     );
 
-    observer.observe(loader);
+    // If the request was aborted exit early
+    if (!response){
+      setStartAt(-1);
+      return;
+    }
 
-    return () => {
-      if (loader) observer.unobserve(loader);
-    };
-  }, [startAt, permittedValues]); // re-subscribe when startAt or permittedValues change
+    // Process response
+    let projectResponse: ProjectsResponseInterface | null = null;
+    let projects: ProjectInterface[] = [];
+    let filteredProjects: ProjectInterface[] = [];
 
-  // Debounced filtering of permitted projects on input change
+    if(response?.status.toString().startsWith("2")){
+
+      projectResponse = ((await response?.json()) as ProjectsResponseInterface);
+      projects = projectResponse.values.filter((newValue: ProjectInterface) => !permittedValues.some((oldValue: ProjectInterface) => newValue.id === oldValue.id));
+      filteredProjects = projects.filter((value: ProjectInterface) => {
+        return (value.key.toLowerCase().includes(textInput.toLowerCase()) || value.name.toLowerCase().includes(textInput.toLowerCase()));
+      })
+
+      // Set next start
+      if(!projectResponse.isLast){
+        setStartAt(startAt + maxResults);
+      }else{
+        setStartAt(-1);
+      }
+    }
+
+    // If the request is out of date exit.
+    if(token !== requestToken.current){
+      return;
+    }
+
+    // Set permitted values or recurse
+    if(projects.length > 0){
+
+      setPermittedValues(prev => [...prev, ...projects]);
+
+      if(filteredProjects.length > 0){
+        setFilteredPermittedValues(prev => [...prev, ...filteredProjects]);
+      }else{
+        setTriggerLoad(prev => !prev);
+      }
+
+    }else{
+      setTriggerLoad(prev => !prev);
+    }
+  }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////// Callbacks //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This function filters the dropdown list
+   * 
+   * @param textInput The user input
+   */
+  function filterProjects(textInput: string){
+
+    // If allowed values exist - then filtered the restricted list
+    if (permittedValues.length > 0) {
+
+      setFilteredPermittedValues(permittedValues.filter((value: ProjectInterface) => {
+        return (value.key.toLowerCase().includes(textInput.toLowerCase()) || value.name.toLowerCase().includes(textInput.toLowerCase()));
+      }));
+
+    }
+
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, true, textInput, getProjects, true);
+  }
+
+
+
+  /**
+   * This function "selects" the project ID.
+   * 
+   * @param projectID The selected project's ID
+   */
+  function updateProjectID(projectID: string) {
+    projectSetter(projectID);
+    const currentURL: URL = new URL(window.location.href);
+    currentURL.searchParams.set("project-id", projectID);
+    router.push(`${currentURL.pathname}?${currentURL.searchParams.toString()}`);
+  }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////// Effects ///////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This retrieves the initial list of projects
+   */
   useEffect(() => {
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
-    debounceTimer.current = setTimeout(() => {
-      const filtered = permittedValues.filter(p =>
-        p.name.toLowerCase().includes(inputValue.toLowerCase())
-      );
-      setFilteredPermittedValues(filtered);
-    }, 300);
+    // Initial load
+    getProjects("", false);
 
-    return () => {
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    };
-  }, [inputValue, permittedValues]);
+    // Check for "selected" project ID
+    const currentURL: URL = new URL(window.location.href);
+    const projectID: string | null = currentURL.searchParams.get("project-id");
+    ;
+    projectSetter(projectID);
 
-  // Input handler
-  function handleInput(ev: React.ChangeEvent<HTMLInputElement>) {
-    setInputValue(ev.target.value);
-  }
+  }, []);
 
-  // Update selected project ID and URL param
-  function updateProjectID(id: string) {
-    setProjectID(id);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("project-id", id);
-    router.replace(`${pathname}?${params.toString()}`);
-  }
+
+  /**
+   * Lazy loading triggered - if no items have been loaded initially.
+   */
+  useEffect(() => {
+
+    getProjects("", false);
+
+  }, [triggerLoad]);
+
+
+  /**
+   * Lazy loading Scroll Check triggered - if more items can be loaded
+   */
+  useEffect(() => {
+    
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, true, inputValue, getProjects, false);
+  
+  }, [startAt]);
+
+  
 
   return (
     <div className={style.projectSearchList}>
@@ -130,19 +228,27 @@ export default function ProjectSearchList() {
       <div className={style.searchSection}>
         <input
           type="text"
-          onChange={handleInput}
+          onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
+            setInputValue(ev.target.value);
+            filterProjects(ev.target.value);
+          }}
           value={inputValue}
-          placeholder="Search Projects"
+          placeholder="Search projects..."
         />
       </div>
-      <div className={style.projectsBox} ref={parentRef}>
+      <div 
+        className={style.projectsBox} 
+        onScroll={() => {
+            checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, true, inputValue, getProjects, false);
+          }}
+        ref={parentRef}>
         {filteredPermittedValues.map(project => (
             <div
               key={project.id}
-              className={`${style.projectTile} ${projectID === project.id ? style.highlight : ""}`}
+              className={`${style.projectTile} ${selectedProject === project.id ? style.highlight : ""}`}
               onClick={() => updateProjectID(project.id)}
             >
-              <p className={style.projectTitle}>{project.name}</p>
+              {project.name}
               <ProjectAvatar
                 avatarURL={project.avatarUrls["48x48"]}
                 displayName={project.name}
@@ -151,14 +257,14 @@ export default function ProjectSearchList() {
             </div>
           ))
         }
-        {filteredPermittedValues.length === 0 && !loading.current && (
+        {filteredPermittedValues.length === 0 && startAt === -1 && (
             <div className={style.rejectTile}>
               No Matching Projects
             </div>
           )
         }
         {startAt !== -1 && (
-            <div ref={loaderRef} className={style.rejectTile}>
+            <div ref={loadDiv} className={style.rejectTile}>
               Loading projects...
             </div>
           )

@@ -12,8 +12,8 @@
     max-height: 100%;
 
     // Border
-    border-top: 1px solid c.$line;
-    border-right: 1px solid c.$line;
+    border-top: 1px solid c.$grayLine;
+    border-right: 1px solid c.$grayLine;
 
     // Shadow
     box-shadow: max(1px, 0.1vh) 0 max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
@@ -34,7 +34,7 @@
         align-items: flex-start;
         
         // Border
-        border-bottom: 1px solid c.$line;
+        border-bottom: 1px solid c.$grayLine;
 
         // Heading
         h1{
@@ -44,7 +44,7 @@
             margin-bottom: max(1.3vh, 13px);
 
             // Color
-            color: white;
+            color: c.$whiteText;
             background-color: transparent;
 
             // Text
@@ -69,10 +69,10 @@
         align-items: center;
         
         // Border
-        border-bottom: 1px solid c.$line;
+        border-bottom: 1px solid c.$grayLine;
 
         // Shadow
-        box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
+        box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow2;
 
         // Children
         input[type=text]{
@@ -87,8 +87,11 @@
             padding: 0 max(0.7vh, 7px);
 
             // Border
-            border: 1px solid c.$line;
+            border: 1px solid c.$grayLine;
             border-radius: max(0.5vh, 5px);
+
+            // Color
+            color: c.$whiteText;
 
             // Text
             font-size: max(1.4vh, 14px);
@@ -135,7 +138,7 @@
         .projectTile{
             // Position
             position: relative;
-            margin-top: max(1vh, 10px);
+            margin-top: max(0.9vh, 9px);
 
             // Dimensions
             width: 85%;
@@ -148,48 +151,42 @@
             align-items: center;
 
             // Border
-            border-radius: max(0.4vh, 4px);
+            border-radius: max(0.3vh, 3px);
 
             // Padding
             padding: max(1vh, 10px);
 
             // Color
-            background-color: c.$boxGray;
+            background-color: c.$darkGray3;
+            color: c.$lightGrayText;
+
+            // Text
+            font-weight: bold;
 
             // Shadow
-            box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow2;
 
+            // Last child
             &:last-child{
                 margin-bottom: max(1vh, 10px);
             }
 
+            // Hover
             &:hover{
                 // Color
-                background-color: c.$containerGrayHighlight;
+                background-color: c.$darkGray4;
                 
                 // Cursor
                 cursor: pointer
             }
 
+            // Active
             &:active{
                 // Color
-                background-color: c.$containerGrayHighlight;
+                background-color: c.$darkGray4;
             }
 
             // Children
-            .projectTitle{
-                // Position
-                position: relative;
-                left: 0;
-
-                // Color
-                color: c.$text;
-                background-color: transparent;
-
-                // Text
-                font-weight: bold;
-            }
-
             .avatar{
                 // Position
                 position: relative;
@@ -198,6 +195,11 @@
 
                 // Dimensions
                 height: 60%;
+            }
+
+            .projectTitle{
+                // Color
+                background-color: transparent;
             }
         }
 
@@ -213,7 +215,7 @@
             // Display Properties
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
 
             // Border
@@ -223,33 +225,29 @@
             padding: max(1vh, 10px);
 
             // Color
-            background-color: c.$boxGray;
+            background-color: c.$darkGray3;
+            color: c.$lightGrayText;
 
             // Shadow
-            box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow2;
 
+            // Last child
             &:last-child{
                 margin-bottom: max(1vh, 10px);
-            }
-
-            // Children
-            .projectTitle{
-                // Position
-                position: relative;
-                left: 0;
-
-                // Color
-                color: c.$text;
-                background-color: transparent;
-
-                // Text
-                font-weight: bold;
             }
         }
 
         .highlight{
             // Color
-            background-color: c.$containerGrayHighlight;
+            color: c.$powderBlue2 !important;
+            background-color: c.$darkGrayBlue1;
+
+            // Hover
+            &:hover{
+                // Color
+                color: c.$powderBlue3 !important;
+                background-color: c.$darkGrayBlue2;
+            }
         }
     }
 }
