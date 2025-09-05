@@ -1,52 +1,58 @@
 
-import Access from "@/interfaces/AccessInterface";
-import AtlassianUser from "@/interfaces/AtlassianUserInterface";
+import { OAuth2AccessInterface } from "@/interfaces/AccessInterface";
+import UserInterface from "@/interfaces/UserInterface";
 import AuthTokensInterface from "@/interfaces/AuthTokensInterface";
 import { NextRequest, NextResponse } from "next/server";
-import { refreshAccessToken, validate } from "./authenticate";
-import getUser from "./user";
-import { db } from "./cache";
+import { refreshAccessToken, validate } from "./AuthenticateLib";
+import getUser from "./UserLib";
+import { db } from "./BackendCache";
+import { decrypt } from "./CryptoLib";
 
 
+/**
+ * This wrapper function manages HTTP request authentication validation, renewal, etc,
+ * ensuring the request is only ever handled once it has been validated.
+ * 
+ * @param request The HTTP request object
+ * 
+ * @param requestHandler A request handler function
+ * 
+ * @returns A HTTP response as provided by the handler function
+ */
 export default async function AuthWrapper(request: NextRequest, requestHandler: (request: NextRequest, authTokens: AuthTokensInterface, requestingAccountID: string | undefined, authorizedAccountID: string | undefined) => Promise<NextResponse>): Promise<NextResponse>{
 
-  // Elevated status
-  const searchParams = (new URL(request.url)).searchParams;
-  const elevate: boolean = searchParams.get('elevate') === "true";
-
-  // authTokens
+  // Auth tokens
   const authTokens: AuthTokensInterface = {
     authToken: request.cookies.get("authToken")?.value,
     refreshToken: request.cookies.get("refreshToken")?.value,
-    elevatedToken: undefined,
-    elevatedRefreshToken: undefined
+    serviceAccountToken: undefined,
+    serviceAccountEmail: undefined
   };
 
   // Response
   let response: NextResponse | undefined;
 
-  // Updated Credentials Toggle
-  let updatedCredentials: boolean = false;
-  let updatedElevatedCredentials: boolean = false;
+  // Update Credentials Toggle
+  let updateCredentials: boolean = false;
 
-  // Access objects
-  let primaryAccess: Access | null = null;
-  let secondaryAccess: Access | null = null;
+  // OAuth2AccessInterface objects
+  let primaryAccess: OAuth2AccessInterface | null = null;
 
-  // Elevated tokens
-  let accountID : string | undefined;
+  // Admin Account ID
+  let authorizedAccountID : string | undefined;
 
   // User data
-  let requestingUser: AtlassianUser | null = null;
+  let requestingUser: UserInterface | null = null;
 
   // Retrieve elevated tokens
   try{
 
-    authTokens.elevatedToken = await db.get("elevatedToken");
-    authTokens.elevatedRefreshToken = await db.get("elevatedRefreshToken");
-    accountID = await db.get("accountID");
+    authTokens.serviceAccountToken = await db.get("serviceAccountToken");
+    authTokens.serviceAccountToken = authTokens.serviceAccountToken ? decrypt(authTokens.serviceAccountToken, process.env.SALT!) : undefined;
+    authTokens.serviceAccountEmail = await db.get("serviceAccountEmail");
+    authorizedAccountID = await db.get("authorizedAccountID");
 
-  }catch(err){
+  }catch{
 
     response = new NextResponse(
       JSON.stringify(
@@ -61,7 +67,7 @@ export default async function AuthWrapper(request: NextRequest, requestHandler: 
 
   }
 
-  // Check user's standard auth tokens
+  // Check user's standard auth tokens - and attempt to refresh the USER'S tokens
   if(response === undefined && (authTokens.authToken === undefined || !(await validate(authTokens.authToken)))){
 
     if(authTokens.refreshToken){
@@ -83,7 +89,7 @@ export default async function AuthWrapper(request: NextRequest, requestHandler: 
 
       }else{
 
-        updatedCredentials = (primaryAccess !== null);
+        updateCredentials = (primaryAccess !== null);
 
       }
 
@@ -104,97 +110,22 @@ export default async function AuthWrapper(request: NextRequest, requestHandler: 
   }
 
 
-  // If the request is "elevated" validate and/or refresh stored credentials
-  if(response === undefined && elevate && (authTokens.elevatedToken === undefined || !(await validate(authTokens.elevatedToken)))){
-
-    if(authTokens.elevatedRefreshToken !== undefined){
-
-      secondaryAccess = await refreshAccessToken(authTokens.elevatedRefreshToken);
-
-      if(!secondaryAccess || !(await validate(secondaryAccess.access_token))){
-
-        response = new NextResponse(
-          JSON.stringify(
-            {
-              msg: "The user is not authorized to perform this operation."
-            }
-          ),
-          {
-            status: 401
-          }
-        )
-
-      }else{
-
-        updatedElevatedCredentials = (secondaryAccess !== null);
-
-      }
-      
-    }else{
-
-      // In the fail case, both elevated tokens are undefined
-      authTokens.elevatedToken = undefined;
-
-    }
-  }
-
-
   // If the user is authorized then make sure all credentials are updated as needed
   if(response === undefined){
 
     // Update standard credentials
-    if(updatedCredentials){
+    if(updateCredentials){
       authTokens.authToken = primaryAccess!.access_token;
       authTokens.refreshToken = primaryAccess!.refresh_token;
     }
 
     requestingUser = await getUser(authTokens.authToken!);
-
-    try{
-      
-      // Updated elevated credentials only if the requesting user is an authorized user
-      if(updatedCredentials && accountID !== undefined && accountID === requestingUser?.accountId){
-
-        authTokens.elevatedToken = primaryAccess!.access_token;
-        authTokens.elevatedRefreshToken = primaryAccess!.refresh_token;
-        await db.put("elevatedToken", authTokens.elevatedToken);
-        await db.put("elevatedRefreshToken", authTokens.elevatedRefreshToken);
-
-      // Updated elevated credentials if the request is elevated
-      }else if(updatedElevatedCredentials){
-        
-        authTokens.elevatedToken = secondaryAccess!.access_token;
-        authTokens.elevatedRefreshToken = secondaryAccess!.refresh_token;
-        await db.put("elevatedToken", authTokens.elevatedToken);
-        await db.put("elevatedRefreshToken", authTokens.elevatedRefreshToken);
-
-      }
-
-    }catch(err){
-
-      response = new NextResponse(
-        JSON.stringify(
-          {
-            msg: "The server experienced an unexpected error."
-          }
-        ),
-        {
-          status: 500
-        }
-      );
-
-    }
-  }
-
-
-  // If an exception hasn't been thrown
-  if(!response){
-    response = await requestHandler(request, authTokens, requestingUser?.accountId, accountID);
+    response = await requestHandler(request, authTokens, requestingUser?.accountId, authorizedAccountID);
   }
 
 
   // Set Cookies as needed
-  if(updatedCredentials){
+  if(updateCredentials){
 
     response.cookies.set("authToken", authTokens.authToken!, {
       path: "/",
