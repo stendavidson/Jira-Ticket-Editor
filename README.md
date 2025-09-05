@@ -1,16 +1,10 @@
-# Jira Ticket Editor
+# Ticket Mirror
 
 **Author:** Sten Healey
 
 
 ### **Description**
-The goal has been to develop an application where users can access, edit and create tickets from Jira. Furthermore, a feature has been added wherein a Jira Service Account can "proxy" access to the Jira API (note this is in addition to the Jira login feature). This feature has already been implemented (see settings/Service Account Authorization).
-
-> [!Warning]
-> To the best of my knowledge this application is currently compliant with Jira's Terms of Service. However, this does not comprise legal advice nor is this respository necessarily up-to-date with Jira's latest Terms of Service. Furthermore, there may be ways in which this application could be utilized that unintentionally violates Jira's Terms of Service. Please ensure that any implementation of this application abides by the the laws applicable in your region and where relevant, Jira's Terms of Service. In utilizing, extending or redistributing this application you acknowledge all this and accept full responsibility.
-
-> [!Note] 
-> This Next.js web app is currently under development it is not fully documented. It still retains debug logging, and not all components have been refactored according the design chosen.
+The goal has been to develop an application where users can access, edit and create tickets from Jira. More broadly this project is intended to be sufficiently modular that developers can customize and extend it to the needs of their specific business. Furthermore, a feature has been added wherein a Jira Service Account can "proxy" access to the Jira API (note this is in addition to the Jira login feature). This feature has already been implemented (see settings/Service Account Authorization). Please see a preview of the interface below. 
 
 
 ### **Pre-requisites**
@@ -20,7 +14,7 @@ The goal has been to develop an application where users can access, edit and cre
 2. An active Jira account.
 
 
-### **Dev Setup**
+### **Setup**
 
 1. After downloading this repository navigate to the path `C:/../../Jira Ticket Editor/Jira Ticket Editor>`
 
@@ -34,6 +28,7 @@ ENVIRONMENT=development
 CLOUD_ID=<your atlassian cloud ID>
 CLIENT_ID=<your jira client id>
 CLIENT_SECRET=<your jira client secret>
+SALT=<sha512 compatible salt>
 
 ```
 
@@ -43,11 +38,46 @@ CLIENT_SECRET=<your jira client secret>
 npm install
 ```
 
-5. To run the Next.js application please run the command:
+
+### **Dev Run**
+
+To run the Next.js application please run the command(s):
 
 ```shell
 npm run dev
 ```
+
+
+### **Prod Run**
+
+To run the Next.js application please run the command(s):
+
+```shell
+npm run build
+```
+
+```shell
+npm run start
+```
+
+
+### **Additional Setup & Notes**
+
+* In order to add a service account please follow the following steps:
+
+  1. Follow the [instructions](https://support.atlassian.com/user-management/docs/manage-api-tokens-for-service-accounts/) provided by Jira to create a scoped API Key with the following scopes:
+      - read:jira-work
+      - read:jira-user
+      - read:servicedesk-request
+      - write:jira-work
+      - write:servicedesk-request
+      - manage:jira-project
+      - manage:jira-configuration
+      - manage:jira-webhook
+      - manage:jira-data-provider
+      - manage:servicedesk-customer
+
+  2. Authorize the application using the Service Account email address and API Key, via the "Settings" feature.
 
 
 ### **Completed Features**
@@ -60,7 +90,7 @@ npm run dev
 
 - Layouts (Navbar etc)
 
-- Settings & Service Account Authorization (may need to be re-implemented in accordance with Jira's latest update to their security requirements).
+- Settings & Service Account Authorization
 
 - Searchable Project List
 
@@ -86,32 +116,37 @@ npm run dev
   - Sprint Input
   - Status Input
   - Team Input
-  - Time Input
+  - Worklog Input
   - Multi-User Input
   - Single-User Input
   - Ticket worklogs
   - Ticket sub-tasks
+  - Ticket comments
+  - Ticket Links
 
 
-### **Remaining Features**
+### **Preview**
 
-- Ticket comments
-
-- Ticket dependencies
-
-### **Feature Preview(s)**
 
 **Project Board**
-![Project Board](Docs/Project%20Boards.PNG)
+![Project Board](Docs/Projects-Page.PNG)
 
-**User Ticket**
-![User Ticket Board](Docs/User%20Tickets.PNG)
+**User's Tickets**
+![User's Tickets](Docs/My-Work-Page.PNG)
 
-**Service Account Authorization**
-![Service Account Authorization](Docs/Service%20Account%20Authorization%20v2.PNG)
+**Settings / Service Account Authorization**
+![Settings / Service Account Authorization](Docs/Settings-Service-Account-Authorization.PNG)
 
-**Partial Ticket Interface**
-![Ticket Interface Part 1](Docs/Incomplete%20Ticket%20Interface%20Part%201.PNG)
-![Ticket Interface Part 2](Docs/Incomplete%20Ticket%20Interface%20Part%202.PNG)
-![Ticket Interface Part 3](Docs/Incomplete%20Ticket%20Interface%20Part%203.PNG)
-![Ticket Interface Part 4](Docs/Incomplete%20Ticket%20Interface%20Part%204.PNG)
+**Creating a Ticket**
+![Create Ticket](Docs/Create-Ticket.PNG)
+
+**Ticket Interface**
+![Ticket Interface Part 1](Docs/Ticket-Preview-Part-1.PNG)
+![Ticket Interface Part 2](Docs/Ticket-Preview-Part-2.PNG)
+![Ticket Interface Part 3](Docs/Ticket-Preview-Part-3.PNG)
+
+**Worklog**
+![Worklog](Docs/Log-Time.PNG)
+
+> [!Warning]
+> In utilizing this repository you acknowledge that you take full responsibility in ensuring that it is utilized in accordance with Jira's Terms of Service and all relevant legislation in your region.
