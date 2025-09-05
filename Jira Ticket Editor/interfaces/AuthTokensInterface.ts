@@ -1,7 +1,7 @@
 
 export default interface AuthTokensInterface {
-  authToken : string | undefined,
-  refreshToken : string | undefined,
-  elevatedToken : string | undefined,
-  elevatedRefreshToken : string | undefined,
+  authToken: string | undefined,
+  refreshToken: string | undefined,
+  serviceAccountToken: string | undefined,
+  serviceAccountEmail: string | undefined,
 }

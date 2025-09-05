@@ -1,11 +1,28 @@
 'use server';
 
+// External Imports
 import { NextRequest, NextResponse } from 'next/server';
+
+// Internal Imports
 import AuthWrapper from '@/lib/AuthWrapper';
 import AuthTokensInterface from '@/interfaces/AuthTokensInterface';
 
+
+// The base JIRA API URL
 const BASE_JIRA_URL = `https://api.atlassian.com/ex/jira/${process.env.CLOUD_ID}/rest/agile/1.0`;
 
+
+/**
+ * This function proxies the Jira API.
+ * 
+ * @param method The HTTP method
+ * 
+ * @param request The HTTP request object
+ * 
+ * @param authTokens The auth tokens
+ * 
+ * @returns A HTTP response object
+ */
 async function proxyRequest(method: 'GET' | 'POST' | 'PUT' | 'DELETE', request: NextRequest, authTokens: AuthTokensInterface): Promise<NextResponse> {
 
   // Retrieve URL Params
@@ -26,8 +43,14 @@ async function proxyRequest(method: 'GET' | 'POST' | 'PUT' | 'DELETE', request: 
     );
   }
 
-  // Select access token
-  const accessToken = elevate && authTokens.elevatedToken ? authTokens.elevatedToken : authTokens.authToken;
+  // Determine auth type
+  let authString: string;
+
+  if(elevate && authTokens.serviceAccountToken && authTokens.serviceAccountEmail){
+    authString = "Basic " + Buffer.from(`${authTokens.serviceAccountEmail}:${authTokens.serviceAccountToken}`);
+  }else{
+    authString = `Bearer ${authTokens.authToken}`;
+  }
 
   // Create the base url
   const formattedPathname = pathname.startsWith('/') ? pathname : `/${pathname}`;
@@ -44,7 +67,7 @@ async function proxyRequest(method: 'GET' | 'POST' | 'PUT' | 'DELETE', request: 
 
     // Pass-on/create headers
     const headers: Record<string, string> = {
-      'Authorization': `Bearer ${accessToken}`,
+      'Authorization': authString,
       'Accept': 'application/json'
     };
 

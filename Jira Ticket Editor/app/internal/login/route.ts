@@ -2,12 +2,11 @@
 
 // External imports
 import { NextRequest, NextResponse } from "next/server";
-import { generateHMAC, generateRandomData } from "../../../lib/keyed_hash";
 
 // Internal imports
-import { refreshAccessToken, validate } from "../../../lib/authenticate";
-import { sha512_key } from "../../../keys";
-import Access from "../../../interfaces/AccessInterface";
+import { refreshAccessToken, validate } from "../../../lib/AuthenticateLib";
+import { OAuth2AccessInterface } from "@/interfaces/AccessInterface";
+import { generateHMAC, generateRandomData } from "../../../lib/CryptoLib";
 
 
 /**
@@ -39,7 +38,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     response = NextResponse.redirect(url);
     
   }else if(refreshToken){
-    const access: Access | null = await refreshAccessToken(refreshToken);
+
+    const access: OAuth2AccessInterface | null = await refreshAccessToken(refreshToken);
+    
     if(access && (await validate(access.access_token))){
 
       const url = new URL(request.url);
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     
     // Set the user nonce
     const urlNonce: string = generateRandomData(32); 
-    const userNonce = await generateHMAC(sha512_key, urlNonce);
+    const userNonce = await generateHMAC(process.env.SALT!, urlNonce);
 
     // Redirect URL
     const REDIRECT_URL = new URL('https://auth.atlassian.com/authorize');
@@ -90,15 +91,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Create a cookie
     response.cookies.set("user-nonce", userNonce, {
-      path: "/",
-      sameSite: "lax",
-      httpOnly: true,
-      secure: false,
-      maxAge: 60 * 60 * 24 * 30
-    });
-
-    // Create a cookie
-    response.cookies.set("elevate", "false", {
       path: "/",
       sameSite: "lax",
       httpOnly: true,

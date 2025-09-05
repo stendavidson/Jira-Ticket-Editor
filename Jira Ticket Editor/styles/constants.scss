@@ -1,12 +1,39 @@
 
-// Standard colors
-$background: #666666;
-$containerGray: #4D4D4D;
-$containerGrayHighlight: #5c5c5c;
-$boxGray: #949494;
-$boxGrayHighlight: #a4a4a4;
-$line: #ADADAD;
-$text: white;
-$button: #3E7FDA;
-$buttonHighlight: #2b6bc4;
-$disabledButton: #537cb6;
+// Full Gray Color Set
+$darkGray0: rgb(30, 30, 30);
+$darkGray1: rgb(40, 40, 40);
+$darkGray2: rgb(50, 50, 50);
+$darkGray3: rgb(60, 60, 60);
+$darkGray4: rgb(70, 70, 70);
+$darkGray5: rgb(80, 80, 80);
+$darkGray6: rgb(90, 90, 90);
+$darkGray7: rgb(100, 100, 100);
+$darkGray8: rgb(110, 110, 110);
+$darkGray9: rgb(120, 120, 120);
+
+// Block Highlighted Color Set
+$darkGrayBlue1: rgba(0, 91, 249, 0.15);
+$darkGrayBlue2: rgba(0, 91, 249, 0.25);
+$darkGrayBlue3: rgba(0, 91, 249, 0.35);
+
+// Blues
+$powderBlue1: rgb(15, 122, 210);
+$powderBlue2: rgb(15, 137, 225);
+$powderBlue3: rgb(15, 152, 240);
+
+// Line
+$grayLine: rgb(100, 100, 100);
+$grayLine2: rgb(140, 140, 140);
+
+// Shadows
+$blackShadow1: rgba(0, 0, 0, 0.4);
+$blackShadow2: rgba(0, 0, 0, 0.7);
+$blackShadow3: rgba(0, 0, 0, 1);
+$whiteShadow: rgba(255, 255, 255, 0.3);
+
+// Text
+$whiteText: rgb(255, 255, 255);
+$lightGrayText: rgb(200, 200, 200);
+
+// Overlays
+$blackOverlay: rgba(0, 0, 0, 0.5);

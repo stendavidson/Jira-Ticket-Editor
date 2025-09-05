@@ -4,11 +4,10 @@
 import RedirectPage from "../components/RedirectPage/RedirectPage";
 import { usePathname } from 'next/navigation';
 
-/**
- * Renders an error 404 redirect page
- */
+
 export default function PageNotFound(){
 
+  // Next.js Hook(s)
   const path = usePathname();
 
   return (

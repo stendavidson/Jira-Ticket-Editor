@@ -1,9 +1,16 @@
 
 // Internal Imports
-import TicketInterface from "@/interfaces/TicketInterface";
+import { IssueInterface } from "@/interfaces/IssueInterface";
 
 
-export function getVisibleFields(data: TicketInterface){
+/**
+ * This function removes unnecessary or difficult to handle fields.
+ * 
+ * @param data The issue to be "cleansed"
+ * 
+ * @returns A cleansed issue object
+ */
+export function getVisibleFields(data: IssueInterface): IssueInterface{
 
   const blockedFields = new Set([
     "statuscategorychangedate",
@@ -33,7 +40,7 @@ export function getVisibleFields(data: TicketInterface){
   // Remove unnecessary fields:
   //   > Uneditable fields with no allowed allowedValues --> NOTE: system generated fields are not included in this
   //   > System generated fields fields that contain NO data
-  for(let key in data.fields){
+  for(const key in data.fields){
     if((data.fields[key] === null || (data.fields[key] instanceof Array && data.fields[key].length === 0)) && data.editmeta.fields[key]?.operations?.length === 0 && data.editmeta.fields[key]?.allowedValues?.length === 0){
       delete data.editmeta.fields[key];
       delete data.fields[key];
@@ -43,7 +50,7 @@ export function getVisibleFields(data: TicketInterface){
   }
 
   // Remove blocked fields --> fields deemed unnecessary
-  for(let key of blockedFields){
+  for(const key of blockedFields){
     if(data.fields.hasOwnProperty(key)){
       delete data.fields[key];
     }

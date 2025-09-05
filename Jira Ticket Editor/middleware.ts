@@ -3,8 +3,8 @@ import { NextResponse, NextRequest } from 'next/server';
 
 
 // Internal imports
-import Access from './interfaces/AccessInterface';
-import { validate, refreshAccessToken } from './lib/authenticate';
+import { OAuth2AccessInterface } from './interfaces/AccessInterface';
+import { validate, refreshAccessToken } from './lib/AuthenticateLib';
  
 
 export async function middleware(request: NextRequest) {
@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
   // If the user is already logged in
   if(authToken && (await validate(authToken))){
 
-    console.log("Position 1");
+    
 
     // If the sourceCookie has been set
       // If the current path == sourceCookie set in '\login' and '\authorize'
@@ -36,24 +36,24 @@ export async function middleware(request: NextRequest) {
     
     if(sourceCookie){
       if(request.nextUrl.pathname === sourceCookie){
-        console.log("Position 1");
+        
         response = NextResponse.next();
         response.cookies.delete("source");
       }else{
-        console.log("Position 2");
+        
         const url = new URL(request.url);
         url.pathname = sourceCookie;
         response = NextResponse.redirect(url);
       }
     }else{
-      console.log("Position 3");
+      
       response = NextResponse.next();
     }
   
   // OR if the user has a valid refresh token
   }else if(refreshToken){
     
-    const access: Access | null = await refreshAccessToken(refreshToken);
+    const access: OAuth2AccessInterface | null = await refreshAccessToken(refreshToken);
 
     if(access && (await validate(access.access_token))){
 
@@ -67,17 +67,17 @@ export async function middleware(request: NextRequest) {
       
       if(sourceCookie){
         if(request.nextUrl.pathname === sourceCookie){
-          console.log("Position 4");
+          
           response = NextResponse.next();
           response.cookies.delete("source");
         }else{
-          console.log("Position 5");
+          
           const url = new URL(request.url);
           url.pathname = sourceCookie;
           response = NextResponse.redirect(url);
         }
       }else{
-        console.log("Position 6");
+        
         response = NextResponse.next();
       }
 
@@ -102,8 +102,6 @@ export async function middleware(request: NextRequest) {
   
   // Else
   if(!response){
-
-    console.log("Position 7")
 
     const url = new URL(request.url);
     url.search = '';

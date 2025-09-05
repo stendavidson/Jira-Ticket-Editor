@@ -1,8 +1,10 @@
 'use client'
 
+// External Imports
 import { useEffect } from "react";
-import request from "../../lib/nothrow_request";
-import Bool from "../../interfaces/BoolInterface";
+
+// Internal Imports
+import request from "@/lib/NoExceptRequestLib";
 
 
 export default function Reflector(){
@@ -17,7 +19,7 @@ export default function Reflector(){
     const saveCredentials = async () => {
 
       // Request URL
-      const requestURL = new URL('/internal/store-credentials', window.location.origin);
+      const requestURL = new URL('/internal/login-credentials', window.location.origin);
 
       // POST Request
       const response: Response | null = await request(requestURL.toString(), {
@@ -28,11 +30,7 @@ export default function Reflector(){
         })
       });
 
-      if(response?.status === 200){
-        const data: Bool | null = await response.json() as Bool;
-        window.location.href = `/authenticated/projects${data?.elevate ? "?settings=true": ""}`;
-      }
-      // TODO - add an else-if status === 400 and redirect the user back to their home page unsuccessfully
+      window.location.href = `/authenticated/projects`;
     }
 
     // Redirect
