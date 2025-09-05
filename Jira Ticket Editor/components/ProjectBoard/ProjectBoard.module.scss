@@ -28,7 +28,7 @@
         align-items: flex-start;
         
         // Border
-        border-bottom: 1px solid c.$line;
+        border-bottom: 1px solid c.$grayLine2;
 
         // Heading
         h1{
@@ -38,7 +38,7 @@
             margin-bottom: max(1.5vh, 15px);
 
             // Color
-            color: white;
+            color: c.$whiteText;
             background-color: transparent;
 
             // Text
@@ -68,23 +68,28 @@
             left: max(8vh, 80px);
 
             // Dimensions
-            width: max(10vh, 100px);
-            height: max(4.6vh, 46px);
+			height: max(4vh, 40px);
+
+			// Padding
+			padding: 0 max(2vh, 20px);
 
             // Border
             border-radius: max(0.5vh, 5px);
 
             // Color
-            background-color: c.$button;
-            color: c.$text;
+            background-color: c.$powderBlue1;
+            color: c.$whiteText;
 
             // Text
-            font-size: max(1.5vh, 15px);
+            font-size: max(1.4vh, 14px);
             font-weight: bold;
+
+            // Shadow
+            box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow2;
 
             &:hover{
                 // Color
-                background-color: c.$buttonHighlight;
+                background-color: c.$powderBlue2;
 
                 // Cursor
                 cursor: pointer;
@@ -93,13 +98,22 @@
             // Disabled
             &:disabled{
                 // Color
-                background-color: c.$boxGray;
+                background-color: c.$darkGray6;
+
+                // Shadow
+				box-shadow: none;
+
+                // Cursor
+                cursor: not-allowed;
             }
 
             // Disabled Hover
             &:disabled:hover{
                 // Color
-                background-color: c.$boxGray;
+                background-color: c.$darkGray6;
+
+                // Shadow
+				box-shadow: none;
 
                 // Cursor
                 cursor: not-allowed;
@@ -120,6 +134,9 @@
             // Display properties
             display: flex;
             flex-direction: column;
+
+            // Border
+            border-radius: max(0.6vh, 6px);
             
             // Children
             .ticketBoard{
@@ -129,8 +146,6 @@
                 // Dimensions
                 min-height: 72.4vh;
                 min-width: max(40vh, 400px);
-                
-                background-color: c.$containerGray;
 
                 // Flex properies
                 display: flex;
@@ -138,9 +153,47 @@
                 justify-content: flex-start;
                 align-items: center;
 
+                // Color
+                background-color: c.$darkGray0;
+
                 // Border
                 border-radius: max(0.6vh, 6px);
+
+                // Last child
+                > :last-child{
+                    margin-bottom: max(1vh, 10px);
+                }
             }
         }
     }
+}
+
+
+.disabledTicketTile{
+    // Position
+    position: relative;
+    margin-top: max(1vh, 10px);
+
+    // Dimensions
+    width: calc(100% - max(4vh, 40px));
+    height: max(5vh, 50px);
+
+    // Display Properties
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    // Border
+    border-radius: max(0.4vh, 4px);
+
+    // Padding
+    padding: max(1vh, 10px);
+
+    // Color
+    color: c.$lightGrayText;
+    background-color: c.$darkGray3;
+
+    // Shadow
+    box-shadow: 0 max(1px, 0.1vh) max(5px, 0.5vh) 0 c.$blackShadow2;
 }
