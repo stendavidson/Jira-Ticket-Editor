@@ -1,0 +1,105 @@
+@use "../../../styles/constants.scss" as c;
+
+.subTaskWrapper{
+    // Position
+    position: relative;
+
+    // Dimensions
+    width: 100%;
+
+    // Display Properties
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    // Children
+    .label{
+        // Position
+        position: relative;
+        margin-bottom: max(0.3vh, 3px);
+
+        // Color
+        color: c.$lightGrayText;
+
+        // Text
+        font-size: max(1.6vh, 16px);
+        font-weight: normal;
+    }
+
+    .ticketBoard{
+        // Position
+        position: relative;
+
+        // Dimensions
+        width: 100%;
+
+        // Display Properties
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        
+        // Color
+        background-color: c.$darkGray0;
+        
+        // Border
+        border-radius: max(0.6vh, 6px);
+
+        > :last-child{
+            margin-bottom: max(1vh, 10px);
+        }
+    }
+
+    .create{
+        // Position
+        position: relative;
+        margin-right: auto;
+        margin-top: max(0.7vh, 7px);
+
+        // Dimensions
+        height: max(4vh, 40px);
+
+        // Padding
+        padding: 0 max(2vh, 20px);
+
+        // Border
+        border-radius: max(0.5vh, 5px);
+
+        // Color
+        color: c.$whiteText;
+        background-color: c.$powderBlue1;
+        
+        // Text
+        font-size: max(1.4vh, 14px);
+        font-weight: bold;
+
+        // Shadow
+        box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow2;
+
+        // Hover
+        &:hover{
+            // Color
+            background-color: c.$powderBlue2;
+
+            // Cursor
+            cursor: pointer;
+        }
+
+        // Disabled
+        &:disabled{
+            // Color
+            background-color: c.$darkGray6;
+        }
+
+        // Disabled Hover
+        &:disabled:hover{
+            // Color
+            background-color: c.$darkGray6;
+
+            // Cursor
+            cursor: not-allowed;
+        }
+    }
+}
+
