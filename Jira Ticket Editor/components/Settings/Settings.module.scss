@@ -16,7 +16,7 @@
     z-index: 200;
 
     // Color
-    background: rgba(0, 0, 0, 0.5);
+    background: c.$blackOverlay;
 
     // Children
     .popup {
@@ -36,13 +36,13 @@
 		padding: 20px 0px;
 	
 		// Border
-		border-radius: min(1vh, 10px);
+        border-radius: max(0.5vh, 5px);
 	
 		// Color
-		background-color: c.$containerGray;
+		background-color: c.$darkGray3;
 		
 		// Shadow
-		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.5);
+		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow3;
 	
 		// Children
 		.closeButton {
@@ -51,23 +51,22 @@
 			top: max(0.5vh, 5px);
 			right: max(1.2vh, 12px);
 
+			// Dimensions
+			height: max(2.5vh, 25px);
+			width: max(2.5vh, 25px);
+
 			// Border
 			border: none;
 
 			// Color
 			background: transparent;
-			color: c.$boxGray;
+			color: c.$darkGray5;
 			
 			// Text
 			font-size: max(2.4vh, 24px);
 
 			// Cursor
-			cursor: pointer;    
-
-			&:hover {
-				//Color
-				color: c.$boxGrayHighlight;
-			}
+			cursor: pointer;
 		}
 		
 		.userBar{
@@ -86,7 +85,7 @@
 			align-items: center;
 
 			// Color
-			background-color: #666666;
+			background-color: c.$darkGray5;
 
 			// Children
 			.avatar{
@@ -124,14 +123,93 @@
 			}		
 		}
 
+		.inputContainer{
+			// Position
+			position: relative;
+			top: 12%;
+
+			// Dimensions
+			width: 100%;
+
+			// Display Properties
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+
+			// Children
+			.inputFieldContainer{
+				// Position
+				position: relative;
+
+				// Dimensions
+				width: 90%;
+
+				// Display Properties
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.label{
+				// Position
+				position: relative;
+				margin-bottom: max(0.3vh, 3px);
+
+				// Text
+				font-size: max(1.4vh, 14px);
+			}
+
+			.inputField{
+				// Position
+				position: relative;
+				margin-bottom: max(2vh, 20px);
+
+				// Dimensions
+				width: calc(100% - max(1.6vh, 16px));
+				height: max(1.7vh, 17px);
+
+				// Padding
+            	padding: max(1.2vh, 12px) max(0.8vh, 8px) max(1.2vh, 12px) max(0.8vh, 8px);
+
+				// Border
+				border-radius: max(0.4vh, 4px);
+				border: 1px solid c.$grayLine2;
+
+				// Color
+				background-color: c.$darkGray1 !important;
+
+				// Text
+				font-size: max(1.4vh, 14px);
+
+				// Resize
+				resize: none;
+
+				// Overflow
+				overflow: hidden;
+			
+				// Placeholder
+				&::placeholder{
+					// Color
+					color: c.$darkGray9;
+				}
+
+				// Focus
+				&:focus{
+					// Border
+					border: 1px solid c.$powderBlue2;
+				}
+			}
+		}
+
 		.authButton{
 			// Position
 			position: absolute;
-			bottom: max(1.2vh, 12px);
-			right: max(1.2vh, 12px);
+			bottom: 6%;
+			right: 5%;
 
 			// Dimensions
-			height: max(4.5vh, 45px);
+			height: max(4vh, 40px);
 
 			// Padding
 			padding: 0 max(2vh, 20px);
@@ -140,23 +218,42 @@
 			border-radius: max(0.5vh, 5px);
 
 			// Color
-			background-color: c.$button;
+			background-color: c.$powderBlue1;
 
+			// Text
+            font-size: max(1.4vh, 14px);
+            font-weight: bold;
+			
 			// Shadow
-			box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.2);
+			box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow1;
 
+			// Hover
 			&:hover{
 				// Color
-				background-color: c.$buttonHighlight;
+				background-color: c.$powderBlue2;
 
 				// Cursor
 				cursor: pointer;
 			}
 
+			// Disabled
 			&:disabled{
 				// Color
-				color: c.$boxGray;
-				background-color: c.$containerGrayHighlight;
+				color: c.$lightGrayText;
+				background-color: c.$darkGray6;
+
+				// Shadow
+				box-shadow: none;
+
+				// Cursor
+				cursor: default;
+			}
+
+			// Disabled hover
+			&:disabled:hover{
+				// Color
+				color: c.$lightGrayText;
+				background-color: c.$darkGray6;
 
 				// Shadow
 				box-shadow: none;
