@@ -28,7 +28,7 @@
         align-items: flex-start;
         
         // Border
-        border-bottom: 1px solid c.$line;
+        border-bottom: 1px solid c.$grayLine;
 
         // Heading
         h1{
@@ -38,7 +38,7 @@
             margin-bottom: max(1.5vh, 15px);
 
             // Color
-            color: white;
+            color: c.$whiteText;
             background-color: transparent;
 
             // Text
@@ -84,7 +84,7 @@
                 min-height: 78vh;
                 min-width: max(40vh, 400px);
                 
-                background-color: c.$containerGray;
+                background-color: c.$darkGray0;
 
                 // Flex properies
                 display: flex;
@@ -95,6 +95,12 @@
                 // Border
                 border-radius: max(0.6vh, 6px);
 
+                // Last child
+                > :last-child{
+                    margin-bottom: max(1vh, 10px);
+                }
+
+                // Children
                 textarea{
                     // Position
                     position: relative;
@@ -108,7 +114,7 @@
                     padding: max(0.7vh, 7px);
 
                     // Border
-                    border: 1px solid c.$line;
+                    border: 1px solid c.$grayLine;
                     border-radius: max(0.5vh, 5px);
 
                     // Text
@@ -120,8 +126,43 @@
                     
                     // Overflow
                     overflow: hidden;
+
+                    // Hover
+                    &:focus{
+                        // Color
+                        border: 1px solid c.$powderBlue2;
+                    }
                 }
             }
         }
     }
+}
+
+
+.disabledTicketTile{
+    // Position
+    position: relative;
+    margin-top: max(1vh, 10px);
+
+    // Dimensions
+    width: calc(100% - max(4vh, 40px));
+    height: max(5vh, 50px);
+
+    // Display Properties
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    // Border
+    border-radius: max(0.4vh, 4px);
+
+    // Padding
+    padding: max(1vh, 10px);
+
+    // Color
+    background-color: c.$darkGray2;
+
+    // Shadow
+    box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
 }

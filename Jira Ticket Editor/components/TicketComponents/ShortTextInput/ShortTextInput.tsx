@@ -5,11 +5,11 @@ import styles from "./ShortTextInput.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
-export default function ShortTextInput({className, fontSize, issueID, keyName, name, operations, defaultValue}: {className: string, fontSize: number, issueID: string, keyName: string, name?: string, operations: string[],  defaultValue: string}) {
+export default function ShortTextInput({className, fontSize, issueID, keyName, name, operations, defaultValue}: {className?: string, fontSize: number, issueID: string, keyName: string, name?: string, operations: string[],  defaultValue: string}) {
 
   // State Values
   const [initial, setInitial] = useState<string>(defaultValue ?? "");
@@ -34,7 +34,7 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
    * 
    * @returns The success of the PUT request
    */
-  async function setInIssue(): Promise<boolean> {
+  async function setInIssue(textInput: string): Promise<boolean> {
 
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
@@ -44,7 +44,7 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
     // PUT Request body
     const body: any = {}
     body.fields = {};
-    body.fields[keyName] = (inputValue !== "" ? inputValue : null);
+    body.fields[keyName] = (textInput !== "" ? textInput : null);
 
     // Update Request
     const response = await request(url.toString(), {
@@ -68,20 +68,22 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
    */
   function inputKeyHandler(ev: React.KeyboardEvent<HTMLTextAreaElement>): void {
 
+    const inputElement: HTMLInputElement = ev.target as HTMLInputElement;
+
     // Submit text on "Enter"
     if (ev.key === "Enter") {
 
       // Leave field
-      ref.current!.blur();
+      inputElement.blur();
 
       // Prevent double handling
       ev.preventDefault();
 
       // Prevent unnecessary re-renders
-      if(inputValue !== initial){
+      if(inputElement.value !== initial){
 
         // Update text field
-        setInIssue().then((success: boolean) => {
+        setInIssue(inputElement.value).then((success: boolean) => {
           if(success){
             context?.setUpdateIndicator(issueID);
             setInitial(inputValue);
@@ -104,7 +106,7 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
     if (inputValue !== initial) {
       
       // Update text field
-      setInIssue().then((success: boolean) => {
+      setInIssue(inputValue).then((success: boolean) => {
         if(success){
           context?.setUpdateIndicator(issueID);
           setInitial(inputValue);
@@ -159,7 +161,7 @@ export default function ShortTextInput({className, fontSize, issueID, keyName, n
 
 
   return (
-    <div className={`${styles.fieldEditor} ${className || ""}`}>
+    <div className={`${styles.fieldEditor} ${className ?? ""}`}>
       {name && (
         <h1 className={styles.label}>{name}</h1>
       )}

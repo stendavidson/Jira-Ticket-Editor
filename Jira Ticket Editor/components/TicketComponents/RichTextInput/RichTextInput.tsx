@@ -1,20 +1,20 @@
 
 // Import styles
-import './RichTextInput.css';
 import styles from './RichTextInput.module.scss';
 
 // External imports
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 
 
 // Internal Imports
-import { parseADFtoHTML, parseHTMLtoADF, stringToHTML, RichTextInterface } from "../../../lib/parser";
+import { parseADFtoHTML, parseHTMLtoADF, stringToHTML } from "@/lib/QuillLib/ParserLib";
 import { AttachmentInterface } from '@/interfaces/AttachementInterface';
-import request from '@/lib/nothrow_request';
+import request from '@/lib/NoExceptRequestLib';
 import { TicketContext } from '@/contexts/TicketContext';
-import './QuillCustomizations';
-import { imageHandler } from './QuillUtils';
+import '@/lib/QuillLib/QuillCustomizations';
+import { imageHandler } from '@/lib/QuillLib/QuillUtils';
+import { RichTextInterface } from '@/interfaces/RichTextInterface';
 
 
 /**
@@ -22,7 +22,7 @@ import { imageHandler } from './QuillUtils';
  */
 const fullToolbar = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code'],
+  ['bold', 'italic', 'underline', 'strike', 'code'],
   [{ color: [] }],
   [{ script: 'sub' }, { script: 'super' }],
   [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
@@ -31,10 +31,10 @@ const fullToolbar = [
 ];
 
 
-export default function RichTextInput({ className, issueID, keyName, name, operations, attachments = [], defaultValue = null  }: { className: string, issueID: string, keyName: string, name: string, operations: string[], attachments: AttachmentInterface[], defaultValue: RichTextInterface | null }) {  
+export default function RichTextInput({ className, issueID, keyName, name, operations, attachments = [], defaultValue = null }: { className?: string, issueID: string, keyName: string, name: string, operations: string[], attachments: AttachmentInterface[], defaultValue: RichTextInterface | null }) {  
 
   // State values
-  const [initial, setInitial] = useState("");
+  const [initialValue, setInitialValue] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [focused, setFocused] = useState(false);
 
@@ -115,14 +115,14 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
   function updateHandler(){
 
     // Early exit
-    if(initial !== inputValue){
+    if(initialValue !== inputValue){
 
       setInIssue().then((success: boolean) => {
         if(success){
           context?.setUpdateIndicator(issueID);
-          setInitial(inputValue);
+          setInitialValue(inputValue);
         }else{
-          setInputValue(initial);
+          setInputValue(initialValue);
         }
       })
 
@@ -142,19 +142,15 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
   useEffect(() => {
 
     const quillHTML = defaultValue ? parseADFtoHTML(defaultValue.content, attachments) : "";
-    setInitial(quillHTML);
+    setInitialValue(quillHTML);
     setInputValue(quillHTML);
+    ;
 
   }, [defaultValue, attachments])
-
-
-  useEffect(() => {
-    console.log(inputValue);
-  }, [inputValue])
   
 
   return (
-    <div className={`${styles.fieldEditor} ${className || ''}`}>
+    <div className={`${styles.fieldEditor} ${className ?? ''}`}>
       {name && (
         <h1 className={styles.label}>{name}</h1>
       )}
@@ -175,21 +171,6 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
         className={`${styles.inputField} ${focused ? styles.focused : ''}`}
         style={{ display: focused ? 'block' : 'none' }}
         tabIndex={-1}
-        onBlur={(ev: React.FocusEvent<HTMLDivElement>) => {
-
-          // Prevent "blur" when images are being added
-          if (onBlurRef.current) {
-
-            const nextFocused = ev.relatedTarget as Node | null;
-            const currentNode = fieldRef.current;
-
-            if (currentNode && (!nextFocused || !currentNode.contains(nextFocused))) {
-              setFocused(false);
-              updateHandler();
-            }
-          }
-
-        }}
         ref={fieldRef}
       >
         <ReactQuill
@@ -201,6 +182,33 @@ export default function RichTextInput({ className, issueID, keyName, name, opera
           ref={quillRef}
         />
       </div>
+      {/* Comment Creator's Control Buttons */}
+      {focused && (
+        <div className={styles.buttonContainer}>
+          {(inputValue !== "" && inputValue !== "<p><br></p>" && inputValue !== initialValue) && (
+            <button 
+              className={styles.saveButton} 
+              type="button" 
+              onMouseDown={() => {
+                setFocused(false);
+                updateHandler();
+              }}
+            >
+              Save
+            </button>
+          )}
+          <button 
+            className={styles.cancelButton} 
+            type="button" 
+            onMouseDown={() => {
+              setFocused(false);
+              setInputValue(initialValue);
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 }

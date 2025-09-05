@@ -38,6 +38,9 @@
         // Padding
         padding: 0;
 
+        // Color
+        color: c.$lightGrayText;
+
         // Text
         font-size: max(1.6vh, 16px);
         font-weight: normal;
@@ -64,7 +67,7 @@
 
         // Border
         border-radius: max(0.4vh, 4px);
-        border: 1px solid c.$containerGray;
+        border: 1px solid c.$darkGray2;
 
         // Overflow
         overflow-y: visible;
@@ -72,16 +75,16 @@
         // Hover
         &:hover{
             // Color
-            background-color: c.$containerGrayHighlight;
+            background-color: c.$darkGray3;
         }
 
         // Custom Focus
         &.focused{
             // Color
-            background-color: rgb(68, 68, 68);
+            background-color: c.$darkGray1;
 
             // Border
-            border: 1px solid rgb(26, 131, 183);
+            border: 1px solid c.$powderBlue2;
         }
 
         // Children
@@ -102,6 +105,9 @@
 
             // Border
             border-radius: max(0.4vh, 4px);
+
+            // Color
+            color: c.$lightGrayText;
             
             // Text
             font-size: max(1.4vh, 14px);
@@ -112,115 +118,7 @@
             // Placeholder
             &::placeholder{
                 // Color
-                color: white
-            }
-        }
-
-        .verticalContainer{
-            // Position
-            position: absolute;
-            right: 0;
-
-            // Dimensions
-            height: max(4vh, 40px);
-
-            // Display Properties
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            // Custom display
-            &.showControls{
-                // Display properties
-                display: flex;
-            }
-            
-            // Children
-            .increaseButton{
-                // Position
-                position: absolute;
-                top: max(0.4vh, 4px);
-                right: max(0.4vh, 4px);
-
-                // Dimensions
-                width: max(3vh, 30px);
-                height: max(1.4vh, 14px);
-
-                // Display Properties
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-
-                // Border
-                border-top-right-radius: max(0.3vh, 3px);
-                border-top-left-radius: max(0.3vh, 3px);
-
-                // Color
-                background-color: c.$boxGray;
-
-                // Hover
-                &:hover{
-                    // Color
-                    background-color: c.$boxGrayHighlight;
-                }
-
-                // Children
-                & svg{
-                    // Position
-                    position: relative;
-
-                    // Dimensions
-                    width: max(1.4vh, 14px);
-                    height: max(1.4vh, 14px);
-
-                    // Color
-                    color: white;
-                }
-            }
-
-            .decreaseButton{
-                // Position
-                position: absolute;
-                bottom: max(0.4vh, 4px);
-                right: max(0.4vh, 4px);
-
-                // Dimensions
-                width: max(3vh, 30px);
-                height: max(1.4vh, 14px);
-
-                // Display Properties
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-
-                // Border
-                border-bottom-right-radius: max(0.3vh, 3px);
-                border-bottom-left-radius: max(0.3vh, 3px);
-
-                // Color
-                background-color: c.$boxGray;
-
-                // Hover
-                &:hover{
-                    // Color
-                    background-color: c.$boxGrayHighlight;
-                }
-
-                // Children
-                & svg{
-                    // Position
-                    position: relative;
-
-                    // Dimensions
-                    width: max(1.4vh, 14px);
-                    height: max(1.4vh, 14px);
-
-                    // Color
-                    color: white;
-                }
+                color: c.$lightGrayText;
             }
         }
     }

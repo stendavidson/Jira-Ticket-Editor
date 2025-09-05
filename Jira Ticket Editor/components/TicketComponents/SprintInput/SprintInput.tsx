@@ -5,7 +5,7 @@ import styles from "./SprintInput.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import { SprintInterface, SprintListResponse }  from "./SprintInterface";
 import { BoardResponseInterface } from "./BoardInterface";
@@ -72,7 +72,7 @@ export default function SprintInput({ className, projectID, issueID, keyName, na
       boardResponse = (await response?.json()) as BoardResponseInterface;
       
       // Add board IDs
-      for(let value of boardResponse.values){
+      for(const value of boardResponse.values){
         boardIDs.push(value.id);
       }
     }
@@ -145,7 +145,7 @@ export default function SprintInput({ className, projectID, issueID, keyName, na
     // Valid potential sprints are retrieved
     let sprints: SprintInterface[] = [];
 
-    for(let boardID of boardIDs){
+    for(const boardID of boardIDs){
       sprints = sprints.concat(await getSprint(boardID));
     }
 

@@ -38,6 +38,9 @@
         // Padding
         padding: 0;
 
+        // Color
+        color: c.$lightGrayText;
+
         // Text
         font-size: max(1.6vh, 16px);
         font-weight: normal;
@@ -77,16 +80,22 @@
             border-radius: max(0.4vh, 4px);
             
             // Color
-            background-color: c.$button;
+            background-color: c.$powderBlue1;
 
             // Text
             font-size: max(1.4vh, 14px);
             font-weight: bold;
 
+            // Shadow
+            box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow2;
+
             // Hover
             &:hover{
                 // Color
-                background-color: c.$buttonHighlight;
+                background-color: c.$powderBlue2;
+
+                // Cursor
+				cursor: pointer;
             }
         }
     }
@@ -111,33 +120,33 @@
     align-items: center;
 
     // Color
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: c.$blackOverlay;
 
     // Children
     .popup{
         // Position
 		position: relative;
+        left: 0;
 		bottom: 7%;
 	
 		// Dimensions
-		height: max(45vh, 450px);
+		height: max(46vh, 460px);
 		width: max(35vh, 350px);
-	
-		// Display Properties
-		display: flex;
-		flex-direction: column;
 	
 		// Padding
 		padding: max(2vh, 20px);
 	
 		// Border
-		border-radius: min(1vh, 10px);
+        border-radius: max(0.5vh, 5px);
 	
 		// Color
-		background-color: c.$containerGray;
+		background-color: c.$darkGray2;
+
+        // Overflow
+        overflow: hidden;
 		
 		// Shadow
-		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.5);
+		box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow3;
 
         // Children
         .popupTitle{
@@ -147,222 +156,252 @@
 
             // Dimensions
             width: 100%;
-
+            min-height: max(2vh, 20px);
+            max-height: max(2vh, 20px);
+            
             // Text
             font-size: max(1.8vh, 18px);
         }
 
-        .fieldContainer{
+        .content{
             // Position
-            position: relative;
-            margin-bottom: max(2vh, 20px);
+		    position: relative;
 
             // Dimensions
             width: 100%;
+            max-height: calc(100% - max(9vh, 90px));
 
             // Display Properties
             display: flex;
             flex-direction: column;
-        }
-
-        .fieldLabel{
-            // Position
-            position: relative;
-            margin-bottom: max(0.3vh, 3px);
-
-            // Dimensions
-            width: 100%;
-            
-            // Text
-            text-align: left;
-            font-size: max(1.2vh, 12px);
-            font-weight: bold;
-        }
-
-        .inputField{
-            // Position
-            position: relative;
-
-            // Dimensions
-            width: calc(100% - max(1.6vh, 16px));
-            min-height: max(4vh, 40px);
 
             // Padding
-            padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
-
-            // Border
-            border-radius: max(0.4vh, 4px);
-            border: 1px solid c.$line;
-
-            // Color
-            background-color: rgb(68, 68, 68) !important;
-
-            // Text
-            font-size: max(1.4vh, 14px);
-
-            // Resize
-            resize: none;
+            padding-right: max(0.5vh, 5px);
 
             // Overflow
-            overflow: visible;
-
-            // Placeholder
-            &::placeholder{
-                // Color
-                color: white;
-            }
-        }
-
-        .dateTimeField{
-            // Position
-            position: relative;
-            margin-right: max(1vh, 10px);
-
-            // Dimensions
-            min-height: max(4vh, 40px);
-            width: calc(100% - max(1.6vh, 16px));
-
-            // Display Properties
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: center;   
-            
-            // Padding
-            padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
-
-            // Border
-            border-radius: max(0.4vh, 4px);
-            border: 1px solid c.$line;
-
-            // Overflow
-            overflow-y: visible;
+            overflow-x: hidden;
+            overflow-y: auto;
 
             // Children
-            .inputDateField{
+            .fieldContainer{
+                // Position
+                position: relative;
+                margin-bottom: max(2vh, 20px);
+
+                // Dimensions
+                width: 100%;
+
+                // Display Properties
+                display: flex;
+                flex-direction: column;
+
+                // Last
+                &:last-child{
+                    margin-bottom: 0;
+                }
+            }
+
+            .fieldLabel{
+                // Position
+                position: relative;
+                margin-bottom: max(0.3vh, 3px);
+
+                // Dimensions
+                width: 100%;
+                
+                // Text
+                text-align: left;
+                font-size: max(1.2vh, 12px);
+                font-weight: bold;
+            }
+
+            .inputField{
                 // Position
                 position: relative;
 
                 // Dimensions
-                flex-grow: 1;
-                flex-shrink: 1;
-                max-width: 55%;
-                height: max(4vh, 40px);
-
-                // Display Properties
-                display: flex;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                justify-content: flex-start;
-                align-items: center;
+                width: calc(100% - max(1.6vh, 16px));
+                min-height: max(4vh, 40px);
 
                 // Padding
-                padding-right: max(0.4vh, 4px);
+                padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
 
                 // Border
-                border-top-left-radius: max(0.4vh, 4px);
-                border-bottom-left-radius: max(0.4vh, 4px);
-                
-                // Text
-                font-size: max(1.4vh, 14px);
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                border-radius: max(0.4vh, 4px);
+                border: 1px solid c.$grayLine2;
 
-                // Placeholder
-                &::placeholder{
-                    // Color
-                    color: white
-                }
-
-                // Focus
-                &:focus{
-                    // Border
-                    border-right: 1px solid c.$line;
-                }
-            }
-
-            .inputTimeField{
-                // Position
-                position: relative;
-
-                // Dimensions
-                flex-grow: 1;
-                flex-shrink: 1;
-                max-width: 45%;
-                height: max(4vh, 40px);
-
-                // Display Properties
-                display: flex;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                justify-content: flex-start;
-                align-items: center;
-
-                // Padding
-                padding-left: max(1vh, 10px);
-
-                // Border
-                border-top-right-radius: max(0.4vh, 4px);
-                border-bottom-right-radius: max(0.4vh, 4px);
-                
-                // Text
-                font-size: max(1.4vh, 14px);
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-
-                // Placeholder
-                &::placeholder{
-                    // Color
-                    color: white
-                }
-
-                // Focus
-                &:focus{
-                    // Border
-                    border-left: 1px solid c.$line;
-                }
-            }
-        }
-
-        .inputTextField{
-            // Position
-            position: relative;
-
-            // Dimensions
-            width: 100%;
-            min-height: max(18vh, 180px);
-            
-            // Border
-            border-radius: max(0.4vh, 4px);
-            border: 1px solid c.$line;
-
-            // Color
-            background-color: rgb(68, 68, 68) !important;
-
-            // Text
-            font-size: max(1.4vh, 14px);
-
-            // Resize
-            resize: none;
-
-            // Overflow
-            overflow: visible;
-
-            // Placeholder
-            &::placeholder{
                 // Color
-                color: white;
+                color: c.$lightGrayText;
+                background-color: c.$darkGray1 !important;
+
+                // Text
+                font-size: max(1.4vh, 14px);
+
+                // Resize
+                resize: none;
+
+                // Overflow
+                overflow: visible;
+
+                // Placeholder
+                &::placeholder{
+                    // Color
+                    color: c.$darkGray9;
+                }
+            }
+
+            .dateTimeField{
+                // Position
+                position: relative;
+                margin-right: max(1vh, 10px);
+
+                // Dimensions
+                min-height: max(4vh, 40px);
+                width: calc(100% - max(1.6vh, 16px));
+
+                // Display Properties
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;   
+                
+                // Padding
+                padding: 0 max(0.8vh, 8px) 0 max(0.8vh, 8px);
+
+                // Border
+                border-radius: max(0.4vh, 4px);
+                border: 1px solid c.$grayLine2;
+
+                // Color
+                background-color: c.$darkGray1 !important;
+
+                // Overflow
+                overflow-y: visible;
+
+                // Children
+                .inputDateField{
+                    // Position
+                    position: relative;
+
+                    // Dimensions
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                    max-width: 55%;
+                    height: max(4vh, 40px);
+
+                    // Display Properties
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    // Padding
+                    padding-right: max(0.4vh, 4px);
+
+                    // Border
+                    border-top-left-radius: max(0.4vh, 4px);
+                    border-bottom-left-radius: max(0.4vh, 4px);
+
+                    // Color
+                    color: c.$lightGrayText;
+                    
+                    // Text
+                    font-size: max(1.4vh, 14px);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    // Focus
+                    &:focus{
+                        // Border
+                        border-right: 1px solid c.$grayLine;
+                    }
+                }
+
+                .inputTimeField{
+                    // Position
+                    position: relative;
+
+                    // Dimensions
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                    max-width: 45%;
+                    height: max(4vh, 40px);
+
+                    // Display Properties
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    // Padding
+                    padding-left: max(1vh, 10px);
+
+                    // Border
+                    border-top-right-radius: max(0.4vh, 4px);
+                    border-bottom-right-radius: max(0.4vh, 4px);
+
+                    // Color
+                    color: c.$lightGrayText;
+                    
+                    // Text
+                    font-size: max(1.4vh, 14px);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    // Focus
+                    &:focus{
+                        // Border
+                        border-left: 1px solid c.$grayLine;
+                    }
+                }
+            }
+
+            .inputTextField{
+                // Position
+                position: relative;
+
+                // Dimensions
+                width: 100%;
+                min-height: max(18vh, 180px);
+                
+                // Border
+                border-radius: max(0.4vh, 4px);
+                border: 1px solid c.$grayLine2;
+
+                // Color
+                color: c.$lightGrayText;
+                background-color: c.$darkGray1 !important;
+
+                // Text
+                font-size: max(1.4vh, 14px);
+
+                // Resize
+                resize: none;
+
+                // Overflow
+                overflow: visible;
+
+                // Placeholder
+                &::placeholder{
+                    // Color
+                    color: c.$darkGray9;
+                }
             }
         }
 
         .buttonContainer{
             // Position
-            position: relative;
+            position: absolute;
+            bottom: max(2vh, 20px);
+            right: max(2vh, 20px);
 
             // Dimensions
             width: 100%;
+            height: max(4vh, 40px);
 
             // Display Properties
             display: flex;
@@ -386,16 +425,19 @@
                 border-radius: max(0.4vh, 4px);
 
                 // Color
-                background-color: c.$button;
+                background-color: c.$powderBlue1;
 
                 // Text
                 font-size: max(1.4vh, 14px);
                 font-weight: 600;
 
+                // Shadow
+		        box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow2;
+
                 // Hover
                 &:hover{
                     // Color
-                    background-color: c.$buttonHighlight;
+                    background-color: c.$powderBlue2;
                 }
             }
 
@@ -419,7 +461,7 @@
                 // Hover
                 &:hover{
                     // Color
-                    background-color: c.$containerGrayHighlight;
+                    background-color: c.$darkGray5;
                 }
             }
         }
@@ -430,7 +472,7 @@
 .focused{
 
     // Border
-    border: 1px solid rgb(26, 131, 183) !important;
+    border: 1px solid c.$powderBlue2 !important;
 }
 
 // Required

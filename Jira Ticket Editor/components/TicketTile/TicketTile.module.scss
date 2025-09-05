@@ -22,18 +22,14 @@
     padding: max(1vh, 10px);
 
     // Color
-    background-color: c.$boxGray;
+    background-color: c.$darkGray2;
 
     // Shadow
-    box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 rgba(0, 0, 0, 0.3);
-
-    &:last-child{
-        margin-bottom: max(1vh, 10px);
-    }
+    box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow3;
 
     &:hover{
         // Color
-        background-color: c.$containerGrayHighlight;
+        background-color: c.$darkGray3;
         
         // Cursor
         cursor: pointer
@@ -41,7 +37,7 @@
 
     &:active{
         // Color
-        background-color: c.$containerGrayHighlight;
+        background-color: c.$darkGray3;
     }
 
     // Children
@@ -71,7 +67,7 @@
 
             // Color
             background-color: transparent;
-            color: c.$text;
+            color: c.$lightGrayText;
 
             // Text
             font-weight: bold;
@@ -104,7 +100,7 @@
             .ticketNumber{
                 // Color
                 background-color: transparent;
-                color: c.$text;
+                color: c.$lightGrayText;
 
                 // Text
                 font-size: max(1.1vh, 11px);
@@ -156,5 +152,40 @@
 
 .highlight{
     // Color
-    background-color: c.$containerGrayHighlight;
+    background-color: c.$darkGrayBlue1;
+
+    // Hover
+    &:hover{
+        // Color
+        background-color: c.$darkGrayBlue2;
+    }
+}
+
+
+.disabledTicketTile{
+    // Position
+    position: relative;
+    margin-top: max(1vh, 10px);
+
+    // Dimensions
+    width: calc(100% - max(4vh, 40px));
+    height: max(5vh, 50px);
+
+    // Display Properties
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    // Border
+    border-radius: max(0.4vh, 4px);
+
+    // Padding
+    padding: max(1vh, 10px);
+
+    // Color
+    background-color: c.$darkGray2;
+
+    // Shadow
+    box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow3;
 }

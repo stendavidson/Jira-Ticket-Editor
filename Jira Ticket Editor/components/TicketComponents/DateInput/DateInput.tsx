@@ -5,7 +5,7 @@ import styles from "./DateInput.module.scss";
 import { useContext, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
@@ -34,7 +34,7 @@ export default function DateInput({className, issueID, keyName, name, custom, op
    * 
    * @returns The success of the PUT request
    */
-  async function setInIssue(): Promise<boolean> {
+  async function setInIssue(inputDate: string): Promise<boolean> {
 
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
@@ -44,7 +44,7 @@ export default function DateInput({className, issueID, keyName, name, custom, op
     // PUT Request Body
     const body: any = {}
     body.fields = {};
-    body.fields[keyName] = (inputValue !== "" ? formatDate(inputValue) : null);
+    body.fields[keyName] = (inputDate !== "" ? formatDate(inputDate) : null);
 
     // Update Request
     const response = await request(url.toString(), {
@@ -111,11 +111,13 @@ export default function DateInput({className, issueID, keyName, name, custom, op
    */
   function inputKeyHandler(ev: React.KeyboardEvent<HTMLInputElement>): void {
 
+    const inputElement: HTMLInputElement = ev.target as HTMLInputElement;
+
     // Submit text on "Enter"
     if (ev.key === "Enter") {
 
       // Leave field
-      ref.current!.blur();
+      inputElement.blur();
 
       // Prevent double handling
       ev.preventDefault();
@@ -124,7 +126,7 @@ export default function DateInput({className, issueID, keyName, name, custom, op
       if(inputValue !== initial){
 
         // Update text field
-        setInIssue().then((success: boolean) => {
+        setInIssue(inputElement.value).then((success: boolean) => {
           if(success){
             context?.setUpdateIndicator(issueID);
             setInitial(inputValue);
@@ -147,7 +149,7 @@ export default function DateInput({className, issueID, keyName, name, custom, op
     if (inputValue !== initial) {
       
       // Update text field
-      setInIssue().then((success: boolean) => {
+      setInIssue(inputValue).then((success: boolean) => {
         if(success){
           context?.setUpdateIndicator(issueID);
           setInitial(inputValue);

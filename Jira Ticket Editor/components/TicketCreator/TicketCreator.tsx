@@ -5,27 +5,24 @@ import styles from "./TicketCreator.module.scss";
 import { useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import IssueTypeInterface from "@/interfaces/IssueTypeInterface";
 import TicketCreationInterface from "./TicketCreationInterface";
 
 
 
-export default function TicketCreator({className, projectID, issueTypes, ticketIDs, setTicketIDs}: {className: string, projectID?: string, issueTypes: IssueTypeInterface[], ticketIDs: {id : string}[], setTicketIDs: (ticketIDs: {id : string}[]) => void}) {
+export default function TicketCreator({className, projectID, issueTypes, addIssue, subTask, parentID}: {className: string, projectID?: string, issueTypes: IssueTypeInterface[], addIssue: (issueID: string) => void, subTask: boolean, parentID?: string}) {
 
   // State Values
   const [createTicket, setCreateTicket] = useState<boolean>(false);
-
   const [inputSummary, setInputSummary] = useState<string>("");
   const [summaryFocused, setSummaryFocused] = useState<boolean>(false);
-  
-  const [inputValue, setInputValue] = useState<string>("");
-  const [selectedOption, setSelectedOption] = useState<IssueTypeInterface | null>(issueTypes[0]);
+  const [issueTypeSearchValue, setIssueTypeSearchValue] = useState<string>("");
+  const [selectedIssueType, setSelectedIssueType] = useState<IssueTypeInterface | null>(issueTypes[0]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [permittedValues, setPermittedValues] = useState<IssueTypeInterface[]>(issueTypes);
   const [filteredPermittedValues, setFilteredPermittedValues] = useState<IssueTypeInterface[]>(issueTypes);
-  const [focused, setFocused] = useState<boolean>(false);
-  
+  const [issueTypeFocused, setIssueTypeFocused] = useState<boolean>(false);
 
   // Refs
   const summaryRef = useRef<HTMLInputElement | null>(null);
@@ -58,10 +55,17 @@ export default function TicketCreator({className, projectID, issueTypes, ticketI
         },
         summary: inputSummary,
         issuetype: {
-          id: selectedOption!.id
+          id: selectedIssueType!.id
         }
       }
     }    
+
+    // Handle subtasks
+    if(subTask){
+      body.fields.parent = {
+        id: parentID
+      }
+    }
 
     // Update Request
     const response = await request(url.toString(), {
@@ -92,19 +96,19 @@ export default function TicketCreator({className, projectID, issueTypes, ticketI
   function submissionHandler() {    
 
     // Prevent update if required fields aren't filled
-    if (selectedOption && inputSummary !== "") {
+    if (selectedIssueType && inputSummary !== "") {
       
       // Update text field
       createIssue().then((ticketID: string | null) => {
         
         // Hide the popup & clear values
-        setSelectedOption(null);
+        setSelectedIssueType(issueTypes[0]);
         setInputSummary("");
         setCreateTicket(false);
 
         // Update the ticket
         if(ticketID){
-          setTicketIDs([...ticketIDs, {id: ticketID}]);
+          addIssue(ticketID);
         }
       });
     }
@@ -138,12 +142,12 @@ export default function TicketCreator({className, projectID, issueTypes, ticketI
    */
   useEffect(() => {
 
-  // If pre-filtered values are present utilize
-  if(issueTypes.length > 0){
-    setSelectedOption(issueTypes[0]);
-    setPermittedValues(issueTypes);
-    setFilteredPermittedValues(issueTypes);
-  }
+    // If pre-filtered values are present utilize
+    if(issueTypes.length > 0){
+      setSelectedIssueType(issueTypes[0]);
+      setPermittedValues(issueTypes);
+      setFilteredPermittedValues(issueTypes);
+    }
 
   }, [issueTypes]);
 
@@ -173,34 +177,41 @@ export default function TicketCreator({className, projectID, issueTypes, ticketI
 
             {/* "Issue Type" field */}
             <div className={styles.fieldContainer}>
-              <h1 className={styles.fieldLabel}>{`${(selectedOption) ? "*" : ""}`}Issue Type</h1>
-              <div className={`${styles.fieldButton}`}>
+              <label className={styles.fieldLabel}>{`${selectedIssueType === null ? "*" : ""}`}Issue Type</label>
+              <div 
+                className={`${styles.fieldButton} ${issueTypeFocused ? styles.focused : ""} ${(issueTypeFocused && selectedIssueType === null) ? styles.warning : ""}`}
+                >
+                <img 
+                  className={styles.icon} 
+                  src={selectedIssueType?.iconUrl ?? "./../Transparent.png"}
+                  alt={`An issue type icon - ${selectedIssueType?.name ?? "Unknown"}`} />
                 <input 
-                  className={`${styles.inputDropdownField} ${focused ? styles.focused : ""} ${(focused && selectedOption === null) ? styles.warning : ""}`} 
+                  className={`${styles.inputDropdownField}`} 
                   type="text" 
-                  value={inputValue} 
-                  placeholder={selectedOption?.name ?? "None"}
+                  value={issueTypeSearchValue} 
+                  placeholder={selectedIssueType?.name ?? "None"}
                   onFocus={() => {
-                    setFocused(true);
+                    setIssueTypeFocused(true);
                     setShowDropdown(true);
                   }}
                   onBlur={() => {
-                    setInputValue("");
+                    setIssueTypeSearchValue("");
                     setFilteredPermittedValues(permittedValues);
-                    setFocused(false);
+                    setIssueTypeFocused(false);
                     setShowDropdown(false);
                   }}
                   onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
-                    setInputValue(ev.target.value);
+                    setIssueTypeSearchValue(ev.target.value);
                     filterDropdown(ev.target.value);
                   }}
                 />
                 <div className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`}>
                   {
                     filteredPermittedValues.map((option: IssueTypeInterface) => {
-                        if(selectedOption?.name !== option.name && option.hierarchyLevel > -1){
+                        if(selectedIssueType?.name !== option.name && ((subTask && option.hierarchyLevel === -1) || (!subTask && option.hierarchyLevel > -1))){
                           return (
-                            <div className={styles.dropdownOption} onMouseDown={() => {setSelectedOption(option)}} key={option.name}>
+                            <div className={styles.dropdownOption} onMouseDown={() => {setSelectedIssueType(option)}} key={option.name}>
+                              <img src={option.iconUrl} className={styles.icon} alt={`An issue type icon - ${option.name}`}/>
                               <p className={styles.dropdownOptionName}>{option.name}</p>
                             </div>
                           )

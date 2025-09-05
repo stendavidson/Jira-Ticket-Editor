@@ -5,7 +5,7 @@ import styles from "./TimeEstimateInput.module.scss";
 import { useContext, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
@@ -35,7 +35,7 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
    * 
    * @returns The success of the PUT request
    */
-  async function setInIssue(): Promise<boolean> {
+  async function setInIssue(time: string): Promise<boolean> {
 
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
@@ -46,7 +46,7 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
     const body: any = {}
     body.fields = {};
     body.fields[keyName] = {
-      originalEstimate: inputValue
+      originalEstimate: time
     }
 
     // Update Request
@@ -71,11 +71,14 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
    */
   function inputKeyHandler(ev: React.KeyboardEvent<HTMLInputElement>): void {
 
+    // Input element
+    const inputElement: HTMLInputElement = ev.target as HTMLInputElement;
+
     // Submit text on "Enter"
     if (ev.key === "Enter") {
 
       // Early exit
-      if(!validateInputField(inputValue)){
+      if(!validateInputField(inputElement.value)){
         setInputValue(initial);
         return;
       }
@@ -87,13 +90,13 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
       ev.preventDefault();
 
       // Prevent unnecessary re-renders
-      if(inputValue !== initial){
+      if(inputElement.value !== initial){
 
         // Update text field
-        setInIssue().then((success: boolean) => {
+        setInIssue(inputElement.value).then((success: boolean) => {
           if(success){
             context?.setUpdateIndicator(issueID);
-            setInitial(inputValue);
+            setInitial(inputElement.value);
           }else{
             setInputValue(initial);
           }
@@ -119,7 +122,7 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
     if (inputValue !== initial) {
       
       // Update text field
-      setInIssue().then((success: boolean) => {
+      setInIssue(inputValue).then((success: boolean) => {
         if(success){
           context?.setUpdateIndicator(issueID);
           setInitial(inputValue);
@@ -167,7 +170,7 @@ export default function TimeEstimateInput({className, issueID, keyName, name, op
           type="text"
           disabled={!operations.includes("set")}
           value={inputValue}
-          placeholder="Log time e.g. 1w 2d 3h 4m"
+          placeholder="No time logged"
           onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
             setInputValue(ev.target.value);
           }}

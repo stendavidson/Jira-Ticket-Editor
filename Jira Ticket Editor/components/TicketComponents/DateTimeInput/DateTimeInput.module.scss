@@ -38,6 +38,9 @@
         // Padding
         padding: 0;
 
+        // Color
+        color: c.$lightGrayText;
+
         // Text
         font-size: max(1.6vh, 16px);
         font-weight: normal;
@@ -64,7 +67,7 @@
 
         // Border
         border-radius: max(0.4vh, 4px);
-        border: 1px solid c.$containerGray;
+        border: 1px solid c.$darkGray2;
 
         // Overflow
         overflow-y: visible;
@@ -72,16 +75,16 @@
         // Hover
         &:hover{
             // Color
-            background-color: c.$containerGrayHighlight;
+            background-color: c.$darkGray3;
         }
 
         // Custom Focus
         &.focused{
             // Color
-            background-color: rgb(68, 68, 68);
+            background-color: c.$darkGray1;
 
             // Border
-            border: 1px solid rgb(26, 131, 183);
+            border: 1px solid c.$powderBlue2;
         }
 
         // Children
@@ -108,6 +111,9 @@
             // Border
             border-top-left-radius: max(0.4vh, 4px);
             border-bottom-left-radius: max(0.4vh, 4px);
+
+            // Color
+            color: c.$lightGrayText;
             
             // Text
             font-size: max(1.4vh, 14px);
@@ -118,13 +124,13 @@
             // Placeholder
             &::placeholder{
                 // Color
-                color: white
+                color: c.$lightGrayText;
             }
 
             // Focus
             &:focus{
                 // Border
-                border-right: 1px solid rgb(26, 131, 183);
+                border-right: 1px solid c.$powderBlue2;
             }
         }
 
@@ -151,6 +157,9 @@
             // Border
             border-top-right-radius: max(0.4vh, 4px);
             border-bottom-right-radius: max(0.4vh, 4px);
+
+            // Color
+            color: c.$lightGrayText;
             
             // Text
             font-size: max(1.4vh, 14px);
@@ -161,13 +170,13 @@
             // Placeholder
             &::placeholder{
                 // Color
-                color: white
+                color: c.$lightGrayText;
             }
             
             // Focus
             &:focus{
                 // Border
-                border-left: 1px solid rgb(26, 131, 183);
+                border-left: 1px solid c.$powderBlue2;
             }
         }
     }

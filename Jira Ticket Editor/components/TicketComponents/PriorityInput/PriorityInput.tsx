@@ -5,9 +5,10 @@ import styles from "./PriorityInput.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import { PriorityResponseInterface, PriorityInterface } from "./PriorityInterface";
+import { checkIfLoaderVisibleAndFetch } from "@/lib/DropdownLib";
 
 
 export default function PriorityInput({ className, projectID, issueID, keyName, name, operations, defaultValue, allowedValues = []}: { className?: string, projectID: string, issueID: string, keyName: string, name: string, operations: string[], defaultValue: PriorityInterface, allowedValues: PriorityInterface[]}){
@@ -18,15 +19,15 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [permittedValues, setPermittedValues] = useState<PriorityInterface[]>([]);
   const [filteredPermittedValues, setFilteredPermittedValues] = useState<PriorityInterface[]>([]);
-  const [startAt, setStartAt] = useState<number>(allowedValues.length > 0 ? -1 : 0);
+  const [startAt, setStartAt] = useState<number>(0);
   const [focused, setFocused] = useState<boolean>(false);
+  const [triggerLoad, setTriggerLoad] = useState<boolean>(false);
   
   // Refs
-  const ref = useRef<HTMLDivElement | null>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadDiv = useRef<HTMLDivElement | null>(null);
-  const initial = useRef<boolean>(true);
-  const loading = useRef<boolean>(false);
+  const requestToken = useRef<number>(0);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Contexts
   const context = useContext(TicketContext);
@@ -42,15 +43,26 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
   /**
    * This function retrives the valid options for the dropdown
    */
-  async function getDropdownOptions(){
+  async function getDropdownOptions(textInput: string, overrideToken: boolean = false){
 
     // Early exit
-    if(startAt === -1 || loading.current){
+    if(!overrideToken && startAt === -1){
       return;
     }
 
-    // Mark as loading
-    loading.current = true;
+    // Max results
+    const maxResults = 50;
+
+    // Set request token
+    requestToken.current++;
+    const token = requestToken.current;
+    
+    // Abort previous request
+    abortRef.current?.abort();
+
+    // Create new AbortController to exit early if necessary
+    const abortController = new AbortController();
+    abortRef.current = abortController;
 
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
@@ -58,30 +70,64 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
     url.searchParams.append("elevate", "true");
     url.searchParams.append("projectId", projectID);
     url.searchParams.append("startAt", startAt.toString());
+    url.searchParams.append("maxResults", maxResults.toString());
 
     // GET request
     const response = await request(
       url.toString(),
       {
-        method: "GET"
+        method: "GET",
+        signal: abortController.signal
       }
     );
+
+    // If the request was aborted exit early
+    if (!response){
+      setStartAt(-1);
+      return;
+    }
 
     // Process response
     let priorityResponse: PriorityResponseInterface | undefined;
     let options : PriorityInterface[] = [];
+    let filteredOptions : PriorityInterface[] = [];
 
     if(response?.status.toString().startsWith("2")){
+      
       priorityResponse = (await response?.json()) as PriorityResponseInterface;
       options = priorityResponse.values;
-      setStartAt(priorityResponse.isLast ? -1 : priorityResponse.startAt + priorityResponse.maxResults);
+      filteredOptions = options.filter((value: PriorityInterface) => {
+        return value.name.toLowerCase().includes(textInput.toLowerCase());
+      });
+
+      // Set next start index
+      if(!priorityResponse.isLast){
+        setStartAt(startAt + priorityResponse.maxResults);
+      }else{
+        setStartAt(-1)
+      }
+      
+    }
+
+    // If the request is out of date exit.
+    if (token !== requestToken.current){
+      return;
     }
   
-    // Set the field options
-    setPermittedValues(prev => [...prev, ...options]);
-    setFilteredPermittedValues(prev => [...prev, ...options.filter((value: PriorityInterface) => value.name.toLowerCase().includes(inputValue.toLowerCase()))]);
+    // Set permitted values or recurse
+    if(options.length > 0){
 
-    loading.current = false;
+      setPermittedValues(prev => [...prev, ...options]);
+
+      if(filteredOptions.length > 0){
+        setFilteredPermittedValues(prev => [...prev, ...filteredOptions]);
+      }else{
+        setTriggerLoad(prev => !prev);
+      }
+
+    }else{
+      setTriggerLoad(prev => !prev);
+    }
   }
 
 
@@ -106,7 +152,6 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
       id: option.id
     };
 
-
     // User request
     const response = await request(
       url.toString(),
@@ -120,7 +165,7 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
   }
 
 
-
+ 
   ///////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////// Callbacks //////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////
@@ -155,6 +200,7 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
       value.name.toLowerCase().includes(textInput.toLowerCase())
     )))
 
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, textInput, getDropdownOptions, true);
   }
 
 
@@ -170,79 +216,56 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
    */
   useEffect(() => {
 
-    // Prevent unnecessary re-renders
-    if(initial.current){
+    // If pre-filtered values are present utilize
+    if(allowedValues.length > 0){
 
-      initial.current = false;
+      setPermittedValues(allowedValues);
+      setFilteredPermittedValues(allowedValues);
 
-      // If pre-filtered values are present utilize
-      if(allowedValues.length > 0){
+    }else{
 
-        setPermittedValues(allowedValues);
-        setFilteredPermittedValues(allowedValues);
-
-      }else{
-
-        getDropdownOptions();
-        
-      }    
-    }
+      getDropdownOptions("", false);
+      
+    }    
 
   }, []);
 
 
-
-    /**
-   * Configure the intersection observer
+  /**
+   * Effect runs lazy loading if no items were loaded intially
    */
   useEffect(() => {
 
-    // Early exit
-    const loader = loadDiv.current;
-    const parent = parentRef.current;
+    if(allowedValues.length === 0){
+      getDropdownOptions("", false);
+    }
     
-    if(!loader || !parent){
-      return;
-    }
 
-    // Create observer
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          getDropdownOptions();
-        }
-      },
-      {
-        root: parent,
-        rootMargin: "0px 0px 150px 0px",
-        threshold: 0,
-      }
-    );
+  }, [triggerLoad]);
 
-    // Observe
-    if(loader){
-      observer.observe(loader);
-    }
 
-    // Function to remove observer
-    return () => {
-      if (loader) {
-        observer.unobserve(loader);
-      }
-    };
+  /**
+   * Effect runs lazy loading if there are NOW options to load
+   */
+  useEffect(() => {
+    
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
 
   }, [startAt, showDropdown]);
 
 
 
   return (
-    <div className={`${styles.fieldEditor} ${className ? className : ""}`} ref={ref}>
+    <div className={`${styles.fieldEditor} ${className ? className : ""}`}>
       <h1 className={styles.label}>{name}</h1>
       <div className={`${styles.fieldButton} ${focused ? styles.focused : ""}`}>
         <>
           {
             selectedOption?.name.toLowerCase().includes(inputValue.toLowerCase()) && (
-              <img src={selectedOption.iconUrl} className={styles.icon}/>
+              <img 
+                className={styles.icon}
+                src={selectedOption.iconUrl} 
+                alt={`Priority icon - ${selectedOption.name ?? "Unknown"}`}/>
             )
           }
           <input 
@@ -266,13 +289,21 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
             }}
           />
         </> 
-        <div className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`} ref={parentRef}>
+        <div 
+          className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`}
+          onScroll={() => {
+            checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
+          }}
+          ref={parentRef}>
           {operations.includes("set") && (
             filteredPermittedValues.map((option: PriorityInterface) => {
                 if(selectedOption.id !== option.id){
                   return (
                     <div className={styles.dropdownOption} onMouseDown={() => {selectOption(option)}} key={option.id}>
-                      <img src={option.iconUrl} className={styles.icon}/>
+                      <img 
+                        className={styles.icon} 
+                        src={option.iconUrl} 
+                        alt={`Priority icon - ${option.name}`}/>
                       <p className={styles.dropdownOptionName}>{option.name}</p>
                     </div>
                   )
@@ -280,7 +311,7 @@ export default function PriorityInput({ className, projectID, issueID, keyName, 
               }
             )
           )}
-          {startAt !== -1 && (
+          {(startAt !== -1 && allowedValues.length === 0) && (
             <div className={styles.invalidDropdownOption} ref={loadDiv}>
               Loading...
             </div>

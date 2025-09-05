@@ -5,12 +5,13 @@ import styles from "./UserInput.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import UserInterface from "./UserInterface";
+import { checkIfLoaderVisibleAndFetch } from "@/lib/DropdownLib";
 
 
-export default function UserInput({ className, issueID, issueKey, keyName, name, operations, defaultValue}: { className?: string, issueID: string, issueKey: string, keyName: string, name: string, operations: string[], defaultValue: UserInterface | null}){
+export default function UserInput({ className, issueID, issueKey, keyName, name, operations, nullable, defaultValue}: { className?: string, issueID: string, issueKey: string, keyName: string, name: string, operations: string[], nullable: boolean, defaultValue: UserInterface | null}){
 
   // State values
   const [inputValue, setInputValue] = useState<string>("");
@@ -20,13 +21,13 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
   const [filteredPermittedValues, setFilteredPermittedValues] = useState<UserInterface[]>([]);
   const [startAt, setStartAt] = useState<number>(0);
   const [focused, setFocused] = useState<boolean>(false);
+  const [triggerLoad, setTriggerLoad] = useState<boolean>(false);
 
   // Refs
-  const ref = useRef<HTMLDivElement | null>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadDiv = useRef<HTMLDivElement | null>(null);
-  const initial = useRef<boolean>(true);
-  const loading = useRef<boolean>(false);
+  const requestToken = useRef<number>(0);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Contexts
   const context = useContext(TicketContext);
@@ -40,20 +41,32 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
 
 
   /**
-   * This function retrives the valid options for the dropdown
+   * This function retrieves all possible dropdown options
+   * 
+   * @param textInput The user's search/filter input
+   * 
+   * @param overrideToken An indicator that the startAt value should be ignored
    */
-  async function getDropdownOptions(){
-
+  async function getDropdownOptions(textInput: string, overrideToken: boolean = false){
+    
     // Early exit
-    if(startAt === -1 || loading.current){
+    if(!overrideToken && startAt === -1){
       return;
     }
 
-    // Mark as loading
-    loading.current = true;
-
-    // Max Results
+    // Max results
     const maxResults = 50;
+
+    // Set request token
+    requestToken.current++;
+    const token = requestToken.current;
+    
+    // Abort previous request
+    abortRef.current?.abort();
+
+    // Create new AbortController to exit early if necessary
+    const abortController = new AbortController();
+    abortRef.current = abortController;
 
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
@@ -68,12 +81,20 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
     const response = await request(
       url.toString(),
       {
-        method: "GET"
+        method: "GET",
+        signal: abortController.signal
       }
     );
 
-    // Process Response
-    let options : UserInterface[] = [];
+    // If the request was aborted exit early
+    if (!response){
+      setStartAt(-1);
+      return;
+    }
+
+    // Process response
+    let options: UserInterface[] = [];
+    let filteredOptions: UserInterface[] = [];
 
     if(response?.status.toString().startsWith("2")){
 
@@ -81,19 +102,36 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
 
       // Set next start
       if(options.length === maxResults){
-        setStartAt(prev => prev + maxResults);
+        setStartAt(startAt + maxResults);
       }else{
         setStartAt(-1);
       }
+
+      options = options.filter((value: UserInterface) => value.accountType === "atlassian");
+      filteredOptions = options.filter((value: UserInterface) => {
+        return (value.displayName.toLowerCase().includes(textInput.toLowerCase()) || value.emailAddress.toLowerCase().includes(textInput.toLowerCase()));
+      })
     }
 
-    // Values are set
-    setPermittedValues(prev => [...prev, ...options.filter((value: UserInterface) => value.accountType === "atlassian")]);
-    setFilteredPermittedValues(prev => [...prev, ...options.filter((value: UserInterface) => {
-      return value.accountType === "atlassian" && (value.displayName.toLowerCase().includes(inputValue.toLowerCase()) || value.emailAddress.toLowerCase().includes(inputValue.toLowerCase()));
-    })]);
+    // If the request is out of date exit.
+    if(token !== requestToken.current){
+      return;
+    }
 
-    loading.current = false;
+    // Set permitted values or recurse
+    if(options.length > 0){
+
+      setPermittedValues(prev => [...prev, ...options]);
+
+      if(filteredOptions.length > 0){
+        setFilteredPermittedValues(prev => [...prev, ...filteredOptions]);
+      }else{
+        setTriggerLoad(prev => !prev);
+      }
+
+    }else{
+      setTriggerLoad(prev => !prev);
+    }
   }
 
 
@@ -167,11 +205,12 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
    * @param textInput The user input
    */
   function filterDropdown(textInput: string){
-    
+
     setFilteredPermittedValues(permittedValues.filter((value: UserInterface) => (
       value.displayName.toLowerCase().includes(textInput.toLowerCase()) || value.emailAddress.toLowerCase().includes(textInput.toLowerCase())
     )))
 
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, textInput, getDropdownOptions, true);
   }
 
 
@@ -187,63 +226,41 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
    */
   useEffect(() => {
 
-    if(initial.current){
-      getDropdownOptions();
-      initial.current = false;
-    }
+    getDropdownOptions("", false);
 
-  }, [])
+  }, []);
 
 
   /**
-   * Configure the intersection observer
+   * This effect retrieves options if no options were initially loaded
    */
   useEffect(() => {
 
-    // Early exit
-    const loader = loadDiv.current;
-    const parent = parentRef.current;
+    getDropdownOptions("", false);
+
+  }, [triggerLoad]);
+
+
+  /**
+   * This effect retrieves options if there are NOW options to be retrieved
+   */
+  useEffect(() => {
     
-    if(!loader || !parent){
-      return;
-    }
-
-    // Create observer
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          getDropdownOptions();
-        }
-      },
-      {
-        root: parent,
-        rootMargin: "0px 0px 150px 0px",
-        threshold: 0,
-      }
-    );
-
-    // Observe
-    if(loader){
-      observer.observe(loader);
-    }
-
-    // Function to remove observer
-    return () => {
-      if (loader) {
-        observer.unobserve(loader);
-      }
-    };
-
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
+  
   }, [startAt, showDropdown]);
 
 
 
   return (
-    <div className={`${styles.fieldEditor} ${className ? className : ""}`} ref={ref}>
+    <div className={`${styles.fieldEditor} ${className ? className : ""}`}>
       <h1 className={styles.label}>{name}</h1>
       <div className={`${styles.fieldButton} ${focused ? styles.focused : ""}`}>
         <>
-          <img src={(selectedOption?.displayName.toLowerCase().includes(inputValue.toLowerCase()) || selectedOption?.emailAddress.toLowerCase().includes(inputValue.toLowerCase())) ? (selectedOption?.avatarUrls["48x48"] ?? "./../defaultAvatar.png") : "./../defaultAvatar.png"} className={styles.userIcon}/>
+          <img 
+            className={styles.userIcon}
+            src={(selectedOption?.displayName.toLowerCase().includes(inputValue.toLowerCase()) || selectedOption?.emailAddress.toLowerCase().includes(inputValue.toLowerCase())) ? (selectedOption?.avatarUrls["48x48"] ?? "./../defaultAvatar.png") : "./../defaultAvatar.png"}
+            alt={`Account avatar - ${selectedOption?.displayName ?? "Unassigned"}`}/>
           <input 
             className={styles.inputField} 
             type="text" 
@@ -265,13 +282,21 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
             }}
           />
         </> 
-        <div className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`} ref={parentRef}>
+        <div 
+          className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`} 
+          onScroll={() => {
+            checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
+          }}
+          ref={parentRef}>
           {operations.includes("set") && (
             filteredPermittedValues.map((option: UserInterface) => {
                 if(selectedOption?.accountId !== option.accountId){
                   return (
                     <div className={styles.dropdownOption} onMouseDown={() => {selectOption(option)}} key={option.accountId}>
-                      <img src={option.avatarUrls["48x48"]} className={styles.userIcon}/>
+                      <img 
+                        className={styles.userIcon} 
+                        src={option.avatarUrls["48x48"]} 
+                        alt={`Account avatar - ${option.displayName}`}/>
                       <p className={styles.dropdownOptionName}>{option.displayName}</p>
                     </div>
                   )
@@ -279,10 +304,12 @@ export default function UserInput({ className, issueID, issueKey, keyName, name,
               }
             )
           )}
-          <div className={styles.dropdownOption} onMouseDown={() => {selectOption(null)}}>
-            <img src="./../defaultAvatar.png" className={styles.userIcon}/>
-            <p className={styles.dropdownOptionName}>Unassigned</p>
-          </div>
+          {nullable && (
+            <div className={styles.dropdownOption} onMouseDown={() => {selectOption(null)}}>
+              <img className={styles.userIcon} src="./../defaultAvatar.png" alt={`Account avatar - Unassigned`}/>
+              <p className={styles.dropdownOptionName}>Unassigned</p>
+            </div>
+          )}
           {startAt !== -1 && (
             <div className={styles.invalidDropdownOption} ref={loadDiv}>
               Loading...

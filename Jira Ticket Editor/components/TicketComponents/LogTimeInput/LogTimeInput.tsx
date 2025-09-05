@@ -5,12 +5,13 @@ import styles from "./LogTimeInput.module.scss";
 import { useContext, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import ReactQuill from "react-quill-new";
-import { imageHandler } from "../RichTextInput/QuillUtils";
-import { parseHTMLtoADF, stringToHTML } from "@/lib/parser";
-
+import { imageHandler } from "../../../lib/QuillLib/QuillUtils";
+import { parseHTMLtoADF, stringToHTML } from "@/lib/QuillLib/ParserLib";
+import '../../../lib/QuillLib/QuillCustomizations';
+import { cleanUpAttachments } from "@/lib/AttachmentsLib";
 
 
 /**
@@ -18,7 +19,7 @@ import { parseHTMLtoADF, stringToHTML } from "@/lib/parser";
  */
 const fullToolbar = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code'],
+  ['bold', 'italic', 'underline', 'strike', 'code'],
   [{ color: [] }],
   [{ script: 'sub' }, { script: 'super' }],
   [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
@@ -28,7 +29,7 @@ const fullToolbar = [
 
 
 
-export default function LogTimeInput({className, issueID, keyName, name, operations, timeSpent, updateTimeSpent}: {className: string, issueID: string, keyName: string, name: string, operations: string[], timeSpent: string, updateTimeSpent: (value: string) => void}) {
+export default function LogTimeInput({className, issueID, name, operations, timeSpent, updateTimeSpent}: {className: string, issueID: string, name: string, operations: string[], timeSpent: string, updateTimeSpent: (value: string) => void}) {
 
   // State Values
   const [inputTime, setInputTime] = useState<string>("");
@@ -304,108 +305,112 @@ export default function LogTimeInput({className, issueID, keyName, name, operati
 
           {/* Popup */}
           <div className={styles.popup}>
+
+            {/* Popup Title */}
             <h1 className={styles.popupTitle}>Time Tracking</h1>
+            
+            {/* Input Fields */}
+            <div className={styles.content}>
 
-            {/* "Time Spent" field */}
-            <div className={styles.fieldContainer}>
-              <label className={styles.fieldLabel}>{`${(inputTime === "") ? "*" : ""}`}Time Spent</label>
-              <input
-                className={`${styles.inputField} ${timeFocused ? styles.focused : ""} ${timeFocused && (inputTime === "" || !validateInputTimeField(inputTime)) ? styles.warning : ""}`}
-                type="text"
-                disabled={false}
-                value={inputTime}
-                placeholder="Log time e.g. 1w 2d 3h 4m"
-                onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
-                  setInputTime(ev.target.value);
-                }}
-                onFocus={() => {setTimeFocused(true)}}
-                onBlur={() => {setTimeFocused(false)}}
-                required={true}
-                ref={timeRef}
-              />
-            </div>
-
-            {/* "Date & Time Started" field */}
-            <div className={styles.fieldContainer}>
-              <label className={styles.fieldLabel}>{`${(inputDateTime1 === "" || inputDateTime2 === "") ? "*" : ""}`}Date Started</label>
-              <div 
-                className={`${styles.dateTimeField} ${dateTimeFocused ? styles.focused : ""} ${dateTimeFocused && (inputDateTime1 === "" || inputDateTime2 === "") ? styles.warning : ""}`}
-                tabIndex={-1}
-                ref={dateTimeFieldRef}
-                onMouseDown={() => {setDateTimeFocused(true)}}
-                onBlur={() => {
-                  // Delay to allow focus to move to another child
-                  setTimeout(() => {
-                    if (!dateTimeFieldRef.current!.contains(document.activeElement)) {
-                      setDateTimeFocused(false);
-                    }
-                  }, 0);
-                }}
-              >
+              {/* "Time Spent" field */}
+              <div className={styles.fieldContainer}>
+                <label className={styles.fieldLabel}>{`${(inputTime === "") ? "*" : ""}`}Time Spent</label>
                 <input
-                  className={styles.inputDateField}
-                  type="date"
+                  className={`${styles.inputField} ${timeFocused ? styles.focused : ""} ${timeFocused && (inputTime === "" || !validateInputTimeField(inputTime)) ? styles.warning : ""}`}
+                  type="text"
                   disabled={false}
-                  value={inputDateTime1}
-                  placeholder=""
-                  onMouseDown={() => {dateTime1Ref.current!.focus()}}
+                  value={inputTime}
+                  placeholder="Log time e.g. 1w 2d 3h 4m"
                   onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
-                    setInputDateTime1(ev.target.value);
+                    setInputTime(ev.target.value);
                   }}
+                  onFocus={() => {setTimeFocused(true)}}
+                  onBlur={() => {setTimeFocused(false)}}
                   required={true}
-                  ref={dateTime1Ref}
-                />
-                <input
-                  className={styles.inputTimeField}
-                  type="time"
-                  disabled={!operations.includes("set")}
-                  value={inputDateTime2}
-                  placeholder=""
-                  onMouseDown={() => {dateTime2Ref.current!.focus()}}
-                  onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
-                    setInputDateTime2(ev.target.value);
-                  }}
-                  required={true}
-                  ref={dateTime2Ref}
+                  ref={timeRef}
                 />
               </div>
-            </div>
 
-            {/* "Work Description" field */}
-            <div className={styles.fieldContainer}>
-              <label className={styles.fieldLabel}>Work Description</label>
-              <div
-                className={`${styles.inputTextField} ${commentFocused ? styles.focused : ''}`}
-                tabIndex={-1}
-                onBlur={(ev: React.FocusEvent<HTMLDivElement>) => {
+              {/* "Date & Time Started" field */}
+              <div className={styles.fieldContainer}>
+                <label className={styles.fieldLabel}>{`${(inputDateTime1 === "" || inputDateTime2 === "") ? "*" : ""}`}Date Started</label>
+                <div 
+                  className={`${styles.dateTimeField} ${dateTimeFocused ? styles.focused : ""} ${dateTimeFocused && (inputDateTime1 === "" || inputDateTime2 === "") ? styles.warning : ""}`}
+                  tabIndex={-1}
+                  ref={dateTimeFieldRef}
+                  onMouseDown={() => {setDateTimeFocused(true)}}
+                  onBlur={() => {
+                    // Delay to allow focus to move to another child
+                    setTimeout(() => {
+                      if (!dateTimeFieldRef.current!.contains(document.activeElement)) {
+                        setDateTimeFocused(false);
+                      }
+                    }, 0);
+                  }}
+                >
+                  <input
+                    className={styles.inputDateField}
+                    type="date"
+                    disabled={false}
+                    value={inputDateTime1}
+                    placeholder=""
+                    onMouseDown={() => {dateTime1Ref.current!.focus()}}
+                    onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
+                      setInputDateTime1(ev.target.value);
+                    }}
+                    required={true}
+                    ref={dateTime1Ref}
+                  />
+                  <input
+                    className={styles.inputTimeField}
+                    type="time"
+                    disabled={!operations.includes("set")}
+                    value={inputDateTime2}
+                    placeholder=""
+                    onMouseDown={() => {dateTime2Ref.current!.focus()}}
+                    onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
+                      setInputDateTime2(ev.target.value);
+                    }}
+                    required={true}
+                    ref={dateTime2Ref}
+                  />
+                </div>
+              </div>
 
-                  // Prevent "blur" when images are being added
-                  if (onBlurRef.current) {
+              {/* "Work Description" field */}
+              <div className={styles.fieldContainer}>
+                <label className={styles.fieldLabel}>Work Description</label>
+                <div
+                  className={`${styles.inputTextField} ${commentFocused ? styles.focused : ''}`}
+                  tabIndex={-1}
+                  onBlur={(ev: React.FocusEvent<HTMLDivElement>) => {
 
-                    const nextFocused = ev.relatedTarget as Node | null;
-                    const currentNode = quillFieldRef.current;
+                    // Prevent "blur" when images are being added
+                    if (onBlurRef.current) {
 
-                    if (currentNode && (!nextFocused || !currentNode.contains(nextFocused))) {
-                      setCommentFocused(false);
+                      const nextFocused = ev.relatedTarget as Node | null;
+                      const currentNode = quillFieldRef.current;
+
+                      if (currentNode && (!nextFocused || !currentNode.contains(nextFocused))) {
+                        setCommentFocused(false);
+                      }
                     }
-                  }
 
-                }}
-                onMouseDown={() => {
-
-                  setCommentFocused(true);
-
-                }}
-                ref={quillFieldRef}
-              >
-                <ReactQuill
-                  theme="snow"
-                  value={inputComment}
-                  placeholder={`Enter Work Description...`}
-                  onChange={setInputComment}
-                  modules={modules}
-                  ref={quillRef}
-                />
+                  }}
+                  onMouseDown={() => {
+                    setCommentFocused(true);
+                  }}
+                  ref={quillFieldRef}
+                >
+                  <ReactQuill
+                    theme="snow"
+                    value={inputComment}
+                    placeholder={`Enter Work Description...`}
+                    onChange={setInputComment}
+                    modules={modules}
+                    ref={quillRef}
+                  />
+                </div>
               </div>
             </div>
 
@@ -425,6 +430,11 @@ export default function LogTimeInput({className, issueID, keyName, name, operati
                 type="button" 
                 onMouseDown={() => {
                   setLogTime(false);
+                  cleanUpAttachments(inputComment);
+                  setInputComment("");
+                  setInputDateTime1("");
+                  setInputDateTime2("");
+                  setInputTime("")
                 }}
               >
                   Cancel

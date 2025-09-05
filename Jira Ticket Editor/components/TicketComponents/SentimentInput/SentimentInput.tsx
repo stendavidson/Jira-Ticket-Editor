@@ -2,15 +2,15 @@
 import styles from "./SentimentInput.module.scss";
 
 // External imports
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import SentimentInterface from "./SentimentInterface";
 
 
-export default function SentimentInput({ className, issueID, issueKey, keyName, name, operations, defaultValue, allowedValues = []}: { className?: string, issueID: string, issueKey: string, keyName: string, name: string, operations: string[], defaultValue: SentimentInterface, allowedValues: SentimentInterface[]}){
+export default function SentimentInput({ className, issueID, keyName, name, operations, defaultValue, allowedValues = []}: { className?: string, issueID: string, keyName: string, name: string, operations: string[], defaultValue: SentimentInterface, allowedValues: SentimentInterface[]}){
 
   // State values
   const [inputValue, setInputValue] = useState<string>("");

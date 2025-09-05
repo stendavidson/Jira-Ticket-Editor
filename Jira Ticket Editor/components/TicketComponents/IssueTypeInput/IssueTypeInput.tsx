@@ -6,7 +6,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
 import IssueTypeInterface from "./IssueTypeInterface";
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
@@ -21,6 +21,13 @@ export default function IssueTypeInput({ issueID, defaultValue, allowedValues = 
 
   // Context
   const context = useContext(TicketContext);
+
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////// API Calls ///////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
 
   
   /**
@@ -59,6 +66,11 @@ export default function IssueTypeInput({ issueID, defaultValue, allowedValues = 
   }
 
 
+  //////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////// Callbacks ///////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+
   /**
    * This handles the selection 
    * 
@@ -79,7 +91,16 @@ export default function IssueTypeInput({ issueID, defaultValue, allowedValues = 
   }
 
 
-  // Hide dropdown if click away occurs
+
+  //////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////// Effects ////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * Click-away handling has been added.
+   */
   useEffect(() => {
 
     function handler(ev: MouseEvent){
@@ -107,17 +128,26 @@ export default function IssueTypeInput({ issueID, defaultValue, allowedValues = 
     <div className={styles.issueTypeEditor} ref={ref}>
       { issueType ?
           <div className={styles.issueTypeButton} onClick={() => {setShowDropdown(prev => !prev)}}>
-            <img src={issueType.iconUrl} className={styles.issueTypeIcon}/>
+            <img 
+              className={styles.issueTypeIcon} 
+              src={issueType.iconUrl} 
+              alt={`Issue type icon - ${issueType.name}`}/>
           </div>
         :
           <div className={styles.issueTypeButton} onClick={() => {setShowDropdown(prev => !prev)}}>
-            <img src="./../FailThrough.png" className={styles.issueTypeIcon}/>
+            <img 
+              className={styles.issueTypeIcon}
+              src="./../FailThrough.png" 
+              alt={`Issue type icon - Unknown`}/>
           </div>
       }    
       <div className={`${styles.issueTypesDropdown} ${showDropdown ? styles.displayDropdown : ""}`}>
         {allowedValues.map((value: IssueTypeInterface) => (
             <div className={styles.issueTypeOption} onClick={() => {select(value)}} key={value.id}>
-              <img src={value.iconUrl} className={styles.issueTypeIcon}/>
+              <img 
+                className={styles.issueTypeIcon}
+                src={value.iconUrl} 
+                alt={`Issue type icon - ${value.name}`}/>
               <p className={styles.issueTypeName}>{value.name}</p>
             </div>
           )

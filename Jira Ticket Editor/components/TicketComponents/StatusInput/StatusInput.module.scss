@@ -17,8 +17,6 @@
 
         // Dimensions
         height: max(3vh, 30px);
-        max-height: max(3vh, 30px);
-        min-height: max(3vh, 30px);
 
         // Display Properties
         display: flex;
@@ -27,7 +25,7 @@
         align-items: center;
 
         // Border
-        border: 1px solid c.$line;
+        border: 1px solid c.$grayLine2;
         border-radius: max(0.4vh, 4px);
 
         // Padding
@@ -38,11 +36,11 @@
 
         // Hover
         &:hover{
-        // Colors
-        background-color: c.$containerGrayHighlight;
-        
-        // Cursor
-        cursor: pointer;
+            // Colors
+            background-color: c.$darkGray2;
+            
+            // Cursor
+            cursor: pointer;
         }
     }
 
@@ -63,7 +61,7 @@
         border-radius: max(0.3vh, 3px);
 
         // Shadow
-        box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.6);
+        box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow2;
 
         // Overflow
         overflow-y: auto;
@@ -97,7 +95,7 @@
             // Hover
             &:hover{
                 // Color
-                background-color: c.$containerGrayHighlight;
+                background-color: c.$darkGray3;
 
                 // Cursor
                 cursor: pointer;

@@ -5,7 +5,7 @@ import styles from "./TeamInput.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import { TeamInterface, TeamOptionResponseInterface, TeamOptionInterface } from "./TeamInterface";
 
@@ -41,6 +41,7 @@ export default function TeamInput({ className, issueID, keyName, name, operation
   /**
    * This function retrieves the valid options for the dropdown
    * 
+   * @param textInput The user's search input
    */
   async function getDropdownOptions(textInput: string){
 
@@ -83,7 +84,7 @@ export default function TeamInput({ className, issueID, keyName, name, operation
     // Process response
     let options: TeamOptionResponseInterface | null = null;
     let results: TeamOptionInterface[] = [];
-    let cleanedResults: TeamOptionInterface[] = [];
+    const cleanedResults: TeamOptionInterface[] = [];
 
     if(response?.status.toString().startsWith("2")){
       options = (await response?.json()) as TeamOptionResponseInterface;
@@ -223,9 +224,9 @@ export default function TeamInput({ className, issueID, keyName, name, operation
       if (allowedValues.length !== 0) {
 
         // Construct dropdown option objects from allowedValues
-        let options: TeamOptionInterface[] = [];
+        const options: TeamOptionInterface[] = [];
         
-        for (let team of allowedValues) {
+        for (const team of allowedValues) {
           options.push({
             value: team.id,
             displayName: team.title

@@ -6,36 +6,33 @@ import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
 import { StatusInterface, TransitionInterface, TransitionsResponseInterface} from "./StatusInterface";
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
 export default function StatusInput({ issueID, defaultValue }: { issueID: string, defaultValue: StatusInterface }){
 
+  // State value(s)
   const [status, setStatusInput] = useState<StatusInterface>(defaultValue);
   const [permittedValues, setPermittedValues] = useState<TransitionInterface[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+
+  // Ref(s)
   const ref = useRef<HTMLDivElement | null>(null);
+
+  // Context(s)
   const context = useContext(TicketContext);
 
-  function getColorRGBA(color: string){
 
-    let returnColor: string = "rgba(255, 255, 255, 0.15)";
-
-    if(color.toLowerCase() === "green"){
-      returnColor = "rgba(0, 255, 34, 0.15)";
-    }else if(color.toLowerCase() === "yellow"){
-      returnColor = "rgba(255, 251, 0, 0.15)";
-    }else if(color.toLowerCase() === "blue-gray" || color.toLowerCase() === "blue"){
-      returnColor = "rgba(0, 123, 255, 0.3)";
-    }else if(color.toLowerCase() === "red"){
-      returnColor = "rgba(255, 0, 0, 0.15)";
-    }
-
-    return returnColor
-  }
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// API Calls ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
 
   
+  
+  /**
+   * This function retrieves the list of possible issue transitions.
+   */
   async function getTransitions(){
     
     // URL Params
@@ -63,11 +60,6 @@ export default function StatusInput({ issueID, defaultValue }: { issueID: string
     setPermittedValues(transitions);
   }
 
-
-  // Get valid options
-  useEffect(() => {
-    getTransitions();
-  }, [])
 
 
   /**
@@ -104,6 +96,45 @@ export default function StatusInput({ issueID, defaultValue }: { issueID: string
   }
 
 
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////// Helper Functions /////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
+  /**
+   * This function converts Jira color names into rgba.
+   * 
+   * @param color Jira "color" name
+   * 
+   * @returns The color in rgba format.
+   */
+  function getColorRGBA(color: string){
+
+    let returnColor: string = "rgba(255, 255, 255, 0.15)";
+
+    if(color.toLowerCase() === "green"){
+      returnColor = "rgba(0, 255, 34, 0.15)";
+    }else if(color.toLowerCase() === "yellow"){
+      returnColor = "rgba(255, 251, 0, 0.15)";
+    }else if(color.toLowerCase() === "blue-gray" || color.toLowerCase() === "blue"){
+      returnColor = "rgba(0, 123, 255, 0.3)";
+    }else if(color.toLowerCase() === "red"){
+      returnColor = "rgba(255, 0, 0, 0.15)";
+    }
+
+    return returnColor
+  }
+
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// Callbacks ////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+
   /**
    * This handles the selection 
    * 
@@ -124,7 +155,25 @@ export default function StatusInput({ issueID, defaultValue }: { issueID: string
   }
 
 
-  // Hide dropdown if click away occurs
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// Effects //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
+
+
+  
+  /**
+   * This effect loads the dropdown options
+   */
+  useEffect(() => {
+    getTransitions();
+  }, [])
+
+
+
+  /**
+   * This effect binds a click-away handler
+   */
   useEffect(() => {
 
     function handler(ev: MouseEvent){
@@ -144,7 +193,9 @@ export default function StatusInput({ issueID, defaultValue }: { issueID: string
       document.removeEventListener("mousedown", handler);
     };
 
-  }, [])
+  }, []);
+
+
 
   return (
     <div className={styles.statusEditor} ref={ref}>

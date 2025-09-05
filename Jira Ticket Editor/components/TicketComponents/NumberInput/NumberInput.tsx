@@ -5,7 +5,7 @@ import styles from "./NumberInput.module.scss";
 import { useContext, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
@@ -35,7 +35,7 @@ export default function NumberInput({className, issueID, keyName, name, operatio
    * 
    * @returns The success of the PUT request
    */
-  async function setInIssue(): Promise<boolean> {
+  async function setInIssue(inputNumber: string): Promise<boolean> {
 
     // URL Params
     const url = new URL("/proxy-api", window.location.origin);
@@ -45,7 +45,7 @@ export default function NumberInput({className, issueID, keyName, name, operatio
     // PUT Request Body
     const body: any = {}
     body.fields = {};
-    body.fields[keyName] = (inputValue === "" ? null : parseInt(inputValue));
+    body.fields[keyName] = (inputNumber === "" ? null : parseInt(inputNumber));
 
     // Update Request
     const response = await request(url.toString(), {
@@ -69,8 +69,10 @@ export default function NumberInput({className, issueID, keyName, name, operatio
    */
   function inputKeyHandler(ev: React.KeyboardEvent<HTMLInputElement>): void {
 
+    const inputElement: HTMLInputElement = ev.target as HTMLInputElement;
+
     // Early exit
-    if(!ref.current!.validity){
+    if(!inputElement.validity){
       return;
     }
 
@@ -78,16 +80,16 @@ export default function NumberInput({className, issueID, keyName, name, operatio
     if (ev.key === "Enter") {
 
       // Leave field
-      ref.current!.blur();
+      inputElement.blur();
 
       // Prevent double handling
       ev.preventDefault();
 
       // Prevent unnecessary re-renders
-      if(inputValue !== initial){
+      if(inputElement.value !== initial){
 
         // Update text field
-        setInIssue().then((success: boolean) => {
+        setInIssue(inputElement.value).then((success: boolean) => {
           if(success){
             context?.setUpdateIndicator(issueID);
             setInitial(inputValue);
@@ -115,7 +117,7 @@ export default function NumberInput({className, issueID, keyName, name, operatio
     if (inputValue !== initial) {
       
       // Update text field
-      setInIssue().then((success: boolean) => {
+      setInIssue(inputValue).then((success: boolean) => {
         if(success){
           context?.setUpdateIndicator(issueID);
           setInitial(inputValue);

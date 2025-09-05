@@ -29,7 +29,7 @@
     // Hover
     &:hover{
       // Colors
-      background-color: c.$containerGrayHighlight;
+      background-color: c.$darkGray3;
       
       // Cursor
       cursor: pointer;
@@ -54,7 +54,7 @@
 
     // Display dropdown
     &.displayDropdown {
-        display: flex;
+      display: flex;
     }
 
     // Children
@@ -85,7 +85,7 @@
       // Hover
       &:hover{
         // Color
-        background-color: c.$containerGrayHighlight;
+        background-color: c.$darkGray3;
 
         // Cursor
         cursor: pointer;
@@ -96,6 +96,9 @@
         // Position
         position: relative;
         margin-left: max(1vh, 10px);
+
+        // Color
+        color: c.$lightGrayText;
       }
     }
   }

@@ -5,9 +5,10 @@ import styles from "./UserArray.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import UserInterface from "../UserInput/UserInterface";
+import { checkIfLoaderVisibleAndFetch } from "@/lib/DropdownLib";
 
 
 export default function UserArray({ className, issueID, issueKey, keyName, name, operations, defaultValue = []}: { className?: string, issueID: string, issueKey: string, keyName: string, name: string, operations: string[], defaultValue: UserInterface[] | null}){
@@ -20,13 +21,13 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
   const [filteredPermittedValues, setFilteredPermittedValues] = useState<UserInterface[]>([]);
   const [startAt, setStartAt] = useState<number>(0);
   const [focused, setFocused] = useState<boolean>(false);
+  const [triggerLoad, setTriggerLoad] = useState<boolean>(false);
 
   // Refs
-  const ref = useRef<HTMLDivElement | null>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadDiv = useRef<HTMLDivElement | null>(null);
-  const initial = useRef<boolean>(true);
-  const loading = useRef<boolean>(false);
+  const requestToken = useRef<number>(0);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Contexts
   const context = useContext(TicketContext);
@@ -38,20 +39,32 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
 
 
   /**
-   * This function retrives the valid options for the dropdown
+   * This function retrieves all possible dropdown options
+   * 
+   * @param textInput The user's search/filter input
+   * 
+   * @param overrideToken An indicator that the startAt value should be ignored
    */
-  async function getDropdownOptions(){
+  async function getDropdownOptions(textInput: string, overrideToken: boolean = false){
 
-    // Early return
-    if(startAt === -1 || loading.current){
+    // Early exit
+    if(!overrideToken && startAt === -1){
       return;
     }
 
-    // Prevent overlapping requests
-    loading.current = true;
-
-    // Max Results
+    // Max results
     const maxResults = 50;
+
+    // Set request token
+    requestToken.current++;
+    const token = requestToken.current;
+    
+    // Abort previous request
+    abortRef.current?.abort();
+
+    // Create new AbortController to exit early if necessary
+    const abortController = new AbortController();
+    abortRef.current = abortController;
 
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
@@ -66,12 +79,20 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
     const response = await request(
       url.toString(),
       {
-        method: "GET"
+        method: "GET",
+        signal: abortController.signal
       }
     );
 
+    // If the request was aborted exit early
+    if (!response){
+      setStartAt(-1);
+      return;
+    }
+
     // Process response
     let options : UserInterface[] = [];
+    let filteredOptions : UserInterface[] = [];
 
     if(response?.status.toString().startsWith("2")){
 
@@ -79,19 +100,36 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
 
       // Set next start
       if(options.length === maxResults){
-        setStartAt(prev => prev + maxResults);
+        setStartAt(startAt + maxResults);
       }else{
         setStartAt(-1);
       }
+
+      options = options.filter((value: UserInterface) => value.accountType === "atlassian");
+      filteredOptions = options.filter((value: UserInterface) => {
+        return (value.displayName.toLowerCase().includes(textInput.toLowerCase()) || value.emailAddress.toLowerCase().includes(textInput.toLowerCase()));
+      })
     }
 
-    // Filter values
-    setPermittedValues(prev => [...prev, ...options.filter((value: UserInterface) => value.accountType === "atlassian")]);
-    setFilteredPermittedValues(prev => [...prev, ...options.filter((value: UserInterface) => {
-      return value.accountType === "atlassian" && (value.displayName.toLowerCase().includes(inputValue.toLowerCase()) || value.emailAddress.toLowerCase().includes(inputValue.toLowerCase()));
-    })]);
+    // If the request is out of date exit.
+    if(token !== requestToken.current){
+      return;
+    }
 
-    loading.current = false;
+    // Set permitted values or recurse
+    if(options.length > 0){
+
+      setPermittedValues(prev => [...prev, ...options]);
+
+      if(filteredOptions.length > 0){
+        setFilteredPermittedValues(prev => [...prev, ...filteredOptions]);
+      }else{
+        setTriggerLoad(prev => !prev);
+      }
+
+    }else{
+      setTriggerLoad(prev => !prev);
+    }
   }
 
 
@@ -171,9 +209,11 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
   }
 
 
+
   ///////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////// Callbacks //////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////
+
 
 
   /**
@@ -221,6 +261,7 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
       value.displayName.toLowerCase().includes(textInput.toLowerCase()) || value.emailAddress.toLowerCase().includes(textInput.toLowerCase())
     )))
 
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, textInput, getDropdownOptions, true);
   }
 
 
@@ -234,60 +275,34 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
    */
   useEffect(() => {
 
-    // Prevent unnecessary re-renders
-    if(initial.current){
-      getDropdownOptions();
-      initial.current = false;
-    }
+    getDropdownOptions("", false);
 
-  }, [])
+  }, []);
 
 
   /**
-   * Configure the intersection observer
+   * This effect retrieves options if no options were initially loaded
    */
   useEffect(() => {
 
-    // Early exit
-    const loader = loadDiv.current;
-    const parent = parentRef.current;
-    
-    if(!loader || !parent){
-      return;
-    }
+    getDropdownOptions("", false);
 
-    // Create observer
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          getDropdownOptions();
-        }
-      },
-      {
-        root: parent,
-        rootMargin: "0px 0px 150px 0px",
-        threshold: 0,
-      }
-    );
+  }, [triggerLoad]);
 
-    // Observe
-    if(loader){
-      observer.observe(loader);
-    }
 
-    // Function to remove observer
-    return () => {
-      if (loader) {
-        observer.unobserve(loader);
-      }
-    };
-
+  /**
+   * This effect retrieves options if there are NOW options to be retrieved
+   */
+  useEffect(() => {
+      
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
+  
   }, [startAt, showDropdown]);
 
 
 
   return (
-    <div className={`${styles.fieldEditor} ${className ? className : ""}`} ref={ref}>
+    <div className={`${styles.fieldEditor} ${className ? className : ""}`}>
       <h1 className={styles.label}>{name}</h1>
       <div className={`${styles.fieldButton} ${focused ? styles.focused : ""}`}>
         <div className={styles.verticalContainer}>
@@ -315,7 +330,10 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
               selectedOptions.map((option: UserInterface) => {
                 return (
                   <div className={styles.selectedOption} key={option.accountId}>
-                    <img src={option.avatarUrls["48x48"]} className={styles.userIcon}/>
+                    <img 
+                      className={styles.userIcon}
+                      src={option.avatarUrls["48x48"]} 
+                      alt={`Account avatar - ${option.displayName}`}/>
                     <p className={styles.selectedOptionName}>{option.displayName}</p>
                     <button className={styles.selectedRemoveButton} type="button" onMouseDown={() => {removeOption(option)}}>
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -329,14 +347,22 @@ export default function UserArray({ className, issueID, issueKey, keyName, name,
             )
           }
         </div>
-        <div className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`} ref={parentRef}>
+        <div 
+          className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`} 
+          onScroll={() => {
+            checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
+          }}
+          ref={parentRef}>
           <>
             {operations.includes("set") && operations.includes("add") && (
                 filteredPermittedValues.map((option: UserInterface) => {
                     if(!selectedOptions.some((value: UserInterface) => value.accountId === option.accountId)){
                       return (
                         <div className={styles.dropdownOption} onMouseDown={() => {addOption(option)}} key={option.accountId}>
-                          <img src={option.avatarUrls["48x48"]} className={styles.userIcon}/>
+                          <img 
+                            className={styles.userIcon}
+                            src={option.avatarUrls["48x48"]} 
+                            alt={`Account avatar - ${option.displayName}`}/>
                           <p className={styles.dropdownOptionName}>{option.displayName}</p>
                         </div>
                       )

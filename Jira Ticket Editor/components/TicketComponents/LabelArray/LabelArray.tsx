@@ -5,9 +5,10 @@ import styles from "./LabelArray.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import LabelsResponseInterface from "./LabelsResponseInterface";
+import { checkIfLoaderVisibleAndFetch } from "@/lib/DropdownLib";
 
 
 export default function LabelArray({ className, issueID, keyName, name, operations, defaultValue = []}: { className?: string, issueID: string, keyName: string, name: string, operations: string[], defaultValue: string[]}){
@@ -20,13 +21,14 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
   const [filteredPermittedValues, setFilteredPermittedValues] = useState<string[]>([]);
   const [startAt, setStartAt] = useState<number>(0);
   const [focused, setFocused] = useState<boolean>(false);
+  const [triggerLoad, setTriggerLoad] = useState<boolean>(false);
 
   // Refs
-  const ref = useRef<HTMLDivElement | null>(null);
   const inputFieldRef = useRef<HTMLInputElement | null>(null);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadDiv = useRef<HTMLDivElement | null>(null);
-  const initial = useRef<boolean>(true);
+  const requestToken = useRef<number>(0);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Contexts
   const context = useContext(TicketContext);
@@ -38,42 +40,86 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
 
 
   /**
-   * This function retrives all the valid dropdown options.
+   * This function retrieves the valid options for the dropdown
    */
-  async function getDropdownOptions(){
+  async function getDropdownOptions(textInput: string, overrideToken: boolean = false){
 
-    // Early return
-    if(startAt === -1){
+    // Early exit
+    if(!overrideToken && startAt === -1){
       return;
     }
+
+    // Max results
+    const maxResults = 50;
+
+    // Set request token
+    requestToken.current++;
+    const token = requestToken.current;
+    
+    // Abort previous request
+    abortRef.current?.abort();
+
+    // Create new AbortController to exit early if necessary
+    const abortController = new AbortController();
+    abortRef.current = abortController;
     
     // URL Params
     const url: URL = new URL("/proxy-api", window.location.origin);
     url.searchParams.append("pathname", "/label");
     url.searchParams.append("elevate", "true");
     url.searchParams.append("startAt", startAt.toString());
+    url.searchParams.append("maxResults", maxResults.toString());
 
     // GET request
     const response = await request(
       url.toString(),
       {
-        method: "GET"
+        method: "GET",
+        signal: abortController.signal
       }
-    );
+    ); 
+
+    // If the request was aborted exit early
+    if (!response){
+      setStartAt(-1);
+      return;
+    }
 
     // Process responses
     let labelsResponse: LabelsResponseInterface | undefined;
-    let addedLabels: string[] = [];
+    let options: string[] = [];
+    let filteredOtions: string[] = [];
 
     if(response?.status.toString().startsWith("2")){
+
       labelsResponse = (await response.json()) as LabelsResponseInterface;
-      addedLabels = labelsResponse.values;
-      setStartAt(labelsResponse.isLast ? -1 : labelsResponse.startAt + labelsResponse.maxResults);
+      options = labelsResponse.values;
+      filteredOtions = options.filter((value: string) => {
+        return (value.toLowerCase().includes(textInput.toLowerCase()));
+      })
+
+      setStartAt(labelsResponse.isLast ? -1 : labelsResponse.startAt + maxResults);
     }
 
-    // Update labels
-    setPermittedValues(prev => [...prev, ...(addedLabels.filter(i => !prev.includes(i)))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })));
-    setFilteredPermittedValues(prev => [...prev, ...(addedLabels.filter(i => !prev.includes(i)).filter(j => j.toLowerCase().includes(inputValue.toLowerCase())))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })));
+    // If the request is out of date exit.
+    if (token !== requestToken.current){
+      return;
+    }
+
+    // Set permitted values or recurse
+    if(options.length > 0){
+
+      setPermittedValues(prev => [...prev, ...options].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })));
+
+      if(filteredOtions.length > 0){
+        setFilteredPermittedValues(prev => [...prev, ...options].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })));
+      }else{
+        setTriggerLoad(prev => !prev);
+      }
+
+    }else{
+      setTriggerLoad(prev => !prev);
+    }
   }
 
 
@@ -145,6 +191,7 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
   }
 
 
+ 
   ///////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////// Callbacks //////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////
@@ -159,7 +206,9 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
 
     // Upon successfully updating the selected options
     addToIssue(option).then((success: boolean) => {
+
       if(success){
+
         setSelectedOptions(prev => [...prev, option]);
 
         // Ensure option is included in permittedValues
@@ -170,7 +219,7 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
         );
 
         // Reset filtered list to full list
-        setFilteredPermittedValues(prev =>
+        setFilteredPermittedValues(
           [...permittedValues, option].filter((v, i, self) => self.indexOf(v) === i).sort((a, b) =>
             a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
           )
@@ -183,13 +232,16 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
 
 
   /**
-   * This function handles the scenario in which the user presses 'Enter'  - similar to
+   * This function handles the scenario in which the user presses 'Enter' - similar to
    * Jira this triggers a field update.
    */
   function inputKeyHandler(ev: React.KeyboardEvent<HTMLInputElement>): void {
 
+    const inputElement: HTMLInputElement = ev.target as HTMLInputElement;
+    const value: string = inputElement.value;
+
     // Submit text on "Enter"
-    if (ev.key === "Enter" && inputValue) {
+    if (ev.key === "Enter" && value !== "") {
 
       // Prevent double handling
       ev.preventDefault();
@@ -229,10 +281,16 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
    */
   function filterDropdown(textInput: string){
 
-    setFilteredPermittedValues(permittedValues.filter((value: string) => 
-      value.toLowerCase().includes(textInput.toLowerCase())
-    ));
+    // If allowed values exist - then filtered the restricted list
+    if (permittedValues.length > 0) {
 
+      setFilteredPermittedValues(permittedValues.filter((value: string) => 
+        value.toLowerCase().includes(textInput.toLowerCase())
+      ));
+
+    }
+
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, textInput, getDropdownOptions, true);
   }
 
 
@@ -262,9 +320,11 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
   }
 
 
+
   ///////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////// Effects ///////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////
+
 
 
   /**
@@ -272,58 +332,34 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
    */
   useEffect(() => {
 
-    // Prevent unnecessary re-renders
-    if(initial.current){
-      initial.current = false;
-      getDropdownOptions();
-    }
+    getDropdownOptions("", false);
     
   }, []);
 
 
   /**
-   * Configure the intersection observer
+   * Effect runs lazy loading if no items were loaded intially
    */
   useEffect(() => {
 
-    // Early exit
-    const loader = loadDiv.current;
-    const parent = parentRef.current;
-    if(!loader || !parent){
-      return;
-    }
+    getDropdownOptions("", false);
 
-    // Create observer
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          getDropdownOptions();
-        }
-      },
-      {
-        root: parent,
-        rootMargin: "0px 0px 150px 0px",
-        threshold: 0,
-      }
-    );
+  }, [triggerLoad]);
 
-    // Observe
-    if(loader){
-      observer.observe(loader);
-    }
 
-    // Function to remove observer
-    return () => {
-      if (loader) {
-        observer.unobserve(loader);
-      }
-    };
-
+  /**
+   * Effect runs lazy loading if there are more items to load NOW
+   */
+  useEffect(() => {
+      
+    checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
+  
   }, [startAt, showDropdown]);
 
 
+
   return (
-    <div className={`${styles.fieldEditor} ${className ? className : ""}`} ref={ref}>
+    <div className={`${styles.fieldEditor} ${className ? className : ""}`}>
       <h1 className={styles.label}>{name}</h1>
       <div className={`${styles.fieldButton} ${focused ? styles.focused : ""}`}>
         <div className={styles.verticalContainer}>
@@ -367,7 +403,12 @@ export default function LabelArray({ className, issueID, keyName, name, operatio
             )
           }
         </div>
-        <div className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`} ref={parentRef}>
+        <div 
+          className={`${styles.fieldDropdown} ${showDropdown ? styles.displayDropdown : ""}`}
+          onScroll={() => {
+            checkIfLoaderVisibleAndFetch(loadDiv.current, parentRef.current, showDropdown, inputValue, getDropdownOptions, false);
+          }}
+          ref={parentRef}>
           <>
             {operations.includes("set") && operations.includes("add") && (
                 filteredPermittedValues.map((option: string) => {

@@ -38,6 +38,9 @@
         justify-content: flex-start;
         align-items: center;
 
+        // Color
+        color: c.$lightGrayText;
+
         // Padding
         padding: 0;
 
@@ -63,7 +66,7 @@
 
         // Border
         border-radius: max(0.4vh, 4px);
-        border: 1px solid c.$containerGray;
+        border: 1px solid c.$darkGray2;
 
         // Padding
         padding: max(1.2vh, 12px) max(0.8vh, 8px) max(1.2vh, 12px) max(0.8vh, 8px);
@@ -74,27 +77,30 @@
         // Overflow
         overflow: hidden;
 
+        // Color
+        color: c.$lightGrayText;
+
         // Text
         line-height: 110%;
 
         // Hover
         &:hover{
             // Colors
-            background-color: c.$containerGrayHighlight;            
+            background-color: c.$darkGray3;            
         }
 
         // Focus
         &:focus{
             // Color
-            background-color: rgb(68, 68, 68);
+            background-color: c.$darkGray1;
 
             // Border
-            border: 1px solid rgb(26, 131, 183);
+            border: 1px solid c.$powderBlue2;
         }
 
         &::placeholder{
             // Color
-            color: white;
+            color: c.$lightGrayText;
         }
     }
 }

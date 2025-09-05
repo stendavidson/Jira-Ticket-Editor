@@ -10,11 +10,11 @@ import { usePathname, useRouter } from 'next/navigation';
  */
 export default function RedirectPage({countdown, message, reason, immediateRedirect, relativeURL}: {countdown: number, message: string, reason: string, immediateRedirect: string, relativeURL: string}) {
   
-  // External hooks
+  // Next.js hooks
   const router = useRouter();
   const pathname = usePathname();
 
-  // Internal hooks
+  // State value(s)
   const [count, setCount] = useState<number>(countdown);
 
 

@@ -37,6 +37,9 @@
         // Padding
         padding: 0;
 
+        // Color
+        color: c.$lightGrayText;
+
         // Text
         font-size: max(1.6vh, 16px);
         font-weight: normal;
@@ -60,13 +63,13 @@
 
         // Border
         border-radius: max(0.4vh, 4px);
-        border: 1px solid rgb(98, 98, 98);
+        border: 1px solid c.$darkGray2;
 
         // Padding
         padding: max(0.8vh, 8px) max(0.8vh, 8px) max(0.8vh, 8px) max(0.8vh, 8px);
 
         // Color
-        background-color: rgb(68, 68, 68);
+        background-color: c.$darkGray1;
 
         // Overflow
         overflow-y: visible;
@@ -74,7 +77,7 @@
         // Custom Focus
         &.focused{
             // Border
-            border: 1px solid rgb(26, 131, 183);
+            border: 1px solid c.$powderBlue2;
         }
 
         // Children
@@ -116,7 +119,8 @@
             padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
 
             // Color
-            background-color: c.$containerGray;
+            color: c.$lightGrayText;
+            background-color: c.$darkGray2;
 
             // Text
             font-size: max(1.4vh, 14px);
@@ -132,7 +136,7 @@
             // Placeholder
             &::placeholder{
                 // Color
-                color: rgb(160, 160, 160);
+                color: c.$lightGrayText;
             }
         }
         
@@ -158,8 +162,8 @@
             // Padding
             padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
 
-            // Color
-            background-color: c.$containerGray;
+            /// Color
+            background-color: c.$darkGray2;
 
             // Text
             font-size: max(1.4vh, 14px);
@@ -170,12 +174,6 @@
             // Final Margin
             &:last-child{
                 margin-bottom: 0;
-            }
-
-            // Placeholder
-            &::placeholder{
-                // Color
-                color: rgb(160, 160, 160);
             }
 
             // Children
@@ -191,6 +189,9 @@
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+
+                // Color
+                color: c.$lightGrayText;
             }
 
             .selectedRemoveButton{
@@ -209,12 +210,8 @@
                 align-items: center;
 
                 // Border
-                border: 1px solid c.$line;
+                border: 1px solid c.$grayLine2;
                 border-radius: max(0.4vh, 4px);
-
-                // Color
-                background: transparent;
-                color: black !important;
 
                 // Cursor
                 cursor: pointer;    
@@ -222,7 +219,7 @@
                 // Hover
                 &:hover {
                     //Color
-                    background-color: c.$containerGrayHighlight;
+                    background-color: c.$darkGray3;
                 }
 
                 // Children
@@ -256,10 +253,10 @@
             border-radius: max(0.3vh, 3px);
 
             // Color
-            background-color: c.$containerGray;
+            background-color: c.$darkGray2;
 
             // Shadow
-            box-shadow: 0 max(2px, 0.2vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.6);
+            box-shadow: 0 max(2px, 0.2vh) max(7px, 0.7vh) 0 c.$blackShadow2;
 
             // Overflow
             overflow-y: auto;
@@ -310,6 +307,9 @@
                 // Padding
                 padding: max(0.5vh, 5px) max(0.8vh, 8px) max(0.5vh, 5px) max(0.8vh, 8px);
 
+                // Color
+                background-color: c.$darkGray2;
+
                 // Text
                 font-size: max(1.4vh, 14px);
                 white-space: nowrap;
@@ -319,7 +319,7 @@
                 // Hover
                 &:hover{
                     // Color
-                    background-color: c.$containerGrayHighlight;
+                    background-color: c.$darkGray3;
 
                     // Cursor
                     cursor: pointer;
@@ -332,6 +332,9 @@
 
                     // Dimensions
                     width: calc(100%);
+
+                    // Color
+                    color: c.$lightGrayText;
 
                     // Text
                     font-size: max(1.4vh, 14px);
@@ -375,6 +378,9 @@
 
                     // Dimensions
                     width: calc(100%);
+
+                    // Color
+                    color: c.$lightGrayText;
 
                     // Text
                     font-size: max(1.4vh, 14px);

@@ -5,7 +5,7 @@ import styles from "./DateTimeInput.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 
 
@@ -108,55 +108,6 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
   ////////////////////////////////// Callbacks //////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////
 
-
-  /**
-   * This function handles the scenario in which the user presses 'Enter'  - similar to
-   * Jira this triggers a field update.
-   */
-  function inputKeyHandler(ev: React.KeyboardEvent<HTMLInputElement>): void {
-
-    // Early exit
-    if (!refDate.current?.validity.valid || !refTime.current?.validity.valid) {
-      return;
-    }
-
-    // Submit text on "Enter"
-    if (ev.key === "Enter") {
-
-      // Leave field
-      divRef.current!.blur();
-      refDate.current!.blur();
-      refTime.current!.blur();
-
-      // Prevent double handling
-      ev.preventDefault();
-
-      // Prevent unnecessary re-renders
-      if(inputValueOne !== initialOne || inputValueTwo !== initialTwo){
-
-        // Prevent partially filled/emptied fields
-        if((inputValueOne === "" && inputValueTwo === "") || (inputValueOne !== "" && inputValueTwo !== "")){
-          
-          // Update text field
-          setInIssue().then((success: boolean) => {
-            if(success){
-              context?.setUpdateIndicator(issueID);
-              setInitialOne(inputValueOne);
-              setInitialTwo(inputValueTwo);
-            }else{
-              setInputValueOne(initialOne);
-              setInputValueTwo(initialTwo);
-            }
-          });
-        }else{
-
-          setInputValueOne(initialOne);
-          setInputValueTwo(initialTwo);
-
-        }
-      }
-    }
-  }
 
 
   /**
@@ -264,7 +215,6 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
           onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
             setInputValueOne(ev.target.value);
           }}
-          onKeyDown={inputKeyHandler}
           ref={refDate}
         />
         <input
@@ -276,7 +226,6 @@ export default function DateTimeInput({className, issueID, keyName, name, operat
           onInput={(ev: React.ChangeEvent<HTMLInputElement>) => {
             setInputValueTwo(ev.target.value);
           }}
-          onKeyDown={inputKeyHandler}
           ref={refTime}
         />
       </div>

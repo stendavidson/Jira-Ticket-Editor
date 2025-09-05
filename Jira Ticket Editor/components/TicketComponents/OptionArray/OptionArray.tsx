@@ -5,7 +5,7 @@ import styles from "./OptionArray.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import { FieldContextInterface, FieldContextResponseInterface, FieldOptionsResponseInterface, FieldOptionInterface } from "../OptionInput/OptionContextInterface";
 
@@ -133,7 +133,7 @@ export default function OptionArray({ className, issueID, keyName, name, operati
 
     let options: FieldOptionInterface[] = [];
 
-    for(let context of fieldContexts){
+    for(const context of fieldContexts){
       options = [...options, ...(await getFieldOptions(keyName, context.id))]
     }
 
@@ -198,7 +198,7 @@ export default function OptionArray({ className, issueID, keyName, name, operati
     body.fields = {};
     body.fields[keyName] = [];
 
-    for(let selectedOption of selectedOptions){
+    for(const selectedOption of selectedOptions){
       if(selectedOption.id !== option.id){
         body.fields[keyName].push(
           { value: option.value }

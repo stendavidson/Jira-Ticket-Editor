@@ -38,6 +38,9 @@
         // Padding
         padding: 0;
 
+        // Color
+        color: c.$lightGrayText;
+
         // Text
         font-size: max(1.6vh, 16px);
         font-weight: normal;
@@ -64,7 +67,7 @@
 
         // Border
         border-radius: max(0.4vh, 4px);
-        border: 1px solid c.$containerGray;
+        border: 1px solid c.$darkGray2;
 
         // Overflow
         overflow-y: visible;
@@ -72,16 +75,16 @@
         // Hover
         &:hover{
             // Color
-            background-color: c.$containerGrayHighlight;
+            background-color: c.$darkGray3;
         }
 
         // Custom Focus
         &.focused{
             // Color
-            background-color: rgb(68, 68, 68);
+            background-color: c.$darkGray1;
 
             // Border
-            border: 1px solid rgb(26, 131, 183);
+            border: 1px solid c.$powderBlue2;
         }
 
         // Children
@@ -102,6 +105,9 @@
 
             // Border
             border-radius: max(0.4vh, 4px);
+
+            // Color
+            color: c.$lightGrayText;
             
             // Text
             font-size: max(1.4vh, 14px);
@@ -112,7 +118,7 @@
             // Placeholder
             &::placeholder{
                 // Color
-                color: white
+                color: c.$lightGrayText;
             }
         }
 
@@ -158,12 +164,12 @@
                 border-top-left-radius: max(0.3vh, 3px);
 
                 // Color
-                background-color: c.$boxGray;
+                background-color: c.$darkGray3;
 
                 // Hover
                 &:hover{
                     // Color
-                    background-color: c.$boxGrayHighlight;
+                    background-color: c.$darkGray4;
                 }
 
                 // Children
@@ -176,7 +182,7 @@
                     height: max(1.4vh, 14px);
 
                     // Color
-                    color: white;
+                    color: c.$grayLine2;
                 }
             }
 
@@ -201,12 +207,12 @@
                 border-bottom-left-radius: max(0.3vh, 3px);
 
                 // Color
-                background-color: c.$boxGray;
+                background-color: c.$darkGray3;
 
                 // Hover
                 &:hover{
                     // Color
-                    background-color: c.$boxGrayHighlight;
+                    background-color: c.$darkGray4;
                 }
 
                 // Children
@@ -219,7 +225,7 @@
                     height: max(1.4vh, 14px);
 
                     // Color
-                    color: white;
+                    color: c.$grayLine2;
                 }
             }
         }

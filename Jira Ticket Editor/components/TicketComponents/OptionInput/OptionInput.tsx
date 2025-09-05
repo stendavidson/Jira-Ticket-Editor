@@ -5,7 +5,7 @@ import styles from "./OptionInput.module.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 
 // Internal imports
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { TicketContext } from "@/contexts/TicketContext";
 import { FieldContextInterface, FieldContextResponseInterface, FieldOptionsResponseInterface, FieldOptionInterface } from "./OptionContextInterface";
 
@@ -136,7 +136,7 @@ export default function OptionInput({ className, issueID, keyName, name, operati
     // Retrieve field options
     let options: FieldOptionInterface[] = [];
 
-    for(let context of contexts){
+    for(const context of contexts){
       options = [...options, ...(await getFieldOptions(context.id))]
     }
 
