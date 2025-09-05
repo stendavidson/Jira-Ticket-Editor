@@ -1,0 +1,171 @@
+@use '../../../../styles/constants.scss' as c;
+
+.linkTile{
+    // Position
+    position: relative;
+    margin-top: max(1vh, 10px);
+
+    // Dimensions
+    width: calc(100% - max(4vh, 40px));
+    height: max(2.5vh, 25px);
+
+    // Display Properties
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    // Border
+    border-radius: max(0.4vh, 4px);
+
+    // Padding
+    padding: max(1vh, 10px);
+
+    // Color
+    background-color: c.$darkGray2;
+
+    // Shadow
+    box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow1;
+
+    // Last Child
+    &:last-child{
+        margin-bottom: max(1vh, 10px);
+    }
+
+    // Children
+    .startBox{
+        // Position
+        position: relative;
+
+        // Dimensions
+        height: 100%;
+
+        // Display properties
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        // Text
+        overflow: hidden;
+
+        // Children
+        .icon{
+            // Position
+            position: relative;
+            margin-right: max(1vh, 10px);
+
+            // Dimensions
+            height: max(2vh, 2px);
+        }
+
+        .text{
+            // Position
+            position: relative;
+
+            // Dimensions
+            min-width: 0;
+            max-width: 90%;
+
+            // Color
+            color: c.$lightGrayText;
+
+            // Text
+            font-size: max(1.4vh, 14px);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .endBox{
+        // Position
+        position: relative;
+
+        // Dimensions
+        height: 100%;
+
+        // Display properties
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        // Color
+        background-color: transparent;
+
+        // Children
+        .status{
+            // Position
+            position: relative;
+            margin-right: max(1vh, 10px);
+
+            // Dimensions
+            height: max(2.8vh, 28px);
+            width: fit-content;
+
+            // Display Properties
+            display: flex;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            // Border
+            border: 1px solid c.$grayLine2;
+            border-radius: max(0.4vh, 4px);
+
+            // Padding
+            padding: 0 max(0.6vh, 6px);
+
+            // Text
+            font-size: max(1.3vh, 13px);
+            text-wrap: nowrap;
+        }
+
+        .icon{
+            // Position
+            position: relative;
+            margin-right: max(1vh, 10px);
+
+            // Dimensions
+            height: max(2vh, 2px);
+        }
+
+        .deleteButton {
+            // Position
+            position: relative;
+
+            // Dimensions
+            height: max(2.5vh, 25px);
+            width: max(2.5vh, 25px);
+            box-sizing: content-box;
+
+            // Display Properties
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            // Border
+            border: 1px solid c.$grayLine2;
+            border-radius: max(0.4vh, 4px);
+
+            // Color
+            background: transparent;
+
+            // Cursor
+            cursor: pointer;    
+
+            &:hover {
+                //Color
+                background-color: c.$darkGray3;
+            }
+        }
+    }
+}
+
+
