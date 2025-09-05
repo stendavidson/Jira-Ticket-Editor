@@ -12,10 +12,10 @@
 
     // Borders
     border: none;
-    border-bottom: 1px solid c.$line;
+    border-bottom: 1px solid c.$grayLine;
 
     // Shadows
-    box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$containerGray;
+    box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow2;
     
     // Children
     .myNav{
@@ -47,7 +47,7 @@
             align-items: center;
 
             // Border
-            border-radius: max(5px, 0.5vh);
+            border-radius: max(4px, 0.4vh);
 
             // Text
             text-decoration: none;
@@ -55,7 +55,7 @@
 
             &:hover{
                 // Color
-                background-color: c.$containerGrayHighlight;
+                background-color: c.$darkGray2;
 
                 // Text
                 text-decoration: none;
@@ -87,12 +87,18 @@
             align-items: center;
 
             // Border
-            border: 1px solid c.$line;
-            border-bottom-left-radius: 4px;
+            border: 1px solid c.$grayLine;
+            border-bottom-left-radius: max(0.4vh, 4px);
 
             // Shadow
-            box-shadow: min(-1px, -0.15vh) max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$containerGray;
+            box-shadow: min(-1px, -0.15vh) max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow2;
 
+            // Last Child
+            & > :last-child{
+                border-bottom-left-radius: max(0.4vh, 4px);
+            }
+
+            // Children
             .dropButton{
                 // Dimensions
                 width: 100%;
@@ -104,15 +110,12 @@
                 justify-content: center;
                 align-items: center;
 
-                // Border
-                border-radius: 4px;
-
                 // Text 
                 text-decoration: none;
 
                 &:hover{
                     // Color
-                    background-color: c.$containerGrayHighlight;
+                    background-color: c.$darkGray2;
     
                     // Text
                     text-decoration: none;
@@ -128,8 +131,13 @@
 
 .highlight{
     // Color
-    background-color: c.$containerGrayHighlight;
+    background-color: c.$darkGrayBlue1;
 
     // Text
     text-decoration: none;
+
+    // Hover
+    &:hover{
+        background-color: c.$darkGrayBlue2 !important;
+    }
 }
