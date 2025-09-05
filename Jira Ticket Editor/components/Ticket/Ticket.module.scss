@@ -18,7 +18,7 @@
     align-items: center;
 
     // Color
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: c.$blackOverlay;
 
     // Children
     .ticketBox{
@@ -40,10 +40,10 @@
         border-radius: max(0.5vh, 5px);
 
         // Color
-        background-color: c.$containerGray;
+        background-color: c.$darkGray2;
 
         // Shadow
-        box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 rgba(0, 0, 0, 0.5);
+        box-shadow: 0 max(1px, 0.1vh) max(7px, 0.7vh) 0 c.$blackShadow3;
 
         // Overflow
         overflow: hidden;
@@ -88,6 +88,9 @@
                     position: relative;
                     margin-top: 0.05vh;
 
+                    // Color
+                    color: c.$lightGrayText;
+
                     // Text
                     font-size: max(1.3vh, 13px);
                 }
@@ -110,19 +113,19 @@
                 align-items: center;
 
                 // Border
-                border: 1px solid c.$line;
+                border: 1px solid c.$grayLine2;
                 border-radius: max(0.4vh, 4px);
 
                 // Color
                 background: transparent;
-                color: c.$boxGray;
+                color: c.$darkGray3;
 
                 // Cursor
                 cursor: pointer;    
 
                 &:hover {
                     //Color
-                    background-color: c.$containerGrayHighlight;
+                    background-color: c.$darkGray4;
                 }
             }
         }
@@ -168,7 +171,7 @@
 
                     // Dimensions
                     width: 93%;
-                    min-height: 100%; //calc(100% - max(1vh, 10px));
+                    min-height: calc(100% - max(1vh, 10px));
 
                     // Display Properties
                     display: flex;
@@ -256,7 +259,7 @@
 
 .adjustPositionPrimary{
     // Position
-    margin: 0 0 max(1.5vh, 15px) 0 !important;
+    margin: 0 0 max(3vh, 30px) 0 !important;
 
     // Dimensions
     width: 100% !important;
@@ -265,7 +268,7 @@
     padding-right: 0 !important;
 
     // Last-child
-    :last-child{
+    &:last-child{
         // Position
         margin: 0 0 0 0 !important;
     }

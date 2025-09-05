@@ -2,7 +2,7 @@
 import styles from "./Ticket.module.scss";
 
 // External imports
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import dynamic from 'next/dynamic';
 
 // Internal Imports
@@ -24,12 +24,15 @@ import NumberInput from "../TicketComponents/NumberInput/NumberInput";
 import DateInput from "../TicketComponents/DateInput/DateInput";
 import DateTimeInput from "../TicketComponents/DateTimeInput/DateTimeInput";
 import { AttachmentInterface } from "@/interfaces/AttachementInterface";
-import request from "@/lib/nothrow_request";
+import request from "@/lib/NoExceptRequestLib";
 import { flushSync } from "react-dom";
 import React from "react";
 import TimeEstimateInput from "../TicketComponents/TimeEstimateInput/TimeEstimateInput";
+import SubTaskInput from "../TicketComponents/SubTaskInput/SubTaskInput";
+import IssueLinkInput from "../TicketComponents/IssueLinkInput/IssueLinkInput";
 const LogTimeInput = dynamic(() => import("../TicketComponents/LogTimeInput/LogTimeInput"), { ssr: false });
 const RichTextInput = dynamic(() => import('../TicketComponents/RichTextInput/RichTextInput'), { ssr: false });
+const CommentsInput = dynamic(() => import('../TicketComponents/CommentsInput/CommentsInput'), { ssr: false });
 
 
 /**
@@ -53,6 +56,9 @@ export default function Ticket(){
   // State Values
   const [attachments, setAttachments] = useState<AttachmentInterface[]>([]);
   const [timeSpent, setTimeSpent] = useState<string>("");
+
+  // Refs
+  const parentRef = useRef<HTMLDivElement | null>(null)
 
 
 
@@ -126,7 +132,7 @@ export default function Ticket(){
   useEffect(() => {
 
     if(context?.ticketData){
-      preloadAttachments(context?.ticketData!.fields.attachment);
+      preloadAttachments(context?.ticketData?.fields?.attachment ?? []);
     }
 
   }, [context?.ticketData]);
@@ -138,7 +144,7 @@ export default function Ticket(){
   useEffect(() => {
     
     if(context?.ticketData){
-      setTimeSpent(context!.ticketData?.fields["timetracking"].timeSpent);
+      setTimeSpent(context!.ticketData?.fields?.["timetracking"].timeSpent ?? "");
     }
     
   }, [context?.ticketData]);
@@ -151,10 +157,10 @@ export default function Ticket(){
         <div className={styles.ticketBox}>
           <div className={styles.controlBar}>
             <div className={styles.issueKey}>
-              <IssueTypeInput issueID={context.ticketData.id} defaultValue={context.ticketData.fields.issuetype} allowedValues={context.ticketData.editmeta.fields.issuetype.allowedValues}/>
+              <IssueTypeInput issueID={context.ticketData.id} defaultValue={context.ticketData.fields.issuetype} allowedValues={context.ticketData.editmeta.fields.issuetype?.allowedValues ?? []}/>
               <p>{context.ticketData.key}</p>
             </div>
-            <StatusInput issueID={context.ticketData!.id} defaultValue={context.ticketData!.fields["status"]}/>
+            <StatusInput issueID={context.ticketData.id} defaultValue={context.ticketData.fields["status"]}/>
             <button className={styles.closeButton} onClick={() => {context.setTicketData(null)}} type="button">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <line x1="1" y1="1" x2="15" y2="15" stroke="#ADADAD" strokeWidth="2" />
@@ -163,18 +169,22 @@ export default function Ticket(){
             </button>
           </div>
           <div className={styles.mainContent}>
-            <div className={styles.column1}>
+            <div className={styles.column1} ref={parentRef}>
               <div className={styles.primaryContent}>
-                <ShortTextInput className={styles.adjustPositionPrimary} fontSize={30} issueID={context.ticketData!.id} keyName={"summary"} operations={context.ticketData!.editmeta.fields["summary"].operations} defaultValue={context.ticketData!.fields["summary"] ?? ""}/>
-                <RichTextInput key={attachments[0]?.id} className={styles.adjustPositionPrimary} issueID={context.ticketData!.id} keyName={"description"} name={context.ticketData!.editmeta.fields["description"].name} operations={context.ticketData!.editmeta.fields["description"].operations} attachments={attachments} defaultValue={context.ticketData!.fields["description"] ?? ""}/>
-                
+                <ShortTextInput className={styles.adjustPositionPrimary} fontSize={30} issueID={context.ticketData.id} keyName={"summary"} operations={context.ticketData.editmeta.fields["summary"]?.operations ?? []} defaultValue={context.ticketData.fields["summary"] ?? ""}/>
+                <RichTextInput key={`description-${attachments[0]?.id}`} className={styles.adjustPositionPrimary} issueID={context.ticketData.id} keyName={"description"} name={context.ticketData.editmeta.fields["description"]?.name ?? ""} operations={context.ticketData.editmeta.fields["description"]?.operations ?? []} attachments={attachments} defaultValue={context.ticketData.fields["description"] ?? ""}/>
+                {!context.ticketData?.fields?.issuetype?.subtask && (
+                  <SubTaskInput className={styles.adjustPositionPrimary} issueID={context.ticketData.id} projectID={context.ticketData.fields["project"]?.id} subTasks={context.ticketData.fields["subtasks"]}/>
+                )}
+                <IssueLinkInput className={styles.adjustPositionPrimary} issueID={context.ticketData.id} projectID={context.ticketData.fields["project"]?.id} defaultValues={context.ticketData.fields["issuelinks"]}/>
+                <CommentsInput key={`comment-${attachments[0]?.id}`} className={styles.adjustPositionPrimary} parentContainer={parentRef} issueID={context.ticketData.id} isServiceDesk={context.ticketData.fields["project"]?.projectTypeKey === "service_desk"} defaultValue={context.ticketData.fields["comment"]} attachments={attachments}/>
               </div>
             </div>
             <div className={styles.column2}>
               <div className={styles.details}>
                 <h1 className={styles.title}>Details</h1>
                 {
-                  Object.keys({...context.ticketData.editmeta.fields, ...context.ticketData.fields}).map((key: string) => {
+                  Object.keys({...(context.ticketData!.editmeta.fields), ...context.ticketData!.fields}).map((key: string) => {
                     
                     // Potentially Editable Fields
                     if(context.ticketData!.editmeta.fields.hasOwnProperty(key)){
@@ -186,7 +196,11 @@ export default function Ticket(){
                       }else if(context.ticketData!.editmeta.fields[key].name === "Sprint"){
                         return <SprintInput key={key} className={styles.adjustPosition} projectID={context.ticketData!.fields["project"].id} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]} allowedValues={context.ticketData!.editmeta.fields[key].allowedValues}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "user"){
-                        return <UserInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]}/>
+                        if(context.ticketData!.editmeta.fields[key].name === "Reporter"){
+                          return <UserInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} nullable={false} defaultValue={context.ticketData!.fields[key]}/>
+                        }else{
+                          return <UserInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} nullable={true} defaultValue={context.ticketData!.fields[key]}/>
+                        }
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "array" && context.ticketData!.editmeta.fields[key].schema.items === "user"){
                         return <UserArray key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]}/>
                       }else if(context.ticketData!.editmeta.fields[key].name === "Labels"){
@@ -198,10 +212,10 @@ export default function Ticket(){
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "team"){
                         return <TeamInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]} allowedValues={context.ticketData!.editmeta.fields[key].allowedValues}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "array" && context.ticketData!.editmeta.fields[key].schema.items === "sd-sentiment"){
-                        return <SentimentInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} issueKey={context.ticketData!.key} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]} allowedValues={context.ticketData!.editmeta.fields[key].allowedValues}/>
-                      }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom !== "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description" && key !== "environment"){
+                        return <SentimentInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key]} allowedValues={context.ticketData!.editmeta.fields[key].allowedValues}/>
+                      }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom !== "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description"){
                         return <ShortTextInput key={key} className={styles.adjustPosition} fontSize={14} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key] ?? ""}/>
-                      }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom === "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description" && key !== "environment"){
+                      }else if(context.ticketData!.editmeta.fields[key].schema.type === "string" && context.ticketData!.editmeta.fields[key].schema.custom === "com.atlassian.jira.plugin.system.customfieldtypes:textarea" && key !== "summary" && key !== "description"){
                         return <RichTextInput key={`${key}-${attachments[0]?.id}`} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} attachments={attachments} defaultValue={context.ticketData!.fields[key] ?? ""}/>
                       }else if(context.ticketData!.editmeta.fields[key].schema.type === "number"){
                         return <NumberInput key={key} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={context.ticketData!.editmeta.fields[key].name} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key] ?? ""}/>
@@ -216,7 +230,7 @@ export default function Ticket(){
                             <TimeEstimateInput className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Original Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].originalEstimate}/>
                             <TimeEstimateInput className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Remaining Estimate"} operations={context.ticketData!.editmeta.fields[key].operations} defaultValue={context.ticketData!.fields[key].remainingEstimate}/>
                             <TimeEstimateInput key={`${key}-${timeSpent}`} className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Spent"} operations={[]} defaultValue={timeSpent}/>
-                            <LogTimeInput className={styles.adjustPosition} issueID={context.ticketData!.id} keyName={key} name={"Time Tracking"} operations={context.ticketData!.editmeta.fields[key].operations} timeSpent={timeSpent} updateTimeSpent={setTimeSpent}/>
+                            <LogTimeInput className={styles.adjustPosition} issueID={context.ticketData!.id} name={"Time Tracking"} operations={context.ticketData!.editmeta.fields[key].operations} timeSpent={timeSpent} updateTimeSpent={setTimeSpent}/>
                           </React.Fragment>
                         );
                       }
