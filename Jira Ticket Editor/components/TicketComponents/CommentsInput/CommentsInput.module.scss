@@ -1,0 +1,61 @@
+@use "../../../styles/constants.scss" as c;
+
+.fieldEditor{
+    // Position
+    position: relative;
+
+    // Dimensions
+    width: 100%;
+
+    // Display Properties
+    display: flex; 
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    // Children
+    .commentsContainer{
+        // Position
+        position: relative;
+        margin-top: max(5vh, 50px);
+
+        // Dimensions
+        width: 100%;
+    }
+}
+
+.comment{
+    // Position
+    position: relative;
+    
+    // Dimensions
+    width: 100%;
+}
+
+.loader{
+    // Position
+    position: relative;
+    
+    // Dimensions
+    width: 100%;
+    height: max(6vh, 60px);
+
+    // Display Properties
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    // Border
+    border-radius: max(0.3vh, 3px);
+
+    // Color
+    color: c.$lightGrayText;
+    background-color: c.$whiteShadow;
+
+    // Font
+    font-size: max(1.6vh, 16px);
+
+    // Shadow
+    box-shadow: 0 max(1px, 0.1vh) max(4px, 0.4vh) 0 c.$blackShadow2;
+}
