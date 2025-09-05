@@ -15,7 +15,7 @@
     border-radius: max(0.3vh, 3px);
 
     // Colors
-    background-color: c.$containerGray;
+    background-color: c.$darkGray3;
 
     &:hover{
         cursor: pointer;
@@ -42,42 +42,12 @@
     border-radius: max(0.3vh, 3px);
 
     // Colors
-    background-color: c.$containerGray;
-    color: c.$containerGray; 
+    background-color: c.$darkGray3;
+    color: c.$darkGray3; 
 
     // Text
     font-size: 4px;
     text-align: center;
-}
-
-.avatarTooltip{
-    // Position
-    position: absolute;
-    z-index: 10;
-    top: 90%;
-    right: 90%;
-
-    // Dimensions
-    max-width: max(25vh, 250px);
-    min-height: max(2vh, 20px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
-    // Display properties
-    display: none;
-
-    // Padding
-    padding: max(0.5vh, 5px) max(0.5vh, 5px) max(0.5vh, 5px) max(0.5vh, 5px);
-    
-    // Border
-    border-radius: 5px;
-
-    // Colors
-    background-color: rgba(0, 0, 0, 0.4);
-
-    // Pointer Events
-    pointer-events: none;
 }
 
 .avatarCircle:hover .avatarTooltip{
